@@ -2,12 +2,11 @@
 
 * 支持多框架，一套代码多个平台
 * 插件热更新，无需重新卸载安装
-* 全局管理器，简单配置即可上手
 
 # 框架
 
 ## 协议
-> 回调地址:http://your.domain/app.php?frameId=70000&frameIp=127.0.0.1&frameGc=123456 ，frameId 不填默认 70000
+> 回调地址:http://your.domain/app.php?frameId=50000&frameIp=127.0.0.1&frameGc=123456 ，frameId 默认值 50000 ，支持HTTP和HTTPS协议。
 
 | frameId | 框架                                                                                                   | 平台    | 鉴权     | HTTP | WS |
 |---------|--------------------------------------------------------------------------------------------------------|---------|--------|------|----|
@@ -34,25 +33,24 @@
 
 ## redis
 
-数据缓存，关键词触发、统计都需要他 [点击这里下载](https://redis.io/download)。
+数据缓存，关键词触发、统计都需要他 [点击这里下载](https://redis.io/download)，或自行安装。
 
-## 项目
+## 设置
 
-```
-git clone https://github.com/MiniGrayGay/PaimonUID
-
-cd backend
-```
-
-## 密钥
-
-所有带 **example.** 前缀的都需要自行配置。里面的密钥换成自己的，然后去掉 **example.** 即可。
+**example** 文件夹内的配置文件需要自行配置。里面的密钥换成自己的，然后复制到 **config** 即可。
 
 ```
-app/example.config 內的文件修改完以后复制一份到 app/config
-app/database/example.app.sql.php
-app/ws/example.qq_ws.js
+app/example.config/app.config.php 內的文件修改完以后复制一份到 app/config
+
+以下4个文件一般情况下无需修改，直接复制到 app/config 即可
+app/example.config/app.config.json
+app/example.config/msg.blockList.txt
+app/example.config/msg.whiteList.txt
+app/example.config/user.blockList.txt
 ```
+
+app/database/example.app.sql.php 为数据库配置
+通常情况下直接复制并重命名为 app/database/app.sql.php 即可
 
 ## frameIp
 > **HTTP** 转发回去的IP，默认为 **app/config/app.config.php** 中配置的IP
@@ -78,15 +76,19 @@ whitelist=127.0.0.1 1.1.1.1
 
 ## 可爱猫
 
-百度网盘 [提取码: vivk](https://pan.baidu.com/s/1f1vk49VvCOLSzKqrUSQOzw)。
+百度网盘 [链接挂了，稍后补链](#)。
 
 ## NOKNOK
 
 找管理员申请，需要注意的是 NOKNOK 的回调地址不允许带参数。
 
+```
+无需填写配置文件，提交 http://your.domain/app.php 给管理员
+```
+
 ## QQ 频道 - 第三方
 
-根目录下 **config.yml** post 的下方加入以下信息:
+在go-cqhttp的 **config.yml** post 的下方加入以下信息:
 
 ```
 - url: 'http://your.domain/app.php?frameId=60000'
@@ -95,7 +97,9 @@ whitelist=127.0.0.1 1.1.1.1
 
 ## QQ 频道 - 官方
 
-根目录下执行以下命令安装依赖并运行:
+修改 app/ws/example.qq_ws.js 文件，复制并重命名为 app/ws/qq_ws.js
+
+执行以下命令安装依赖并运行:
 
 ```
 yarn
@@ -107,10 +111,10 @@ yarn start:qq
 
 环境密钥配置好以后需要 **管理员** 向机器人发送 **功能** 初始化插件，之后每次增删插件也需要。
 
-只有注册过的命令下次才会调用相关插件，不用每一句话都轮询所有插件了。
+只有初始化过的命令才会调用相关插件，避免都轮询所有插件影响速度。
 
 ## 注意
 
 路径需要有写入、读取权限，否则【缓存】、【发图】相关功能受到影响。
 
-如果有两个相似的命令 (比如 **一言状态** 和 **一言** )，建议长的放短的前面，否则调用次数的统计可能会统计到先匹配到的关键词上。
+如果有两个相似的命令 (比如 **一言状态** 和 **一言** )，建议长的放短的前面，否则调用时会先匹配到短的关键词上。
