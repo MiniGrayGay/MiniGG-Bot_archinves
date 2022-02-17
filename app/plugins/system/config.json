@@ -6,7 +6,7 @@
         "系统"
     ],
     "desc": "你就是我的Master吗？",
-    "ver": "1.0.3",
+    "ver": "1.0.1.4",
     "author": "MiniGG",
     "url": null,
     "switch": true,
@@ -28,7 +28,7 @@
                 "show": false
             },
             {
-                "keywords": "娱乐功能|游戏相关|原神相关|系统功能",
+                "keywords": "娱乐功能|游戏相关|原神功能|系统功能",
                 "desc": "二级菜单",
                 "show": false
             },
