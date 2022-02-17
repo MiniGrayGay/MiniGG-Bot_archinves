@@ -68,12 +68,13 @@ class system_actions extends app
         } elseif (preg_match("/^(功能|菜单|帮助)\$/", $msgContent)) {
             $ret = "> 派蒙的百宝箱\n";
             $ret .= "\n";
-            $ret .= "> 游戏相关\n";
+            $ret .= "> 娱乐功能\n";
+            $ret .= "> 原神功能\n";
             $ret .= "> 系统功能";
-        } elseif (preg_match("/^(娱乐功能|游戏相关|内战系统|系统功能)\$/", $msgContent, $msgMatch)) {
+        } elseif (preg_match("/^(娱乐功能|游戏相关|原神功能|系统功能)\$/", $msgContent, $msgMatch)) {
             $matchValue = $msgMatch[0];
             $menuArr['娱乐功能'] = "工具";
-            $menuArr['游戏相关'] = "游戏";
+            $menuArr['原神功能'] = "原神";
             $menuArr['系统功能'] = "系统";
             $ret = $this->getPluginsInfo($menuArr[$matchValue]);
         } elseif (FRAME_ID == 10000 && $msgContent == "登录") {
@@ -290,7 +291,7 @@ class system_actions extends app
                 if ($menuType && !in_array($menuType, $pluginType)) {
                     continue;
                 }
-                //跳过不是一个类型的
+                //跳过不是一个类型的,暂不处理
                 if (strpos($desc, "[管]") > -1) {
                     //$adminCommand .= $command;
                 } else {

@@ -3,11 +3,10 @@
     "guid": "1b885a61-d8d6-41d2-a212-0b90dc72c6d7",
     "name": "派蒙的百宝箱",
     "type": [
-        "游戏",
         "原神"
     ],
     "desc": "山高狐狸野，八重是我姐！",
-    "ver": "1.0.0.0",
+    "ver": "1.0.2",
     "author": "MiniGG",
     "url": null,
     "switch": true,
@@ -21,12 +20,12 @@
         "frame": [],
         "command": [{
                 "keywords": "查询",
-                "desc": "查询玩家信息",
+                "desc": "根据UID查询玩家信息",
                 "demo": "原神玩家查询<uid>，示例:原神玩家查询12345678"
             },
             {
-                "keywords": "原神每日材料",
-                "desc": "查询每日材料"
+                "keywords": "材料",
+                "desc": "查询原神当日材料"
             }
         ]
     }

@@ -6,8 +6,8 @@
         "系统"
     ],
     "desc": "你就是我的Master吗？",
-    "ver": "1.0.0.0",
-    "author": "jmglsi",
+    "ver": "1.0.3",
+    "author": "MiniGG",
     "url": null,
     "switch": true,
     "trigger": {
@@ -28,7 +28,7 @@
                 "show": false
             },
             {
-                "keywords": "娱乐功能|游戏相关|内战系统|系统功能",
+                "keywords": "娱乐功能|游戏相关|原神相关|系统功能",
                 "desc": "二级菜单",
                 "show": false
             },

@@ -69,7 +69,7 @@ class genshinuid_actions extends app
             } else {
                 $ret = $this->appCommandErrorMsg($matchValue);
             }
-        } elseif (preg_match("/原神每日材料/", $msgContent)) {
+        } elseif (preg_match("/材料/", $msgContent)) {
             $ret = $this->getGenshinDaily();
         }
         $this->appSend($msgRobot, $msgType, $msgSource, $msgSender, $ret);
