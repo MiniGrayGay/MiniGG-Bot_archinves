@@ -6,6 +6,12 @@
 
 # 框架
 
+## 环境
+
+已在`Windows11`、`Windows Server 2019`、`Centos 8.5.2111`上使用`PHP 7.4`与`PHP 8.0`进行测试。
+
+理论上兼容`PHP 7.3`及以上的版本，推荐使用`PHP 8.0`进行部署
+
 ## 协议
 
 > 回调地址:http://your.domain/app.php?frameId=50000&frameIp=127.0.0.1&frameGc=123456 ，frameId 不填默认 50000
@@ -39,17 +45,15 @@
 
 ## 数据库
 
-> 通常情况下复制并重命名为 **app/database/app.sql.php** 即可。
-
 ### Redis
 
 > Bot数据缓存，关键词触发、统计都需要用到 [下载地址](https://redis.io/download)。
 
-如Redis设置了访问密钥，按修改 **app/database/example.app.sql.php** 内说明修改
+如Redis设置了访问密钥，按 **app/example.config/app.database.php** 内说明修改
 
-### MySQL/MariaDB
+### ~~MySQL/MariaDB~~
 
-> 暂未使用的预留配置文件，不需要进行配置。
+> ~~暂未使用的预留配置文件，不需要进行配置。~~
 
 ## 项目
 
@@ -57,7 +61,11 @@
 
 ## 密钥
 
-> **app/example.config** 目录下的文件需要进行配置，通常情况下，除**app.config.php**需要把里面的密钥换成自己的，其余配置文件无需额外编辑，配置完成后，复制 **app/example.config** 目录下的文件到 **app/config** 目录下即可。
+> **app/example.config** 目录下的文件需要进行配置
+>
+>通常情况下，除 **app.config.php** 需要把里面的密钥换成自己的，其余配置文件无需额外编辑
+>
+>配置完成后，复制 **app/example.config** 目录下所有文件到 **app/config** 目录下即可。
 
 ## frameIp
 

@@ -1,9 +1,7 @@
 <?php
 
 ini_set("display_errors", "off");
-//打开错误提示
-//ini_set("error_reporting", E_ALL);
-//显示所有错误
+//关闭错误提示
 
 /**
  *
@@ -26,8 +24,6 @@ header("Content-type: application/json; charset=utf-8");
  * 引用模块
  *
  */
-define('APP_DIR_DATABASE', "app/database/");
-require_once(APP_DIR_DATABASE . "app.sql.php");
 
 define('APP_DIR_CLASS', "app/class/");
 require_once(APP_DIR_CLASS . "api.class.php");
@@ -36,6 +32,7 @@ require_once(APP_DIR_CLASS . "app.class.php");
 define('APP_DIR_CONFIG', "app/config/");
 require_once(APP_DIR_CONFIG . "app.config.php");
 require_once(APP_DIR_CONFIG . "app.definition.php");
+require_once(APP_DIR_CONFIG . "app.database.php");
 
 define('APP_DIR_CACHE', "app/cache/");
 define('APP_DIR_PLUGINS', "app/plugins/");
