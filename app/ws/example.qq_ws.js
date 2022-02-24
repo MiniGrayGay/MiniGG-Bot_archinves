@@ -27,8 +27,7 @@ let wsInfo = {
     heartbeatInterval: 41250,
     wsUrl: "",
     gateway: "https://api.sgroup.qq.com/gateway/bot",
-    postUrl: "http://localhost/bot.91m.top/app.php?frameId=70000&botType=" + botInfo.type
-    //"http://bot-localhost.91m.top/app.php?frameId=70000"
+    postUrl: "http(s)://your-domain/app.php?frameId=70000&botType=" + botInfo.type
 }
 
 let timerInfo = {
