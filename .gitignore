@@ -1,5 +1,6 @@
 .vscode/settings.json
 .DS_Store
+.idea
 node_modules
 app/cache/*
 app/config/*

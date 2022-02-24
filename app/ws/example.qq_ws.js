@@ -2,9 +2,9 @@ let ws = require("ws");
 let axios = require("axios");
 
 let botInfo = {
-    id: "", //BotAppid
-    name: "", //BotName
-    token: "", //BotToken
+    id: "",
+    name: "",
+    token: "",
     type: 1, //0 私域 1 公域
     sessionId: null
 };
@@ -27,8 +27,8 @@ let wsInfo = {
     heartbeatInterval: 41250,
     wsUrl: "",
     gateway: "https://api.sgroup.qq.com/gateway/bot",
-    postUrl: "http://your.domain/app.php?frameId=70000&botType=" + botInfo.type
-        //替换成你的域名，推荐https
+    postUrl: "http://localhost/bot.91m.top/app.php?frameId=70000&botType=" + botInfo.type
+    //"http://bot-localhost.91m.top/app.php?frameId=70000"
 }
 
 let timerInfo = {
