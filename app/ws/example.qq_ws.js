@@ -1,10 +1,20 @@
 let ws = require("ws");
 let axios = require("axios");
 
+/**
+ * QQ机器人文档
+ * @link https://bot.q.qq.com/wiki/
+ */
+
+/**
+ * QQ机器人注册入口
+ * @link https://bot.q.qq.com/open/#/type?appType=2
+ */
+
 let botInfo = {
-    id: "",
-    name: "",
-    token: "",
+    id: "", //BotAppID
+    name: "", //机器人名字（建议和平台设置的一致，否则会出现神奇的BUG）
+    token: "", //BotToken（这里用不到BotSecret，填BotToken即可）
     type: 1, //0 私域 1 公域
     sessionId: null
 };
@@ -27,6 +37,7 @@ let wsInfo = {
     heartbeatInterval: 41250,
     wsUrl: "",
     gateway: "https://api.sgroup.qq.com/gateway/bot",
+    //使用沙箱模式时替换gateway为 https://sandbox.api.sgroup.qq.com ，沙箱环境只会收到测试频道的事件，且调用openapi仅能操作测试频道
     postUrl: "http(s)://your-domain/app.php?frameId=70000&botType=" + botInfo.type
 }
 
@@ -72,12 +83,6 @@ let botRun = function() {
 
         appLog("接收数据", "op:" + wsInfo.op + " s:" + wsInfo.s + " t:" + wsInfo.t + " d:" + res, "<-");
 
-        /**
-         *
-         * opcode 的定义
-         *
-         * @link https://bot.q.qq.com/wiki/develop/api/gateway/opcode.html
-         */
         if (wsInfo.op === 0) {
             if (wsInfo.t === "RESUMED") {
                 appLog("连接恢复", "OK");
@@ -93,7 +98,6 @@ let botRun = function() {
                  *
                  * 私域机器人不用艾特
                  *
-                 * @link https://wj.qq.com/s2/9379748/ed13
                  */
                 axios({
                     url: wsInfo.postUrl,

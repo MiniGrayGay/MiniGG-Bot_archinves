@@ -1,0 +1,33 @@
+{
+  "icon": "pic.icon",
+  "guid": "ab5a29bd-f7b5-4834-8b6a-ac1117cf81c0",
+  "name": "谁在窥屏",
+  "type": [
+    "工具"
+  ],
+  "desc": "谁在潜水不说话",
+  "ver": "1.0.0.0",
+  "author": "小灰灰",
+  "url": null,
+  "switch": false,
+  "trigger": {
+    "web": [
+      "https://info.minigg.cn"
+    ],
+    "frame": [
+      10000,
+      60000,
+      70000
+    ],
+    "command": [
+      {
+        "keywords": "查窥屏",
+        "desc": "[管]返回当前潜水的列表"
+      },
+      {
+        "keywords": "谁在窥屏",
+        "desc": "[管]发送一个卡片，5秒钟后就知道啦"
+      }
+    ]
+  }
+}

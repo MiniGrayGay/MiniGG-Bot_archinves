@@ -8,5 +8,4 @@ app/database/*
 app/resources/*
 app/ws/*
 !app/config/app.definition.php
-!app/database/example.app.sql.php
 !app/ws/example.qq_ws.js
