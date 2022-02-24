@@ -1,5 +1,8 @@
 <?php
-class poster {
+
+class poster
+{
+
     public static $errMsg = '';
     public static $config = array();
     private static $backGroundImage = '';
@@ -7,36 +10,43 @@ class poster {
     private static $bgImageData = null;
     private static $textDefault = array();
     private static $imageDefault = array();
-    public static function init() {
+
+    public static function init()
+    {
         self::$fontPath = dirname(dirname(__FILE__)) . '/resources/';
-        self::$imageDefault = array('name' => '', //图片名称，用于出错时定位
-        'url' => '', //图片路径
-        'stream' => 0, //图片数据流，与url二选一
-        'left' => 0, //左边距
-        'top' => 0, //上边距
-        'right' => 0, //有边距
-        'bottom' => 0, //下边距
-        'width' => 0, //宽
-        'height' => 0, //高
-        'radius' => 0, //圆角度数，最大值为显示宽度的一半
-        'opacity' => 100, //透明度
+        self::$imageDefault = array(
+            'name' => '', //图片名称，用于出错时定位
+            'url' => '', //图片路径
+            'stream' => 0, //图片数据流，与url二选一
+            'left' => 0, //左边距
+            'top' => 0, //上边距
+            'right' => 0, //有边距
+            'bottom' => 0, //下边距
+            'width' => 0, //宽
+            'height' => 0, //高
+            'radius' => 0, //圆角度数，最大值为显示宽度的一半
+            'opacity' => 100, //透明度
         );
-        self::$textDefault = array('text' => '', //显示文本
-        'left' => 0, //左边距,数字或者center,水平居中
-        'top' => 0, //上边距,数字或者center,垂直居中
-        'width' => 0, //文本框宽度，设置后可实现文字换行
-        'fontSize' => 32, //字号
-        'fontPath' => 'msyh.ttf', //字体文件
-        'fontColor' => '255,255,255', //字体颜色
-        'angle' => 0, //倾斜角度
+        self::$textDefault = array(
+            'text' => '', //显示文本
+            'left' => 0, //左边距,数字或者center,水平居中
+            'top' => 0, //上边距,数字或者center,垂直居中
+            'width' => 0, //文本框宽度，设置后可实现文字换行
+            'fontSize' => 32, //字号
+            'fontPath' => 'msyh.ttf', //字体文件
+            'fontColor' => '255,255,255', //字体颜色
+            'angle' => 0, //倾斜角度
         );
     }
+
     /*
      * 海报配置信息
      * @param $config array 指定的配置信息
      * @return array 合并后的完整配置信息
-    */
-    public static function setConfig($config = array()) {
+     */
+
+    public static function setConfig($config = array())
+    {
         if (!self::$imageDefault || !self::$textDefault) {
             self::init();
         }
@@ -57,12 +67,15 @@ class poster {
         }
         return self::$config;
     }
+
     /*
      * 合并生成海报
      * @param $fileName string 指定生成的图片路径，不传则直接返回图片数据流
      * @return string or bool 图片数据流或者处理结果状态
-    */
-    public static function make($fileName = '') {
+     */
+
+    public static function make($fileName = '')
+    {
         self::$errMsg = null;
         if (!self::$backGroundImage || ((strpos(self::$backGroundImage, 'http') === false) && !is_file(self::$backGroundImage))) {
             self::$errMsg = '请先设置有效的海报背景图片';
@@ -86,7 +99,9 @@ class poster {
             imagefill(self::$bgImageData, 0, 0, $transparent);
             imagecopyresampled(self::$bgImageData, $bgData, 0, 0, 0, 0, $backgroundWidth, $backgroundHeight, $backgroundWidth, $backgroundHeight);
         }
+
         $bgImgData = self::$bgImageData;
+
         //处理图片
         if (self::$config['image']) {
             foreach (self::$config['image'] as $val) {
@@ -117,6 +132,7 @@ class poster {
                 imagesavealpha($res, true); //这里很重要;
                 $resWidth = $info[0];
                 $resHeight = $info[1];
+
                 if ($val['radius']) {
                     if ($val['width'] > $resWidth) {
                         $val['width'] = $resWidth;
@@ -146,13 +162,14 @@ class poster {
                 $val['top'] = $val['top'] < 0 ? $backgroundHeight - abs($val['top']) - $val['height'] : $val['top'];
                 //放置图像
                 imagecopymerge($bgImgData, $canvas, $val['left'], $val['top'], $val['right'], $val['bottom'], $val['width'], $val['height'], $val['opacity']); //左，上，右，下，宽度，高度，透明度
-                
             }
         }
+
         //处理文字
         if (self::$config['text']) {
             mb_internal_encoding("UTF-8"); // 设置编码
             foreach (self::$config['text'] as $val) {
+
                 $fontPath = self::$fontPath . $val['fontPath'];
                 if ($val['width']) {
                     $val['text'] = self::stringAutoWrap($val['text'], $val['fontSize'], $val['angle'], $fontPath, $val['width'], false);
@@ -196,30 +213,38 @@ class poster {
             return $content;
         }
     }
+
     /*
      * 清理海报背景缓存数据
      * @return bool 清理结果
-    */
-    public static function clear() {
+     */
+
+    public static function clear()
+    {
         if (self::$bgImageData) {
             self::$bgImageData = null;
         }
         return true;
     }
+
     /*
      * 抛出异常信息
      * @return string 异常信息说明
-    */
-    public static function getErrMessage() {
+     */
+
+    public static function getErrMessage()
+    {
         return self::$errMsg;
     }
+
     /*
      * 根据文字长度计算出行数
      * @param $string string 需要显示的文字
      * @param $info array 文字显示设置
      * @return int 返回文字行数
-    */
-    public static function getFontLines($string, $info) {
+     */
+    public static function getFontLines($string, $info)
+    {
         if (!self::$imageDefault || !self::$textDefault) {
             self::init();
         }
@@ -230,8 +255,10 @@ class poster {
         }
         return self::stringAutoWrap($string, $setting['fontSize'], $setting['angle'], self::$fontPath . $setting['fontPath'], $setting['width'], true);
     }
+
     //生成圆角图片
-    private static function setRadiusImage(&$imgData, $resWidth, $resHeight, $w, $h, $radius = 10) {
+    private static function setRadiusImage(&$imgData, $resWidth, $resHeight, $w, $h, $radius = 10)
+    {
         $img = imagecreatetruecolor($w, $h);
         //创建透明背景色，主要127参数，其他可以0-255，因为任何颜色的透明都是透明
         $transparent = imagecolorallocatealpha($img, 0, 0, 0, 127);
@@ -243,8 +270,8 @@ class poster {
         imagefill($img, 0, 0, $transparent);
         imagecopyresampled($imgData, $imgData, 0, 0, 0, 0, $w, $h, $resWidth, $resHeight); //将原图缩放尺寸重新获得数据流
         $r = $radius; //圆 角半径
-        for ($x = 0;$x < $w;$x++) {
-            for ($y = 0;$y < $h;$y++) {
+        for ($x = 0; $x < $w; $x++) {
+            for ($y = 0; $y < $h; $y++) {
                 $rgbColor = imagecolorat($imgData, $x, $y);
                 if (($x >= $radius && $x <= ($w - $radius)) || ($y >= $radius && $y <= ($h - $radius))) {
                     //不在四角的范围内,直接画
@@ -280,19 +307,21 @@ class poster {
         }
         return $img;
     }
+
     //文字自动换行
-    private static function stringAutoWrap($string, $fontsize, $angle, $fontface, $width, $returnLines = false) {
+    private static function stringAutoWrap($string, $fontsize, $angle, $fontface, $width, $returnLines = false)
+    {
         $arr = array();
         $newStr = '';
         $counts = 1;
         $count = mb_strlen($string, 'UTF-8');
-        for ($i = 0;$i < $count;$i++) {
+        for ($i = 0; $i < $count; $i++) {
             $str = mb_substr($string, $i, 1);
-            $newStr.= $str;
+            $newStr .= $str;
             $box = imagettfbbox($fontsize, $angle, $fontface, $newStr);
             if (($box[2] > $width)) {
                 $arr[] = PHP_EOL;
-                $counts+= 1;
+                $counts += 1;
                 $newStr = '';
             }
             $arr[] = $str;

@@ -2,22 +2,28 @@
 
 * 支持多框架，一套代码多个平台
 * 插件热更新，无需重新卸载安装
+* 全局管理器，简单配置即可上手
 
 # 框架
 
 ## 协议
-> 回调地址:http://your.domain/app.php?frameId=50000&frameIp=127.0.0.1&frameGc=123456 ，frameId 默认值 50000 ，支持HTTP和HTTPS协议。
 
-| frameId | 框架                                                                                                   | 平台    | 鉴权     | HTTP | WS |
-|---------|--------------------------------------------------------------------------------------------------------|---------|--------|------|----|
-| 10000   | [MyPCQQ](https://www.mypcqq.cc)                                                                        | 电脑 QQ | 白名单IP | ✓    | ✗  |
-| 20000   | [可爱猫](http://www.keaimao.com.cn/forum.php)                                                          | 微信    | 密钥     | ✓    | ✗  |
-| 50000   | [NOKNOK 机器人](https://www.noknok.cn)                                                                 | NOKNOK  | 密钥     | ✓    | ✗  |
-| 60000   | [go-cqhttp](https://github.com/Mrs4s/go-cqhttp/blob/master/docs/guild.md)                              | 手机 QQ | 密钥     | ✓    | ✓  |
-| 70000   | [QQ 机器人](https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&inviteCode=1d9lY8&from=181074&biz=ka) | QQ 频道 | 密钥     | ✗    | ✓  |
+> 回调地址:http://your.domain/app.php?frameId=50000&frameIp=127.0.0.1&frameGc=123456 ，frameId 不填默认 50000
+
+| frameId | 框架                                                                        | 平台     | 鉴权     | HTTP | WS |
+|---------|---------------------------------------------------------------------------|----------|----------|------|----|
+| 5000    | [小米小爱开放平台](https://developers.xiaoai.mi.com)                              | 小爱音响 | -        | ✓    | ✗  |
+| 10000   | [MyPCQQ](https://www.mypcqq.cc)                                           | 电脑 QQ  | 白名单IP | ✓    | ✗  |
+| 20000   | [可爱猫](http://www.keaimao.com.cn/forum.php)                                | 微信     | 密钥     | ✓    | ✗  |
+| 50000   | [NOKNOK 机器人](https://www.noknok.cn)                                       | NOKNOK   | 密钥     | ✓    | ✗  |
+| 60000   | [go-cqhttp](https://github.com/Mrs4s/go-cqhttp/blob/master/docs/guild.md) | 手机 QQ  | 密钥     | ✓    | ✓  |
+| 70000   | [QQ 机器人](https://bot.q.qq.com/)                                           | QQ 频道  | 密钥     | ✗    | ✓  |
 
 ## 数据
-> **-** 表示不确定，且很大概率不行
+
+> **-** 表示不确定，且很大概率不行，
+
+> **小爱音响** 只支持语音文本回复（文字识别率有点感人）
 
 | msgType      | MyPCQQ | 可爱猫 | NOKNOK 机器人 | go-cqhttp | QQ 机器人 |
 |--------------|--------|--------|---------------|-----------|-----------|
@@ -31,77 +37,81 @@
 
 # 配置
 
-## redis
+## 数据库
 
-数据缓存，关键词触发、统计都需要他 [点击这里下载](https://redis.io/download)，或自行安装。
+> 通常情况下复制并重命名为 **app/database/app.sql.php** 即可。
 
-## 设置
+### Redis
 
-**example** 文件夹内的配置文件需要自行配置。里面的密钥换成自己的，然后复制到 **config** 即可。
+> Bot数据缓存，关键词触发、统计都需要用到 [下载地址](https://redis.io/download)。
 
-```
-app/example.config/app.config.php 內的文件修改完以后复制一份到 app/config
+如Redis设置了访问密钥，按修改 **app/database/example.app.sql.php** 内说明修改
 
-以下4个文件一般情况下无需修改，直接复制到 app/config 即可
-app/example.config/app.config.json
-app/example.config/msg.blockList.txt
-app/example.config/msg.whiteList.txt
-app/example.config/user.blockList.txt
-```
+### MySQL/MariaDB
 
-app/database/example.app.sql.php 为数据库配置
-通常情况下直接复制并重命名为 app/database/app.sql.php 即可
+> 暂未使用的预留配置文件，不需要进行配置。
+
+## 项目
+
+> https://github.com/MiniGrayGay/PaimonUID
+
+## 密钥
+
+> **app/example.config** 目录下的文件需要进行配置，通常情况下，除**app.config.php**需要把里面的密钥换成自己的，其余配置文件无需额外编辑，配置完成后，复制 **app/example.config** 目录下的文件到 **app/config** 目录下即可。
 
 ## frameIp
-> **HTTP** 转发回去的IP，默认为 **app/config/app.config.php** 中配置的IP
 
-如需外网访问，建议 服务器端防火墙、安全策略组 放通 **8000-8100** 端口。
+> **HTTP/HTTPS** 通信的IP或域名，可在 **app/config/app.config.php** 中修改`FRAME_IP`
+
+如需外网访问，建议 服务器端防火墙、安全策略组 放行Web通信端口外，额外放行 **8000-8100** 端口。
 
 ## frameGc
 
-NOKNOK 和 QQ 频道 请填 **子频道ID** ，不填默认全部处理。
+> `NOKNOK` 和 `QQ频道` 专用参数，填入 **子频道ID** 时，仅响应特定子频道，为空时默认全部子频道可用。
 
 # 使用
 
-## MyPCQQ
+## 小爱音响 `测试中`
 
-根目录下 **Set.ini** 的底下加入以下信息，按照 log 填入白名单 IP，每个空格分开。
+> [创建技能](https://developers.xiaoai.mi.com/skills/create/list) -> 编辑技能 -> 配置服务 -> 配置信息，按提示配置即可
+
+## MyPCQQ (相对feng控几率比GO-CQ更低)
+
+> 在MyPCQQ目录下 **Set.ini** 的底下加入以下信息，按照 log 填入白名单 IP，每个空格分开。
 
 ```
 [tran]
 enable=1
 target=http://your.domain/app.php?frameId=10000
-whitelist=127.0.0.1 1.1.1.1
+whitelist=127.0.0.1 119.29.29.29
 ```
 
 ## 可爱猫
 
-百度网盘 [链接挂了，稍后补链](#)。
+> 可爱猫5.1.7(自动更新到最新版本) [下载地址](https://storage.minigg.cn/可爱猫.zip)。
 
 ## NOKNOK
 
-找管理员申请，需要注意的是 NOKNOK 的回调地址不允许带参数。
+> 需要向管理员申请，由于 NOKNOK 的回调地址不允许带参数。所以 `frameId` 为 NOKNOK的 `50000`
+
+## QQ 频道 (GO-CQHttp)
+
+> 在GO-CQHttp的配置文件 **config.yml** 中HTTP通信部分的 post 的下方加入以下信息：
 
 ```
-无需填写配置文件，提交 http://your.domain/app.php 给管理员
-```
-
-## QQ 频道 - 第三方
-
-在go-cqhttp的 **config.yml** post 的下方加入以下信息:
-
-```
-- url: 'http://your.domain/app.php?frameId=60000'
+- url: 'http(s)://your.domain/app.php?frameId=60000'
   secret: '' #密钥
 ```
 
-## QQ 频道 - 官方
+PS：由于QQ消息&QQ群消息&QQ频道消息的接口不相同+MyPCQQ对于QQ非频道消息更稳定，所以暂时不会考虑添加QQ与QQ群的支持。(应该是不会加了)
 
-修改 app/ws/example.qq_ws.js 文件，复制并重命名为 app/ws/qq_ws.js
+## QQ 频道 (官方API)
 
-执行以下命令安装依赖并运行:
+> 在插件目录下执行以下命令安装依赖并运行（需要`Nodejs 12+`，Linux下推荐使用`screen`保持运行）:
 
 ```
+npm install -g yarn
+
 yarn
 
 yarn start:qq
@@ -109,12 +119,14 @@ yarn start:qq
 
 # 写在最后
 
-环境密钥配置好以后需要 **管理员** 向机器人发送 **功能** 初始化插件，之后每次增删插件也需要。
+> Bot配置完成以后及每次增删插件时需要 **管理员** 向机器人发送 `功能` 初始化插件，修改插件不涉及触发的命令时可以不用重新初始化。
 
-只有初始化过的命令才会调用相关插件，避免都轮询所有插件影响速度。
+PS：只有初始化过的命令才能使用，避免全部命令都使用轮询，提升运行速度。
 
 ## 注意
 
 路径需要有写入、读取权限，否则【缓存】、【发图】相关功能受到影响。
 
-如果有两个相似的命令 (比如 **一言状态** 和 **一言** )，建议长的放短的前面，否则调用时会先匹配到短的关键词上。
+如果有两个相似的命令 (比如 **一言状态** 和 **一言** )，建议长的放短的前面，否则调用次数的统计可能会统计到先匹配到的关键词上。
+
+# 总会有地上的生灵，敢于直面雷霆的威光！

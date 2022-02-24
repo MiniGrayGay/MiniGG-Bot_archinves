@@ -1,5 +1,8 @@
 <?php
+
 /**
+ * 这是一个示例插件
+ *
  * 需要注意的几个默认规则:
  * 1.本插件类的文件名必须是action
  * 2.插件类的名称必须是{插件名_actions}
@@ -15,6 +18,7 @@ class genshinuid_actions extends app
         $appManager->register('plugin', $this, 'EventFun');
         $this->linkRedis();
     }
+
     //解析函数的参数是appManager的引用
     function EventFun($msg)
     {
@@ -74,10 +78,11 @@ class genshinuid_actions extends app
         }
         $this->appSend($msgRobot, $msgType, $msgSource, $msgSender, $ret);
     }
+
     /**
-     * 
+     *
      * 获取信息
-     * 
+     *
      */
     function ckget()
     {
@@ -87,6 +92,7 @@ class genshinuid_actions extends app
         $ck = $cks[array_rand($cks)];
         return $ck;
     }
+
     function mihoyoapi($q, $url)
     {
         //加签DS，查询米哈游API
@@ -118,6 +124,7 @@ class genshinuid_actions extends app
         curl_close($curl);
         return $tmpInfo;
     }
+
     function igs($res, $msgContent)
     {
         $ch = curl_init();
@@ -137,6 +144,7 @@ class genshinuid_actions extends app
         }
         return $imgurl;
     }
+
     function getGenshinDaily()
     {
         $dailyInfo['自由'] = "达达利亚、可莉、埃洛伊、安柏、砂糖、芭芭拉、迪奥娜";
@@ -158,9 +166,9 @@ class genshinuid_actions extends app
         $dailyInfo['天光'] = "雷电将军、早柚";
         //稻妻
         /**
-         * 
+         *
          * 日 一 二 三 四 五 六
-         * 
+         *
          */
         $weekArr = array("日", "一", "二", "三", "四", "五", "六");
         $nowWeek = date("w");

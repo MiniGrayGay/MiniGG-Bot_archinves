@@ -1,25 +1,26 @@
 {
-    "icon": "pic.icon",
-    "guid": "59507ba3-d487-4b67-b6f6-b5df1b454b48",
-    "name": "暴走的巅峰赛",
-    "type": [
-        "娱乐"
+  "icon": "pic.icon",
+  "guid": "59507ba3-d487-4b67-b6f6-b5df1b454b48",
+  "name": "暴走的巅峰赛",
+  "type": [
+    "游戏"
+  ],
+  "desc": "神秘的小灰灰",
+  "ver": "1.0.0.0",
+  "author": "小灰灰",
+  "url": null,
+  "switch": true,
+  "trigger": {
+    "web": [
+      "https://www.minigg.cn"
     ],
-    "desc": "膨胀的小灰灰",
-    "ver": "1.0.1",
-    "author": "小灰灰",
-    "url": null,
-    "switch": true,
-    "trigger": {
-        "web": [
-            "https://pvp.minigg.cn/"
-        ],
-        "frame": [],
-        "command": [{
-                "keywords": "查牌子|查金牌",
-                "desc": "查询一个英雄的最低金牌",
-                "demo": "查牌子<大区><英雄名>，<大区>:安卓QQ、苹果QQ、安卓WX、苹果WX\n示例:查牌子安卓QQ孙尚香"
-            }
-        ]
-    }
+    "frame": [],
+    "command": [
+      {
+        "keywords": "查牌子|查金牌",
+        "desc": "查询一个英雄的最低金牌",
+        "demo": "查牌子<大区><英雄名>，<大区>:安卓QQ、苹果QQ、安卓WX、苹果WX\n示例:查牌子安卓QQ孙尚香"
+      }
+    ]
+  }
 }
