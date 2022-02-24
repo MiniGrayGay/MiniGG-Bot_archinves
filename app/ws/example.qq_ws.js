@@ -10,12 +10,12 @@ let botInfo = {
 };
 
 /**
- * 
+ *
  * 订阅多个事件 1 << 10 | 1 << 30
- * 
+ *
  */
 let authorization = "Bot " + botInfo.id + "." + botInfo.token,
-    intents = botInfo.type == 0 ? 1 << 9 | 1 << 12 : 1 << 12 | 1 << 30,
+    intents = botInfo.type === 0 ? 1 << 9 | 1 << 12 : 1 << 12 | 1 << 30,
     shard = [0, 1];
 
 let wsInfo = {
@@ -73,26 +73,26 @@ let botRun = function() {
         appLog("接收数据", "op:" + wsInfo.op + " s:" + wsInfo.s + " t:" + wsInfo.t + " d:" + res, "<-");
 
         /**
-         * 
+         *
          * opcode 的定义
-         * 
+         *
          * @link https://bot.q.qq.com/wiki/develop/api/gateway/opcode.html
          */
-        if (wsInfo.op == 0) {
-            if (wsInfo.t == "RESUMED") {
+        if (wsInfo.op === 0) {
+            if (wsInfo.t === "RESUMED") {
                 appLog("连接恢复", "OK");
 
                 //恢复成功之后，开始补发遗漏事件
-            } else if (wsInfo.t == "READY") {
+            } else if (wsInfo.t === "READY") {
                 appLog("连接成功", "获取 sessionId");
 
                 botInfo.sessionId = resJson.d.session_id;
                 //连接成功获取 sessionId
             } else if (["MESSAGE_CREATE", "AT_MESSAGE_CREATE", "DIRECT_MESSAGE_CREATE"].indexOf(wsInfo.t)) {
                 /**
-                 * 
+                 *
                  * 私域机器人不用艾特
-                 * 
+                 *
                  * @link https://wj.qq.com/s2/9379748/ed13
                  */
                 axios({
@@ -107,15 +107,15 @@ let botRun = function() {
             }
 
             //服务端进行消息推送
-        } else if (wsInfo.op == 7) {
+        } else if (wsInfo.op === 7) {
             appLog("接收数据", "你还在吗?", "<-");
 
             //服务端通知客户端重新连接
-        } else if (wsInfo.op == 9) {
+        } else if (wsInfo.op === 9) {
             appLog("接收数据", "参数有误?", "<-");
 
             //当identify或resume的时候，如果参数有错，服务端会返回该消息
-        } else if (wsInfo.op == 10) {
+        } else if (wsInfo.op === 10) {
             wsInfo.heartbeatInterval = resJson.d.heartbeat_interval;
 
             if (botInfo.sessionId) {
@@ -150,9 +150,9 @@ let botRun = function() {
             wsInfo.connect.send(appMsg(wsInfo.ret));
 
             /**
-             * 
+             *
              * 连接成功后开始发送心跳包
-             * 
+             *
              */
             clearInterval(timerInfo.botRun);
             clearInterval(timerInfo.botHeartbeat);
@@ -160,7 +160,7 @@ let botRun = function() {
             timerInfo.botHeartbeat = setInterval(appHeartbeat, wsInfo.heartbeatInterval);
 
             //当客户端与网关建立ws连接之后，网关下发的第一条消息
-        } else if (wsInfo.op == 11) {
+        } else if (wsInfo.op === 11) {
             appLog("接收数据", "心跳 OK", "<-");
 
             //当发送心跳成功之后，就会收到该消息
@@ -170,7 +170,7 @@ let botRun = function() {
     wsInfo.connect.on("close", function(err) {
         appLog("连接关闭", err);
 
-        if (err != 4009) {
+        if (err !== 4009) {
             botInfo.sessionId = null;
 
             appLog("连接关闭", "清除 sessionId");
