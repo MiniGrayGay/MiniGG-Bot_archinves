@@ -78,6 +78,41 @@ class genshininfo_actions extends app
                 }
                 $ret = rtrim($ret, "、");
             }
+        } elseif (preg_match("/武器/", $msgContent, $msgMatch)) {
+            $matchValue = $msgMatch[0];
+            $msgContent = str_replace($matchValue, "", $msgContent);
+            $weaponapi = "https://info.minigg.cn/weapons?query=" . urlencode($msgContent);
+            if (preg_match("/\d{1,2}/", $msgContent, $levelMatch)) {
+                $levelValue = $levelMatch[0];
+                $msgContent = str_replace($levelValue, "", $msgContent);
+                $charapi .= "&stats=" . $levelValue;
+            }
+            $res = json_decode($this->requestUrl($weaponapi, "", "", ""), true);
+            if (sizeof($res['costs']) == 6) {
+                $weaponlevel = "https://info.minigg.cn/weapons?query=" . urlencode($msgContent) . "&stats=90";
+                $weaponattack = json_decode($this->requestUrl($weaponlevel, "", "", ""), true);
+            } else {
+                $weaponlevel = "https://info.minigg.cn/weapons?query=" . urlencode($msgContent) . "&stats=70";
+                $weaponattack = json_decode($this->requestUrl($weaponlevel, "", "", ""), true);
+            }
+            if (isset ($res['errcode'])) {
+                $ret = "查询的武器或武器类别不存在，可@机器人并发送/help获取完整帮助";
+            } elseif (isset ($res['name'])) {
+                $ret .= "【名称】：" . $res['name'] . "\n";
+                $ret .= "【类型】：" . $res['rarity'] . "星" . $res['weapontype'] . "\n";
+                $ret .= "【基础攻击力】：" . $res['baseatk'] . "\n";
+                $ret .= "【满级攻击力】：" . round($weaponattack['attack']) . "\n";
+                $ret .= "【基础" . $res['substat'] . "】：" . $res['subvalue'] . "%\n";
+                $ret .= "【满级" . $res['substat'] . "】：" . round($weaponattack['specialized'], 3) * 100 . "%\n";
+                $ret .= "【介绍】：" . $res['description'] . "\n";
+                $ret .= "【" . $res['effectname'] . "】：" . $res['effect'];
+            } else {
+                foreach ($res as $resarray) {
+                    $ret .= $resarray;
+                    $ret .= "、";
+                }
+                $ret = rtrim($ret, "、");
+            }
         }
         $this->appSend($msgRobot, $msgType, $msgSource, $msgSender, $ret);
     }
