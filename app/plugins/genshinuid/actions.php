@@ -105,35 +105,13 @@ class genshinuid_actions extends app
         $headers[] = 'User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/2.11.1';
         $headers[] = 'x-rpc-client_type: 5';
         $headers[] = 'Referer: https://webstatic.mihoyo.com/';
-        $headers[] = $this->ckget();
-        $curl = curl_init();
-        // 启动一个CURL会话
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_HEADER, 0);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_COOKIESESSION, true);
-        curl_setopt($curl, CURLOPT_FAILONERROR, true);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        // 跳过证书检查
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-        // 从证书中检查SSL加密算法是否存在
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        $tmpInfo = curl_exec($curl);
-        curl_close($curl);
-        return $tmpInfo;
+        return $this->requestUrl($url, "", $headers, $this->ckget());
     }
 
     function igs($res, $msgContent)
     {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_URL, "https://yuanshen.minigg.cn/generator/user_info?style=egenshin&uid=" . $msgContent . "&nickname=%E6%B4%BE%E8%92%99%E7%9A%84%E7%99%BE%E5%AE%9D%E7%AE%B1");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $res);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8', 'Content-Length: ' . strlen($res)));
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+        $url = "https://yuanshen.minigg.cn/generator/user_info?style=egenshin&uid=" . $msgContent . "&nickname=%E6%B4%BE%E8%92%99%E7%9A%84%E7%99%BE%E5%AE%9D%E7%AE%B1";
+        $response = $this->requestUrl($url, $res, array('Content-Type: application/json; charset=utf-8', 'Content-Length: ' . strlen($res)), "");
         $img = json_decode($response, true);
         if ($img['retcode'] == 0) {
             $imgurl = "https://yuanshen.minigg.cn" . $img['url'];

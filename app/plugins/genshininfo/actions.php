@@ -58,24 +58,26 @@ class genshininfo_actions extends app
                 $msgContent = str_replace($levelValue, "", $msgContent);
                 $charapi .= "&stats=" . $levelValue;
             }
-            $res = json_decode(file_get_contents($charapi), true);
-            $ret = $res['title'] . " - " . $res['fullname'];
-            $ret .= "\n";
-            $ret .= "【稀有度】：" . $res['rarity'] . "星";
-            $ret .= "\n";
-            $ret .= "【武器】：" . $res['weapontype'];
-            $ret .= "\n";
-            $ret .= "【元素】：" . $res['element'] . "元素";
-            $ret .= "\n";
-            $ret .= "【突破加成】：" . $res['substat'];
-            $ret .= "\n";
-            $ret .= "【生日】：" . $res['birthday'];
-            $ret .= "\n";
-            $ret .= "【命之座】：" . $res['constellation'];
-            $ret .= "\n";
-            $ret .= "【CV】：中：" . $res['cv']['chinese'] . "/日：" . $res['cv']['japanese'];
-            $ret .= "\n";
-            $ret .= "【介绍】：" . $res['description'];
+            $res = json_decode($this->requestUrl($charapi, "", "", ""), true);
+            if (isset ($res['errcode'])) {
+                $ret = "查询的角色名字或角色类别不存在，可@机器人并发送/help获取完整帮助";
+            } elseif (isset ($res['name'])) {
+                $ret = $res['title'] . " - " . $res['fullname'] . "\n";
+                $ret .= "【稀有度】：" . $res['rarity'] . "星\n";
+                $ret .= "【武器】：" . $res['weapontype'] . "\n";
+                $ret .= "【元素】：" . $res['element'] . "元素\n";
+                $ret .= "【突破加成】：" . $res['substat'] . "\n";
+                $ret .= "【生日】：" . $res['birthday'] . "\n";
+                $ret .= "【命之座】：" . $res['constellation'] . "\n";
+                $ret .= "【CV】：中：" . $res['cv']['chinese'] . "、日：" . $res['cv']['japanese'] . "\n";
+                $ret .= "【介绍】：" . $res['description'];
+            } else {
+                foreach ($res as $resarray) {
+                    $ret .= $resarray;
+                    $ret .= "、";
+                }
+                $ret = rtrim($ret, "、");
+            }
         }
         $this->appSend($msgRobot, $msgType, $msgSource, $msgSender, $ret);
     }
