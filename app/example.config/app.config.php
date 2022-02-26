@@ -63,7 +63,7 @@ $appInfo['botInfo'] = array(
         "uin" => "12345"
     ),
     "MYPCQQ" => array(
-        //QQ机器人
+        //QQ机器人-留空即可
         "id" => "",
         "name" => "",
         "accessToken" => "",
@@ -132,8 +132,8 @@ $t = time();
 define('TIME_T', $t);
 //当前
 
-$originInfo[10000] = "http://127.0.0.1:8010";
-$originInfo[20000] = "http://127.0.0.1:8073/send"; //如果可爱猫客户端与网站不在同一机器按需修改成对应域名
+$originInfo[10000] = "http://127.0.0.1:8010"; //默认转发回本机8010端口，如果MyPCQQ与网站不在同一机器按需修改成对应域名
+$originInfo[20000] = "http://127.0.0.1:8073/send"; //默认转发回本机8073端口，如果可爱猫与网站不在同一机器按需修改成对应域名
 $originInfo[50000] = "https://openapi.noknok.cn";
 $originInfo[60000] = "http://127.0.0.1:8020"; //GO-CQhttp默认Http端口为5700，按需修改
 $originInfo[70000] = "https://api.sgroup.qq.com"; //使用沙箱模式时替换URL为 https://sandbox.api.sgroup.qq.com ，沙箱环境只会收到测试频道的事件，且调用openapi仅能操作测试频道

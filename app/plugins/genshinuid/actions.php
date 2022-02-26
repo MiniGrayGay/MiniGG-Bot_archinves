@@ -85,8 +85,8 @@ class genshinuid_actions extends app
     function ckget()
     {
         // Cookies池
-        $cks[] = "Cookie:UM_distinctid=17edf33920e50c-002dee4db06398-5b161d53-384000-17edf33920f13a1; _ga=GA1.2.178990658.1644422206; _gid=GA1.2.27842903.1644422206; CNZZDATA1275023096=868232692-1644412279-%7C1644412279; _gat=1; _MHYUUID=0bcf51ab-8de9-4ec2-86ed-30532446c657; ltoken=12tD4MpnTfSKVyA3LgL1H25LsLltsA8xYxhe9gua; ltuid=122457530; cookie_token=W8BMiojcpsTeWGBQbJE1EwOl7dgfrr7BrI5sf8Wb; account_id=122457530";
-        $cks[] = "Cookie:UM_distinctid=17edf33920e50c-002dee4db06398-5b161d53-384000-17edf33920f13a1; _ga=GA1.2.178990658.1644422206; _gid=GA1.2.27842903.1644422206; CNZZDATA1275023096=868232692-1644412279-%7C1644412279; _gat=1; _MHYUUID=0bcf51ab-8de9-4ec2-86ed-30532446c657; ltoken=12tD4MpnTfSKVyA3LgL1H25LsLltsA8xYxhe9gua; ltuid=122457530; cookie_token=W8BMiojcpsTeWGBQbJE1EwOl7dgfrr7BrI5sf8Wb; account_id=122457530";
+        $cks[] = "";
+        $cks[] = "";
         $ck = $cks[array_rand($cks)];
         return $ck;
     }
