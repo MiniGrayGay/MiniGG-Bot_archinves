@@ -86,6 +86,8 @@
 ## MyPCQQ (相对feng控几率比GO-CQ更低)
 
 > 在MyPCQQ目录下 **Set.ini** 的底下加入以下信息，按照 log 填入白名单 IP，每个空格分开。
+>
+> 接口说明见 `app.config.php` 注释
 
 ```
 [tran]
@@ -96,11 +98,13 @@ whitelist=127.0.0.1 119.29.29.29
 
 ## 可爱猫
 
-> 可爱猫5.1.7(自动更新到最新版本) [下载地址](https://storage.minigg.cn/可爱猫.zip)。
+> 可爱猫(自动更新到最新版本) [下载地址](https://storage.minigg.cn/可爱猫.zip)。
+>
+> 接口说明见 `app.config.php` 注释
 
 ## NOKNOK
 
-> 需要向管理员申请，由于 NOKNOK 的回调地址不允许带参数。所以 `frameId` 为 NOKNOK的 `50000`
+> 需要向管理员申请，由于 NOKNOK 的回调地址不允许带参数。所以 `frameId` 默认值已设置为 NOKNOK 所使用的 `50000`
 
 ## QQ 频道 (GO-CQHttp)
 
