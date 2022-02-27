@@ -8,25 +8,25 @@
 
 ## 环境
 
-已在`Windows11`、`Windows Server 2019`、`Centos 8.5.2111`上使用`PHP 7.4`与`PHP 8.0`进行测试。
+已在`Windows11`、`Windows Server 2019`、`Centos 7.9.2009`、`Centos 8.5.2111`上使用`PHP 7.4`与`PHP 8.0`进行测试。
 
-理论上兼容`PHP 7.3`及以上的版本，推荐使用`PHP 8.0`进行部署
+理论上兼容`PHP 7.3`及以上的版本，推荐使用`Linux环境`+`PHP 8.0`进行部署
 
 ## 协议
 
 > 回调地址:http://your.domain/app.php?frameId=50000&frameIp=127.0.0.1&frameGc=123456 ，frameId 不填默认 50000
 
-> `小米小爱开放平台`与`微信公众平台`测试中，暂不提供文档
+> `小米小爱开放平台`与`微信公众平台`挖坑中，暂不提供文档
 
-| frameId | 框架                                                                        | 平台        | 鉴权     | HTTP | WS |
-|---------|---------------------------------------------------------------------------|-----------|----------|------|----|
-| 5000    | [小米小爱开放平台](https://developers.xiaoai.mi.com)                              | 小爱音响      | -        | ✓    | ✗  |
-| 10000   | [MyPCQQ](https://www.mypcqq.cc)                                           | 电脑 QQ     | 白名单IP | ✓    | ✗  |
-| 20000   | [可爱猫](http://www.keaimao.com.cn/forum.php)                                | 微信        | 密钥     | ✓    | ✗  |
-| 50000   | [NOKNOK 机器人](https://www.noknok.cn)                                       | NOKNOK    | 密钥     | ✓    | ✗  |
-| 60000   | [go-cqhttp](https://github.com/Mrs4s/go-cqhttp/blob/master/docs/guild.md) | 手机 QQ     | 密钥     | ✓    | ✓  |
-| 70000   | [QQ 机器人](https://bot.q.qq.com/)                                           | QQ 频道     | 密钥     | ✗    | ✓  |
-| 2000    | [微信公众平台](https://mp.weixin.qq.com/)                                           | 微信公众号/服务号 | 密钥     | ✓    | ✗  |
+| frameId | 框架                                                                        | 平台           | 鉴权     | HTTP | WS |
+|---------|---------------------------------------------------------------------------|--------------|----------|------|----|
+| 2000    | [微信公众平台](https://mp.weixin.qq.com/)                                           | 微信公众号&服务号    | 密钥     | ✓    | ✗  |
+| 5000    | [小米小爱开放平台](https://developers.xiaoai.mi.com)                              | 小爱同学         | -        | ✓    | ✗  |
+| 10000   | [MyPCQQ](https://www.mypcqq.cc)                                           | 电脑QQ(私聊&群消息) | 白名单IP | ✓    | ✗  |
+| 20000   | [可爱猫](http://www.keaimao.com.cn/forum.php)                                | 微信           | 密钥     | ✓    | ✗  |
+| 50000   | [NOKNOK 机器人](https://www.noknok.cn)                                       | NOKNOK       | 密钥     | ✓    | ✗  |
+| 60000   | [go-cqhttp](https://github.com/Mrs4s/go-cqhttp/blob/master/docs/guild.md) | 手机QQ(仅频道)    | 密钥     | ✓    | ✓  |
+| 70000   | [QQ 机器人](https://bot.q.qq.com/)                                           | QQ频道-官方      | 密钥     | ✗    | ✓  |
 
 ## 数据
 
