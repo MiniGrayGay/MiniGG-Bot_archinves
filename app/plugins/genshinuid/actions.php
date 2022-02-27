@@ -65,7 +65,7 @@ class genshinuid_actions extends app
                 $res = $this->mihoyoapi($q, $url);
                 $imgurl = $this->igs($res, $msgContent);
                 //我也不知道为什么QQ频道机器人 at_msg、文本、image_msg 一起发会丢失一个 \n
-                $ret = $imgurl;
+                $ret = "UID：" . $msgContent;
                 $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgImgUrl'] = $imgurl;
                 $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg,image_msg";
             } else {

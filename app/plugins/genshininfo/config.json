@@ -1,29 +1,36 @@
 {
-    "icon": "pic.icon",
-    "guid": "59507ba3-d487-4b67-b6f6-b5df1b454b48",
-    "name": "原神信息查询",
-    "type": [
-        "原神"
+  "icon": "pic.icon",
+  "guid": "59507ba3-d487-4b67-b6f6-b5df1b454b48",
+  "name": "原神信息查询",
+  "type": [
+    "原神"
+  ],
+  "desc": "该功能由小灰灰提供",
+  "ver": "1.0.1",
+  "author": "小灰灰",
+  "url": null,
+  "switch": true,
+  "trigger": {
+    "web": [
+      "https://blog.minigg.cn/g/18"
     ],
-    "desc": "该功能由小灰灰提供",
-    "ver": "1.0.1",
-    "author": "小灰灰",
-    "url": null,
-    "switch": true,
-    "trigger": {
-        "web": [
-            "https://blog.minigg.cn/g/18"
-        ],
-        "frame": [],
-        "command": [{
-                "keywords": "角色",
-                "desc": "查询游戏的角色的信息",
-                "demo": "角色+<角色名字> 例如：角色可莉"
-            },{
-                "keywords": "武器",
-                "desc": "查询游戏的武器的信息",
-                "demo": "武器+<武器名字> 例如：武器薙草"
-            }
-        ]
-    }
+    "frame": [],
+    "command": [
+      {
+        "keywords": "角色",
+        "desc": "查询游戏的角色的信息",
+        "demo": "角色+<角色名字> 例如：角色可莉"
+      },
+      {
+        "keywords": "武器",
+        "desc": "查询游戏的武器的信息",
+        "demo": "武器+<武器名字> 例如：武器薙草"
+      },
+      {
+        "keywords": "武器",
+        "desc": "查询游戏的武器的信息",
+        "demo": "武器+<武器名字> 例如：武器薙草"
+      }
+    ]
+  }
 }
