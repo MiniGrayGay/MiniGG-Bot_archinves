@@ -152,6 +152,11 @@ $appInfo['codeInfo'] = $codeInfo;
 $authInfo[1000] = array(
     ""
 );
+
+$authInfo[1003] = array(
+    "" //舔狗日记、网易云热评、互删句子接口密钥
+);
+
 //-
 $appInfo['authInfo'] = $authInfo;
 
