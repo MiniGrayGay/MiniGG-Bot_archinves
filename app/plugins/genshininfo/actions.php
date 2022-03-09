@@ -116,9 +116,9 @@ class genshininfo_actions extends app
         } elseif (preg_match("/命之座|命座/", $msgContent, $msgMatch)) {
             $matchValue = $msgMatch[0];
             $msgContent = str_replace($matchValue, "", $msgContent);
-            $weaponapi = "https://info.minigg.cn/constellations?query=" . urlencode($msgContent);
+            $constellationapi = "https://info.minigg.cn/constellations?query=" . urlencode($msgContent);
 
-            $res = json_decode($this->requestUrl($weaponapi, "", "", ""), true);
+            $res = json_decode($this->requestUrl($constellationapi, "", "", ""), true);
 
             if (isset ($res['errcode'])) {
                 $ret = "查询的武器或武器类别不存在，可@机器人并发送/help获取完整帮助";
@@ -131,9 +131,23 @@ class genshininfo_actions extends app
                 $ret .= "【" . $res['c5']['name'] . "】：" . $res['c5']['effect'] . "\n";
                 $ret .= "【" . $res['c6']['name'] . "】：" . $res['c6']['effect'] . "\n";
                 $ret = str_replace("**", "", $ret);
+            }
+        } elseif (preg_match("/天赋/", $msgContent, $msgMatch)) {
+            $matchValue = $msgMatch[0];
+            $msgContent = str_replace($matchValue, "", $msgContent);
+            preg_match("/^\d{n}/", $msgContent, $msgMatch)
+            $matchValue = $msgMatch[0];
+            $msgContent = str_replace($matchValue, "", $msgContent);
+            $talentapi = "https://info.minigg.cn/talents?query=" . urlencode($msgContent);
+            $res = json_decode($this->requestUrl($weaponapi, "", "", ""), true);
 
+            if (isset ($res['errcode'])) {
+                $ret = "查询的武器或武器类别不存在，可@机器人并发送/help获取完整帮助";
+            } elseif (isset ($res['name'])) {
+                $ret .= "【角色】：" . $res['name'] . "\n";
             }
-            }
+            $ret = $matchValue;
+        }
         $this->appSend($msgRobot, $msgType, $msgSource, $msgSender, $ret);
     }
 }
