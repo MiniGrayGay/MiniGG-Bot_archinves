@@ -113,6 +113,24 @@ class genshininfo_actions extends app
                 }
                 $ret = rtrim($ret, "、");
             }
+        } elseif (preg_match("/命之座|命座/", $msgContent, $msgMatch)) {
+            $matchValue = $msgMatch[0];
+            $msgContent = str_replace($matchValue, "", $msgContent);
+            $weaponapi = "https://info.minigg.cn/constellations?query=" . urlencode($msgContent);
+
+            $res = json_decode($this->requestUrl($weaponapi, "", "", ""), true);
+
+            if (isset ($res['errcode'])) {
+                $ret = "查询的武器或武器类别不存在，可@机器人并发送/help获取完整帮助";
+            } elseif (isset ($res['name'])) {
+                $ret .= "【角色】：" . $res['name'] . "\n";
+                $ret .= "【" . $res['c1']['name'] . "】：" . $res['c1']['effect'] . "\n";
+                $ret .= "【" . $res['c2']['name'] . "】：" . $res['c2']['effect'] . "\n";
+                $ret .= "【" . $res['c3']['name'] . "】：" . $res['c3']['effect'] . "\n";
+                $ret .= "【" . $res['c4']['name'] . "】：" . $res['c4']['effect'] . "\n";
+                $ret .= "【" . $res['c5']['name'] . "】：" . $res['c5']['effect'] . "\n";
+                $ret .= "【" . $res['c6']['name'] . "】：" . $res['c6']['effect'] . "\n";
+            }
         }
         $this->appSend($msgRobot, $msgType, $msgSource, $msgSender, $ret);
     }
