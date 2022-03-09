@@ -130,11 +130,9 @@ class genshininfo_actions extends app
                 $ret .= "【" . $res['c4']['name'] . "】：" . $res['c4']['effect'] . "\n";
                 $ret .= "【" . $res['c5']['name'] . "】：" . $res['c5']['effect'] . "\n";
                 $ret .= "【" . $res['c6']['name'] . "】：" . $res['c6']['effect'] . "\n";
-                if (preg_match("/\*\*/g", $ret, $msgMatch)) {
-                    $matchValue = $msgMatch[0];
-                    $ret = str_replace($matchValue, "", $ret);
-                }
-                }
+                $ret = str_replace("**", "", $ret);
+
+            }
             }
         $this->appSend($msgRobot, $msgType, $msgSource, $msgSender, $ret);
     }
