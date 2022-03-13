@@ -49,91 +49,73 @@ class genshininfo_actions extends app
         $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = NULL;
         $msgContent = str_replace(" ", "", $msgContent);
         $msgContent = strtoupper($msgContent);
-        if (preg_match("/角色/", $msgContent, $msgMatch)) {
-            $matchValue = $msgMatch[0];
-            $msgContent = str_replace($matchValue, "", $msgContent);
-            $charapi = "https://info.minigg.cn/characters?query=" . urlencode($msgContent);
-            if (preg_match("/\d{1,2}/", $msgContent, $levelMatch)) {
-                $levelValue = $levelMatch[0];
-                $msgContent = str_replace($levelValue, "", $msgContent);
-                $charapi .= "&stats=" . $levelValue;
-            }
-            $res = json_decode($this->requestUrl($charapi, "", "", ""), true);
-            if (isset ($res['errcode'])) {
-                $ret = "查询的角色名字或角色类别不存在，可@机器人并发送/help获取完整帮助";
-            } elseif (isset ($res['name'])) {
-                $ret = $res['title'] . " - " . $res['fullname'] . "\n";
-                $ret .= "【稀有度】：" . $res['rarity'] . "星\n";
-                $ret .= "【武器】：" . $res['weapontype'] . "\n";
-                $ret .= "【元素】：" . $res['element'] . "元素\n";
-                $ret .= "【突破加成】：" . $res['substat'] . "\n";
-                $ret .= "【生日】：" . $res['birthday'] . "\n";
-                $ret .= "【命之座】：" . $res['constellation'] . "\n";
-                $ret .= "【CV】：中：" . $res['cv']['chinese'] . "、日：" . $res['cv']['japanese'] . "\n";
-                $ret .= "【介绍】：" . $res['description'];
-            } else {
-                foreach ($res as $resarray) {
-                    $ret .= $resarray;
-                    $ret .= "、";
+
+        preg_match("/角色|武器|命之座|命座|天赋|圣遗物|食物|原魔/", $msgContent, $msgMatch);
+        $matchValue = $msgMatch[0];
+        $msgContent = str_replace($matchValue, "", $msgContent);
+        switch ($matchValue) {
+            /**
+             * 角色查询
+             */
+            case '角色':
+                $resArray = $this->requestUrl(APP_INFO['MiniGGApi']['Characters'] . urlencode($msgContent));
+                $resJson = json_decode($resArray);
+                if (isset ($resJson->errcode)) {
+                    $ret = $resJson->errmsg;
+                } elseif (isset ($resJson->name)) {
+                    $ret = $resJson->title . " - " . $resJson->fullname . "\n";
+                    $ret .= "【稀有度】：" . $resJson->rarity . "星\n";
+                    $ret .= "【武器】：" . $resJson->weapontype . "\n";
+                    $ret .= "【元素】：" . $resJson->element . "元素\n";
+                    $ret .= "【突破加成】：" . $resJson->substat . "\n";
+                    $ret .= "【生日】：" . $resJson->birthday . "\n";
+                    $ret .= "【命之座】：" . $resJson->constellation . "\n";
+                    $ret .= "【CV】：中：" . $resJson->cv->chinese . "、日：" . $resJson->cv->japanese . "\n";
+                    $ret .= "【介绍】：" . $resJson->description;
+                } else {
+                    foreach ($resJson as $resArray) {
+                        $ret .= $resArray;
+                        $ret .= "、";
+                    }
+                    $ret = rtrim($ret, "、");
                 }
-                $ret = rtrim($ret, "、");
-            }
-        } elseif (preg_match("/武器/", $msgContent, $msgMatch)) {
-            $matchValue = $msgMatch[0];
-            $msgContent = str_replace($matchValue, "", $msgContent);
-            $weaponapi = "https://info.minigg.cn/weapons?query=" . urlencode($msgContent);
-            if (preg_match("/\d{1,2}/", $msgContent, $levelMatch)) {
-                $levelValue = $levelMatch[0];
-                $msgContent = str_replace($levelValue, "", $msgContent);
-                $charapi .= "&stats=" . $levelValue;
-            }
-            $res = json_decode($this->requestUrl($weaponapi, "", "", ""), true);
-            if (sizeof($res['costs']) == 6) {
-                $weaponlevel = "https://info.minigg.cn/weapons?query=" . urlencode($msgContent) . "&stats=90";
-                $weaponattack = json_decode($this->requestUrl($weaponlevel, "", "", ""), true);
-            } else {
-                $weaponlevel = "https://info.minigg.cn/weapons?query=" . urlencode($msgContent) . "&stats=70";
-                $weaponattack = json_decode($this->requestUrl($weaponlevel, "", "", ""), true);
-            }
-            if (isset ($res['errcode'])) {
-                $ret = "查询的武器或武器类别不存在，可@机器人并发送/help获取完整帮助";
-            } elseif (isset ($res['name'])) {
-                $ret .= "【名称】：" . $res['name'] . "\n";
-                $ret .= "【类型】：" . $res['rarity'] . "星" . $res['weapontype'] . "\n";
-                $ret .= "【基础攻击力】：" . $res['baseatk'] . "\n";
-                $ret .= "【满级攻击力】：" . round($weaponattack['attack']) . "\n";
-                $ret .= "【基础" . $res['substat'] . "】：" . $res['subvalue'] . "%\n";
-                $ret .= "【满级" . $res['substat'] . "】：" . round($weaponattack['specialized'], 3) * 100 . "%\n";
-                $ret .= "【介绍】：" . $res['description'] . "\n";
-                $ret .= "【" . $res['effectname'] . "】：" . $res['effect'];
-            } else {
-                foreach ($res as $resarray) {
-                    $ret .= $resarray;
-                    $ret .= "、";
+                break;
+            /**
+             * 武器查询
+             */
+            case '武器':
+                $resArray = $this->requestUrl(APP_INFO['MiniGGApi']['Weapons'] . urlencode($msgContent));
+                $resJson = json_decode($resArray);
+                if (isset ($resJson->errcode)) {
+                    $ret = $resJson->errmsg;
+                } else {
+                    if (isset ($resJson->costs->ascend6)) {
+                        $level = "&stats=90";
+                    } else {
+                        $level = "&stats=70";
+                    }
+                    $levelArray = $this->requestUrl(APP_INFO['MiniGGApi']['Weapons'] . urlencode($msgContent) . $level);
+                    $levelJson = json_decode($levelArray);
+                    if (isset ($resJson->name)) {
+                        $ret = "【名称】：" . $resJson->name . "\n";
+                        $ret .= "【类型】：" . $resJson->rarity . "星" . $resJson->weapontype . "\n";
+                        $ret .= "【介绍】：" . $resJson->description . "\n";
+                        $ret .= "【基础/满级攻击力】：" . $resJson->baseatk . "/" . round($levelJson->attack, 2) . "\n";
+                        if ($resJson->substat !== "") {
+                            $ret .= "【突破加成】：" . $resJson->substat . "\n";
+                            $ret .= "【基础/满级加成】：" . $resJson->subvalue . "/" . round(($levelJson->specialized * 100), 2) . "%\n";
+                            $ret .= "【" . $resJson->effectname . "】：" . $resJson->effect . "\n";
+                        }
+                    } else {
+                        foreach ($resJson as $resArray) {
+                            $ret .= $resArray;
+                            $ret .= "、";
+                        }
+                        $ret = rtrim($ret, "、");
+                    }
                 }
-                $ret = rtrim($ret, "、");
-            }
-        } elseif (preg_match("/命之座|命座/", $msgContent, $msgMatch)) {
-            $matchValue = $msgMatch[0];
-            $msgContent = str_replace($matchValue, "", $msgContent);
-            $weaponapi = "https://info.minigg.cn/constellations?query=" . urlencode($msgContent);
-
-            $res = json_decode($this->requestUrl($weaponapi, "", "", ""), true);
-
-            if (isset ($res['errcode'])) {
-                $ret = "查询的武器或武器类别不存在，可@机器人并发送/help获取完整帮助";
-            } elseif (isset ($res['name'])) {
-                $ret .= "【角色】：" . $res['name'] . "\n";
-                $ret .= "【" . $res['c1']['name'] . "】：" . $res['c1']['effect'] . "\n";
-                $ret .= "【" . $res['c2']['name'] . "】：" . $res['c2']['effect'] . "\n";
-                $ret .= "【" . $res['c3']['name'] . "】：" . $res['c3']['effect'] . "\n";
-                $ret .= "【" . $res['c4']['name'] . "】：" . $res['c4']['effect'] . "\n";
-                $ret .= "【" . $res['c5']['name'] . "】：" . $res['c5']['effect'] . "\n";
-                $ret .= "【" . $res['c6']['name'] . "】：" . $res['c6']['effect'] . "\n";
-                $ret = str_replace("**", "", $ret);
-
-            }
-            }
+                break;
+        }
         $this->appSend($msgRobot, $msgType, $msgSource, $msgSender, $ret);
     }
 }
