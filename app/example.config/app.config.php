@@ -11,12 +11,8 @@ define('FRAME_IP', $_GET['frameIp'] ?? "127.0.0.1");
 define('FRAME_GC', $_GET['frameGc'] ?? NULL);
 define('FRAME_KEY', $_POST['key'] ?? NULL);
 //挂机器人的服务器，请求回去的时候需要
-define('APP_API_HOST', "https://api.91m.top");
-define('APP_API_APP', APP_API_HOST . "/hero/v1/app.php");
-define('APP_API_GAME', APP_API_HOST . "/hero/v1/game.php");
-define('APP_API_ROBOT', APP_API_HOST . "/hero/v1/robot.php");
-define('APP_API_VERCEL', "https://efd77fa25b8bb282.vercel.app");
-define('APP_CD', 5);
+define('GenshinWikiUrl', "https://info.minigg.cn/");
+
 
 /**
  *
@@ -175,57 +171,8 @@ $iconInfo[50000] = array(
 //-
 $appInfo['iconInfo'] = $iconInfo;
 
-$appInfo['provinceType'] = array(
-    "请选择省份", //0
-    "安徽省", //1
-    "澳门特别行政区", //2
-    "北京市", //3
-    "重庆市", //4
-    "福建省", //5
-    "甘肃省", //6
-    "广东省", //7
-    "广西壮族自治区", //8
-    "贵州省", //9
-    "海南省", //10
-    "河北省", //11
-    "河南省", //12
-    "黑龙江省", //13
-    "湖北省", //14
-    "湖南省", //15
-    "吉林省", //16
-    "江苏省", //17
-    "江西省", //18
-    "辽宁省", //19
-    "内蒙古自治区", //20
-    "宁夏回族自治区", //21
-    "青海省", //22
-    "山东省", //23
-    "山西省", //24
-    "陕西省", //25
-    "上海市", //26
-    "四川省", //27
-    "台湾省", //28
-    "天津市", //29
-    "西藏自治区", //30
-    "香港特别行政区", //31
-    "新疆维吾尔自治区", //32
-    "云南省", //33
-    "浙江省" //34
-);
-//省份列表
-
-$appInfo['areaType'] = array(
-    "请选择大区", //0
-    "安卓QQ", //1
-    "苹果QQ", //2
-    "安卓WX", //3
-    "苹果WX" //4
-);
-//大区列表
-
-FRAME_ID != 20000 ? $nowAreaType = "安卓QQ" : $nowAreaType = "安卓WX";
-$appInfo['nowAreaType'] = $nowAreaType;
-//默认大区
+$appInfo['MiniGGApi']['Characters'] = GenshinWikiUrl . "characters?query=";
+$appInfo['MiniGGApi']['Weapons'] = GenshinWikiUrl . "weapons?query=";
 
 define('APP_INFO', $appInfo);
 
