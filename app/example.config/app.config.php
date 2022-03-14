@@ -75,11 +75,11 @@ $appInfo['botInfo'] = array(
         "inviteInGroup" => $inviteInGroup[array_rand($inviteInGroup)],
         "uin" => ""
     ),
-    "NOKNOK" => array(
-        "id" => "",
-        "name" => "",
-        "accessToken" => "",
-        "verifyToken" => "",
+    "NOKNOK" => array(//联系NokNok管理员获取
+        "id" => "", //uid
+        "name" => "",   //昵称
+        "accessToken" => "",    //token
+        "verifyToken" => "",    //verifytoken
         "uin" => ""
     ),
     "QQChannel" => array(
