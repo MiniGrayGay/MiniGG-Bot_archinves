@@ -173,6 +173,7 @@ $appInfo['iconInfo'] = $iconInfo;
 
 $appInfo['MiniGGApi']['Characters'] = GenshinWikiUrl . "characters?query=";
 $appInfo['MiniGGApi']['Weapons'] = GenshinWikiUrl . "weapons?query=";
+$appInfo['MiniGGApi']['Talents'] = GenshinWikiUrl . "talents?query=";
 
 define('APP_INFO', $appInfo);
 

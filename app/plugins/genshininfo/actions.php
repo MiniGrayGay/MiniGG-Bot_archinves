@@ -50,10 +50,52 @@ class genshininfo_actions extends app
         $msgContent = str_replace(" ", "", $msgContent);
         $msgContent = strtoupper($msgContent);
 
-        preg_match("/角色|武器|命之座|命座|天赋|圣遗物|食物|原魔/", $msgContent, $msgMatch);
+        preg_match("/信息|攻略|角色|武器|命之座|命座|天赋|圣遗物|食物|原魔/", $msgContent, $msgMatch);
         $matchValue = $msgMatch[0];
         $msgContent = str_replace($matchValue, "", $msgContent);
         switch ($matchValue) {
+            /**
+             * 信息图片
+             */
+            case '信息':
+                $imgUrl = "https://img.genshin.minigg.cn/info/" . urlencode($msgContent) . ".jpg";
+                if (FRAME_ID == 10000) {
+                    $ret .= "[{$imgUrl}]";
+
+                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg";
+                } elseif (FRAME_ID == 50000) {
+                    $ret .= "![]({$imgUrl})";
+
+                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "markdown_msg";
+                } elseif (in_array(FRAME_ID, array(60000, 70000))) {
+                    $ret = "";
+                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgImgUrl'] = $imgUrl;
+                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg,image_msg";
+                } else {
+                    $ret = NULL;
+                }
+                break;
+            /**
+             * 攻略图片
+             */
+            case '攻略':
+                $imgUrl = "https://img.genshin.minigg.cn/guide/" . urlencode($msgContent) . ".jpg";
+                if (FRAME_ID == 10000) {
+                    $ret .= "[{$imgUrl}]";
+
+                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg";
+                } elseif (FRAME_ID == 50000) {
+                    $ret .= "![]({$imgUrl})";
+
+                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "markdown_msg";
+                } elseif (in_array(FRAME_ID, array(60000, 70000))) {
+                    $ret = "";
+                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgImgUrl'] = $imgUrl;
+                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg,image_msg";
+                } else {
+                    $ret = NULL;
+                }
+                break;
             /**
              * 角色查询
              */
@@ -113,6 +155,27 @@ class genshininfo_actions extends app
                         }
                         $ret = rtrim($ret, "、");
                     }
+                }
+                break;
+            /**
+             * 天赋查询
+             */
+            case '天赋':
+                $resArray = $this->requestUrl(APP_INFO['MiniGGApi']['Talents'] . urlencode($msgContent));
+                $resJson = json_decode($resArray);
+                if (isset ($resJson->errcode)) {
+                    $ret = $resJson->errmsg;
+                } elseif (isset ($resJson->name)) {
+                    $ret = "【名字】：" . $resJson->name . "\n";
+                    $ret .= "\n【" . $resJson->combat1->name . "】：\n\n" . $resJson->combat1->info . "\n";
+                    $ret .= "\n【" . $resJson->combat2->name . "】：" . $resJson->combat2->info . "\n";
+                    $ret .= "\n【" . $resJson->combat3->name . "】：" . $resJson->combat3->info . "\n";
+                    if (isset ($resJson->combatsp)) {
+                        $ret .= "\n【" . $resJson->combatsp->name . "】：" . $resJson->combatsp->info . "\n";
+                    }
+                    $ret .= "\n【" . $resJson->passive1->name . "】：" . $resJson->passive1->info . "\n";
+                    $ret .= "\n【" . $resJson->passive2->name . "】：" . $resJson->passive2->info . "\n";
+                    $ret .= "\n【" . $resJson->passive3->name . "】：" . $resJson->passive3->info . "\n";
                 }
                 break;
         }
