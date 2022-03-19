@@ -49,136 +49,91 @@ class genshingacha_actions extends app
         $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = NULL;
         $msgContent = str_replace(" ", "", $msgContent);
         $msgContent = strtoupper($msgContent);
+        $gachaMember = "memberCode=" . $msgReceiver;
+        /**
+         * 抽卡接口地址
+         */
+        $gachaUrl = "https://gacha.minigg.cn/api/";
+        $gachaKey = "SmG5TNYyHCFGjnE4";
+        $ArmPrayOne = "ArmPray/PrayOne?";
+        //单抽武器祈愿池
+        $ArmPrayTen = "ArmPray/PrayTen?";
+        //十连武器祈愿池
+        $PermPrayOne = "PermPray/PrayOne?";
+        //单抽常驻祈愿池
+        $PermPrayTen = "PermPray/PrayTen?";
+        //十连常驻祈愿池
+        $RolePrayOne = "RolePray/PrayOne?";
+        //单抽角色祈愿池
+        $RolePrayTen = "RolePray/PrayTen?";
+        //十连角色祈愿池
+        $SetMemberAssign = "PrayInfo/SetMemberAssign?";
+        //设置武器定轨
+        $GetMemberAssign = "PrayInfo/GetMemberAssign?";
+        //获取武器定轨
+        $GetPondInfo = "PrayInfo/GetPondInfo?";
+        //获取卡池信息
+        $GetMemberPrayDetail = "PrayInfo/GetMemberPrayDetail?";
+        //获取成员抽卡分析
+        $GetLuckRanking = "PrayInfo/GetLuckRanking?";
+        //获取授权码内欧气排行
+        $authorzation = array("authorzation:" . $gachaKey);
 
-        preg_match("/信息|攻略|角色|武器|命之座|命座|天赋|圣遗物|食物|原魔/", $msgContent, $msgMatch);
+        preg_match("/获取卡池|设置卡池/", $msgContent, $msgMatch);
         $matchValue = $msgMatch[0];
         $msgContent = str_replace($matchValue, "", $msgContent);
+        $this->redisSet("msgContent", $msgContent);
         switch ($matchValue) {
             /**
              * 信息图片
              */
-            case '信息':
-                $imgUrl = "https://img.genshin.minigg.cn/info/" . urlencode($msgContent) . ".jpg";
-                if (FRAME_ID == 10000) {
-                    $ret .= "[{$imgUrl}]";
-
-                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg";
-                } elseif (FRAME_ID == 50000) {
-                    $ret .= "![]({$imgUrl})";
-
-                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "markdown_msg";
-                } elseif (in_array(FRAME_ID, array(60000, 70000))) {
-                    $ret = "";
-                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgImgUrl'] = $imgUrl;
-                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg,image_msg";
+            case '获取卡池':
+                if ($this->redisExists("MiniGG-Gacha-PondInfo")) {
+                    $resJson = $this->redisGet("MiniGG-Gacha-PondInfo");
                 } else {
-                    $ret = NULL;
+                    $reqUrl = $gachaUrl . $GetPondInfo;
+                    $resJson = json_decode($this->requestUrl($reqUrl, "", $authorzation), true);
+                    $this->redisSet("MiniGG-Gacha-PondInfo", $resJson, 14400);
                 }
-                break;
-            /**
-             * 攻略图片
-             */
-            case '攻略':
-                $imgUrl = "https://img.genshin.minigg.cn/guide/" . urlencode($msgContent) . ".jpg";
-                if (FRAME_ID == 10000) {
-                    $ret .= "[{$imgUrl}]";
-
-                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg";
-                } elseif (FRAME_ID == 50000) {
-                    $ret .= "![]({$imgUrl})";
-
-                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "markdown_msg";
-                } elseif (in_array(FRAME_ID, array(60000, 70000))) {
-                    $ret = "";
-                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgImgUrl'] = $imgUrl;
-                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg,image_msg";
-                } else {
-                    $ret = NULL;
+                $rolecount = sizeof($resJson['data']['role']);
+                $ret = "角色祈愿UP池";
+                $ret .= "\n卡池①";
+                $ret .= "\n五星角色：" . $resJson['data']['role']['0']['pondInfo']['star5UpList']['0']['goodsName'];
+                if ($rolecount == 2) {
+                    $ret .= "\n卡池②";
+                    $ret .= "\n五星角色：" . $resJson['data']['role']['1']['pondInfo']['star5UpList']['0']['goodsName'];
                 }
+                $ret .= "\n四星角色：" . $resJson['data']['role']['0']['pondInfo']['star4UpList']['0']['goodsName'] . "、" . $resJson['data']['role']['0']['pondInfo']['star4UpList']['1']['goodsName'] . "、" . $resJson['data']['role']['0']['pondInfo']['star4UpList']['2']['goodsName'] . "\n\n";
+                $ret .= "武器祈愿UP池";
+                $ret .= "\n五星武器①：" . $resJson['data']['arm']['0']['pondInfo']['star5UpList']['0']['goodsName'];
+                $ret .= "\n五星武器②：" . $resJson['data']['arm']['0']['pondInfo']['star5UpList']['1']['goodsName'];
+                $ret .= "\n四星武器：" . $resJson['data']['arm']['0']['pondInfo']['star4UpList']['0']['goodsName'] . "、" . $resJson['data']['arm']['0']['pondInfo']['star4UpList']['1']['goodsName'] . "、" . $resJson['data']['arm']['0']['pondInfo']['star4UpList']['2']['goodsName'] . "\n\n";
                 break;
-            /**
-             * 角色查询
-             */
-            case '角色':
-                $resArray = $this->requestUrl(APP_INFO['MiniGGApi']['Characters'] . urlencode($msgContent));
-                $resJson = json_decode($resArray);
-                if (isset ($resJson->errcode)) {
-                    $ret = $resJson->errmsg;
-                } elseif (isset ($resJson->name)) {
-                    $ret = $resJson->title . " - " . $resJson->fullname . "\n";
-                    $ret .= "【稀有度】：" . $resJson->rarity . "星\n";
-                    $ret .= "【武器】：" . $resJson->weapontype . "\n";
-                    $ret .= "【元素】：" . $resJson->element . "元素\n";
-                    $ret .= "【突破加成】：" . $resJson->substat . "\n";
-                    $ret .= "【生日】：" . $resJson->birthday . "\n";
-                    $ret .= "【命之座】：" . $resJson->constellation . "\n";
-                    $ret .= "【CV】：中：" . $resJson->cv->chinese . "、日：" . $resJson->cv->japanese . "\n";
-                    $ret .= "【介绍】：" . $resJson->description;
-                } else {
-                    foreach ($resJson as $resArray) {
-                        $ret .= $resArray;
-                        $ret .= "、";
-                    }
-                    $ret = rtrim($ret, "、");
+            case '设置卡池':
+                switch ($msgContent) {
+                    case '':
+                        $ret = "null";
+                        break;
+                    case '角色':
+                        $ret = "角色";
+                        break;
+                    case '武器':
+                        $ret = "武器";
+                        break;
+                    case '常驻':
+                    case '毒池':
+                        $ret = "常驻";
+                        break;
                 }
-                break;
-            /**
-             * 武器查询
-             */
-            case '武器':
-                $resArray = $this->requestUrl(APP_INFO['MiniGGApi']['Weapons'] . urlencode($msgContent));
-                $resJson = json_decode($resArray);
-                if (isset ($resJson->errcode)) {
-                    $ret = $resJson->errmsg;
-                } else {
-                    if (isset ($resJson->costs->ascend6)) {
-                        $level = "&stats=90";
-                    } else {
-                        $level = "&stats=70";
-                    }
-                    $levelArray = $this->requestUrl(APP_INFO['MiniGGApi']['Weapons'] . urlencode($msgContent) . $level);
-                    $levelJson = json_decode($levelArray);
-                    if (isset ($resJson->name)) {
-                        $ret = "【名称】：" . $resJson->name . "\n";
-                        $ret .= "【类型】：" . $resJson->rarity . "星" . $resJson->weapontype . "\n";
-                        $ret .= "【介绍】：" . $resJson->description . "\n";
-                        $ret .= "【基础/满级攻击力】：" . $resJson->baseatk . "/" . round($levelJson->attack, 2) . "\n";
-                        if ($resJson->substat !== "") {
-                            $ret .= "【突破加成】：" . $resJson->substat . "\n";
-                            $ret .= "【基础/满级加成】：" . $resJson->subvalue . "/" . round(($levelJson->specialized * 100), 2) . "%\n";
-                            $ret .= "【" . $resJson->effectname . "】：" . $resJson->effect . "\n";
-                        }
-                    } else {
-                        foreach ($resJson as $resArray) {
-                            $ret .= $resArray;
-                            $ret .= "、";
-                        }
-                        $ret = rtrim($ret, "、");
-                    }
-                }
-                break;
-            /**
-             * 天赋查询
-             */
-            case '天赋':
-                $resArray = $this->requestUrl(APP_INFO['MiniGGApi']['Talents'] . urlencode($msgContent));
-                $resJson = json_decode($resArray);
-                if (isset ($resJson->errcode)) {
-                    $ret = $resJson->errmsg;
-                } elseif (isset ($resJson->name)) {
-                    $ret = "【名字】：" . $resJson->name . "\n";
-                    $ret .= "\n【" . $resJson->combat1->name . "】：\n\n" . $resJson->combat1->info . "\n";
-                    $ret .= "\n【" . $resJson->combat2->name . "】：" . $resJson->combat2->info . "\n";
-                    $ret .= "\n【" . $resJson->combat3->name . "】：" . $resJson->combat3->info . "\n";
-                    if (isset ($resJson->combatsp)) {
-                        $ret .= "\n【" . $resJson->combatsp->name . "】：" . $resJson->combatsp->info . "\n";
-                    }
-                    $ret .= "\n【" . $resJson->passive1->name . "】：" . $resJson->passive1->info . "\n";
-                    $ret .= "\n【" . $resJson->passive2->name . "】：" . $resJson->passive2->info . "\n";
-                    $ret .= "\n【" . $resJson->passive3->name . "】：" . $resJson->passive3->info . "\n";
-                }
-                break;
         }
+        /**
+         *
+         *
+         *读数据 $this->redisGet("name");
+         *判断是否存在 $this->redisExists("name");
+         *写数据 $this->redisSet("name", "text or json");
+         *
+         */
         $this->appSend($msgRobot, $msgType, $msgSource, $msgSender, $ret);
     }
 }

@@ -8,9 +8,17 @@
 
 ## 环境
 
-已在`Windows11`、`Windows Server 2019`、`Centos 7.9.2009`、`Centos 8.5.2111`上使用`PHP 7.4`与`PHP 8.0`进行测试。
+### 已测试环境
 
-理论上兼容`PHP 7.3`及以上的版本，推荐使用`Linux环境`+`PHP 8.0`进行部署
+| 系统             | PHP版本   |
+|----------------|---------|
+| Windows 10     | PHP 7.4 |
+| Windows 11     | PHP 8.1 |
+| WinServer 2019 | PHP 8.1 |
+| Winserver 2016 | PHP 8.1 |
+| CentOS 8       | PHP 8.0 |
+| CentOS 7       | PHP 8.0 |
+| Ubuntu 20.04   | PHP 8.0 |
 
 ## 协议
 
