@@ -17,7 +17,6 @@ class system_actions extends app
 
         $this->linkRedis();
     }
-
     //解析函数的参数是appManager的引用
 
     function EventFun($msg)
