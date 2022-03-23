@@ -210,7 +210,7 @@ class api
             if ($newExtData) $postBody[$extMsgType] = $newExtData;
             //消息类型 回复 markwodn 艾特
         } else {
-            $l2_type = $msgOrigMsg['l2_type'] ?? 1;
+            $l2_type = 1;
             $l3_types = array();
         }
 
@@ -670,9 +670,7 @@ class api
         $msgContent = str_replace("[PUSH_MSG_IMG]", "", $msgContent);
         //只回复图片的占位符
 
-        if (FRAME_ID == 5000) {
-            file_put_contents("a_" . TIME_T . ".txt", $msgContent);
-
+        if (FRAME_ID == 2500) {
             $this->requestApiByXIAOAI($msgContent, $msgExtArr);
         } elseif (FRAME_ID == 10000) {
             if ($extMsgType == "api_msg") {

@@ -122,11 +122,11 @@ class genshingacha_actions extends app
                     "kv" => array(
                         array(
                             "key" => "#DESC#",
-                            "value" => "TITLE"
+                            "value" => "原神模拟抽卡-设置"
                         ),
                         array(
                             "key" => "#PROMPT#",
-                            "value" => "TITLE"
+                            "value" => "原神模拟抽卡-设置"
                         ),
                         array(
                             "key" => "#LIST#",
@@ -145,7 +145,7 @@ class genshingacha_actions extends app
                                             "value" => "角色-" . $resJson['data']['role']['0']['pondInfo']['star5UpList']['0']['goodsName']
                                         ), array(
                                             "key" => "link",
-                                            "value" => "https://bot.q.minigg.cn/src/index.php?userid=" . $msgReceiver . "&gacheset=role&index=0"
+                                            "value" => FRAME_NS . "app/plugins/genshingacha/set.php?userid=" . $msgReceiver . "&gacheset=role&index=0"
                                         )
                                     )
                                 ), array(
@@ -155,7 +155,7 @@ class genshingacha_actions extends app
                                             "value" => "角色-" . $resJson['data']['role']['1']['pondInfo']['star5UpList']['0']['goodsName']
                                         ), array(
                                             "key" => "link",
-                                            "value" => "https://bot.q.minigg.cn/src/index.php?userid=" . $msgReceiver . "&gacheset=role&index=1"
+                                            "value" => FRAME_NS . "app/plugins/genshingacha/set.php?userid=" . $msgReceiver . "&gacheset=role&index=0"
                                         )
                                     )
                                 ), array(
@@ -165,7 +165,7 @@ class genshingacha_actions extends app
                                             "value" => "武器-" . $resJson['data']['arm']['0']['pondInfo']['star5UpList']['0']['goodsName']
                                         ), array(
                                             "key" => "link",
-                                            "value" => "https://bot.q.minigg.cn/src/index.php?userid=" . $msgReceiver . "&gacheset=arm&index=0"
+                                            "value" => "https://bot.w.minigg.cn/src/gacha.php?userid=" . $msgReceiver . "&gacheset=arm&index=0"
                                         )
                                     )
                                 ), array(
@@ -175,7 +175,7 @@ class genshingacha_actions extends app
                                             "value" => "武器-" . $resJson['data']['arm']['0']['pondInfo']['star5UpList']['1']['goodsName']
                                         ), array(
                                             "key" => "link",
-                                            "value" => "https://bot.q.minigg.cn/src/index.php?userid=" . $msgReceiver . "&gacheset=arm&index=1"
+                                            "value" => "https://bot.w.minigg.cn/src/gacha.php?userid=" . $msgReceiver . "&gacheset=arm&index=1"
                                         )
                                     )
                                 ), array(
@@ -185,7 +185,7 @@ class genshingacha_actions extends app
                                             "value" => "常驻"
                                         ), array(
                                             "key" => "link",
-                                            "value" => "https://bot.q.minigg.cn/src/index.php?userid=" . $msgReceiver . "&gacheset=perm&index=0"
+                                            "value" => "https://bot.w.minigg.cn/src/index.php?userid=" . $msgReceiver . "&gacheset=perm&index=0"
                                         )
                                     )
                                 ),

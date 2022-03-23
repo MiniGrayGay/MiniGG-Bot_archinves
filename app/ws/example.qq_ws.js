@@ -93,7 +93,7 @@ let botRun = function() {
 
                 botInfo.sessionId = resJson.d.session_id;
                 //连接成功获取 sessionId
-            } else if (["MESSAGE_CREATE", "AT_MESSAGE_CREATE", "DIRECT_MESSAGE_CREATE"].indexOf(wsInfo.t)) {
+            } else if (["MESSAGE_CREATE", "AT_MESSAGE_CREATE", "DIRECT_MESSAGE_CREATE"].indexOf(wsInfo.t) > -1) {
                 /**
                  *
                  * 私域机器人不用艾特

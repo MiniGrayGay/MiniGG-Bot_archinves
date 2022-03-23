@@ -8,15 +8,13 @@ require_once("main.php");
  *
  */
 $reqRet = file_get_contents("php://input");
-
 if (!$reqRet) {
     header("Location: https://www.minigg.cn");
-
     exit(1);
 } else {
     $appInfo = APP_INFO;
 
-    if (FRAME_ID == 5000) {
+    if (FRAME_ID == 2500) {
         $resJson = json_decode($reqRet, true);
 
         $resSession = $resJson['session'] ?? array();
@@ -33,11 +31,11 @@ if (!$reqRet) {
         $appMic = true;
 
         if ($XIAOAIMsgNoResponse) {
-            $res = "主人，你怎么不理我呀，你还在嘛？";
+            $res = "主人，还在嘛？";
         } elseif ($XIAOAIMsgType == 0) {
-            $res = "主人，你好。";
+            $res = "你好，主人。";
         } elseif ($XIAOAIMsgType == 2) {
-            $res = "主人，再见！";
+            $res = "再见，主人！";
 
             $appMic = false;
         }
@@ -392,7 +390,7 @@ if (!$reqRet) {
          *
          * 艾特消息
          *
-         * 194,160和194,177，频道用的不知道是什么奇怪的空格
+         * 不知道是什么奇怪的空格
          */
         if (strpos($QQChannelMsgContent, "<@!") > -1) {
             $QQChannelMsgContent = str_replace("<@!{$QQChannelMsgRobot}>" . chr(32), "", $QQChannelMsgContent);
@@ -477,7 +475,12 @@ if (!$reqRet) {
      * 群组的唯一 id
      *
      */
-    $GLOBALS['msgGc'] = $msg['Source'] . "," . $msg['SubSource'];
+    $nowSource = $msg['Source'];
+    $nowSubSource = $msg['SubSource'];
+    $nowSubSource ? $nowGc = $nowSource . "," . $nowSubSource : $nowGc = $nowSource;
+    $GLOBALS['msgGc'] = $nowGc;
+    $GLOBALS['msgRobot'] = $msg['Robot'];
+    $GLOBALS['msgSender'] = $msg['Sender'];
 
     /**
      *
