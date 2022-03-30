@@ -79,7 +79,7 @@ class genshingacha_actions extends app
         //获取授权码内欧气排行
         $authorzation = array("authorzation:" . $gachaKey);
 
-        preg_match("/获取卡池|设置卡池|定轨/", $msgContent, $msgMatch);
+        preg_match("/获取卡池|设置卡池|定轨|单抽|十连/", $msgContent, $msgMatch);
         $matchValue = $msgMatch[0];
         $msgContent = str_replace($matchValue, "", $msgContent);
         $this->redisSet("msgContent", $msgContent);
@@ -117,6 +117,9 @@ class genshingacha_actions extends app
                     $this->redisSet("MiniGG-Gacha-PondInfo", $resJson, 14400);
                 }
                 $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "json_msg";
+                $t = time();
+                $s = $t . "y8h8tqUAEDzyR6xZQKX6Ak";
+                $c = md5($s);
                 $ret = array(
                     "template_id" => 23,
                     "kv" => array(
@@ -142,10 +145,17 @@ class genshingacha_actions extends app
                                     "obj_kv" => array(
                                         array(
                                             "key" => "desc",
+                                            "value" => "请在30秒内点击对应的卡池名字进行设置"
+                                        )
+                                    )
+                                ), array(
+                                    "obj_kv" => array(
+                                        array(
+                                            "key" => "desc",
                                             "value" => "角色-" . $resJson['data']['role']['0']['pondInfo']['star5UpList']['0']['goodsName']
                                         ), array(
                                             "key" => "link",
-                                            "value" => FRAME_NS . "app/plugins/genshingacha/set.php?userid=" . $msgReceiver . "&gacheset=role&index=0"
+                                            "value" => "https://bot.q.minigg.cn/app/plugins/genshingacha/set.php?userid=" . $msgReceiver . "&token=" . $c . "&pray=role&index=0"
                                         )
                                     )
                                 ), array(
@@ -155,7 +165,7 @@ class genshingacha_actions extends app
                                             "value" => "角色-" . $resJson['data']['role']['1']['pondInfo']['star5UpList']['0']['goodsName']
                                         ), array(
                                             "key" => "link",
-                                            "value" => FRAME_NS . "app/plugins/genshingacha/set.php?userid=" . $msgReceiver . "&gacheset=role&index=0"
+                                            "value" => "https://bot.q.minigg.cn/app/plugins/genshingacha/set.php?userid=" . $msgReceiver . "&token=" . $c . "&pray=role&index=1"
                                         )
                                     )
                                 ), array(
@@ -165,7 +175,7 @@ class genshingacha_actions extends app
                                             "value" => "武器-" . $resJson['data']['arm']['0']['pondInfo']['star5UpList']['0']['goodsName']
                                         ), array(
                                             "key" => "link",
-                                            "value" => "https://bot.w.minigg.cn/src/gacha.php?userid=" . $msgReceiver . "&gacheset=arm&index=0"
+                                            "value" => "https://bot.q.minigg.cn/app/plugins/genshingacha/set.php?userid=" . $msgReceiver . "&token=" . $c . "&pray=arm&index=0"
                                         )
                                     )
                                 ), array(
@@ -175,7 +185,7 @@ class genshingacha_actions extends app
                                             "value" => "武器-" . $resJson['data']['arm']['0']['pondInfo']['star5UpList']['1']['goodsName']
                                         ), array(
                                             "key" => "link",
-                                            "value" => "https://bot.w.minigg.cn/src/gacha.php?userid=" . $msgReceiver . "&gacheset=arm&index=1"
+                                            "value" => "https://bot.q.minigg.cn/app/plugins/genshingacha/set.php?userid=" . $msgReceiver . "&token=" . $c . "&pray=arm&index=1"
                                         )
                                     )
                                 ), array(
@@ -185,11 +195,10 @@ class genshingacha_actions extends app
                                             "value" => "常驻"
                                         ), array(
                                             "key" => "link",
-                                            "value" => "https://bot.w.minigg.cn/src/index.php?userid=" . $msgReceiver . "&gacheset=perm&index=0"
+                                            "value" => "https://bot.q.minigg.cn/app/plugins/genshingacha/set.php?userid=" . $msgReceiver . "&token=" . $c . "&pray=perm&index=0"
                                         )
                                     )
                                 ),
-
                             )
                         )
                     )

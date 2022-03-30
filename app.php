@@ -450,6 +450,47 @@ if (!$reqRet) {
         );
 
         //QQChannel:官方:统一格式
+    } elseif (FRAME_ID == 80000) {
+        $resJson = json_decode($reqRet, true);
+
+        $XXQMsgType = $resJson['type'] ?? "text";
+        $XXQMsgContent = $resJson['message'] ?? NULL;
+
+        /**
+         *
+         * 机器人号码
+         *
+         */
+        $XXQMsgRobot = $appInfo['botInfo']['XXQ']['uin'] ?? NULL;
+
+        $XXQMsgId = $resJson['messageId'] ?? NULL;
+        $XXQMsgSource = $resJson['superGroupId'] ?? NULL;
+        $XXQMsgSubSource = $resJson['chatRoomId'] ?? NULL;
+        $XXQMsgSender = $resJson['fUserId'] ?? NULL;
+
+        $msgContentOriginal = $XXQMsgContent;
+
+        $msg = array(
+            "Ver" => 0,
+            "Pid" => 0,
+            "Port" => 0,
+            "MsgID" => $XXQMsgId,
+            "OrigMsg" => $reqRet ? base64_encode($reqRet) : NULL,
+            "Robot" => $XXQMsgRobot,
+            "MsgType" => $XXQMsgType,
+            "MsgSubType" => 0,
+            //"MsgFileUrl" => $XXQMsgFileUrl,
+            "Content" => $XXQMsgContent ? base64_encode(urldecode($XXQMsgContent)) : NULL,
+            "Source" => $XXQMsgSource,
+            "SubSource" => $XXQMsgSubSource,
+            //"SourceName" => $XXQMsgSourceName ? $XXQMsgSourceName : NULL,
+            "Sender" => $XXQMsgSender,
+            //"SenderName" => $XXQMsgSenderName ? $XXQMsgSenderName : NULL,
+            "Receiver" => $XXQMsgSender,
+            //"ReceiverName" => $XXQMsgSenderName ? $XXQMsgSenderName : NULL,
+        );
+
+        //X星球:统一格式
     } else {
         exit(1);
     }
@@ -486,10 +527,13 @@ if (!$reqRet) {
      *
      * 一些定义
      *
+     * msgImgNewSize 压缩图片 msgAtNokNok 艾特信息
      */
     $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = NULL;
-    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['imgNewSize'] = true; //压缩图片
     $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgOrigMsg'] = $resJson;
+    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgImgUrl'] = NULL;
+    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgImgNewSize'] = true;
+    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgAtNokNok'] = array();
 }
 
 $appManager = new app();
@@ -713,7 +757,7 @@ if (count($allPlugins) == 0) {
      * 匹配不到关键词自动退出
      *
      */
-    if (FRAME_ID == 50000 || (FRAME_ID == 70000 && BOT_TYPE == 1)) {
+    if (FRAME_ID == 70000 && BOT_TYPE == 1) {
         $appManager->appSend($msg['Robot'], $msg['MsgType'], $msg['Source'], $msg['Sender'], $appInfo['noKeywords']);
     }
 
