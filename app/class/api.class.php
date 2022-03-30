@@ -79,7 +79,6 @@ class api
      *
      * 可爱猫:未死鲤鱼:返回请求API的结果
      *
-     *
      */
     public function requestApiByWSLY($newMsg, $msgExtArr = array())
     {
@@ -130,9 +129,9 @@ class api
             $postArr['msg'] = urlencode($newMsg);
         }
 
-        $botInfo = APP_INFO['botInfo']['WSLY'];
+        $appInfo = APP_INFO;
+        $botInfo = $appInfo['botInfo']['WSLY'];
         $postArr['key'] = $botInfo['accessToken'];
-
         $postData = json_encode(array(
             "data" => json_encode($postArr, JSON_UNESCAPED_UNICODE)
         ));
@@ -154,12 +153,10 @@ class api
      *
      * NOKNOK:返回请求API的结果
      *
-     *
      */
     public function requestApiByNOKNOK($newMsg, $msgExtArr = array())
     {
         $reqUrl = APP_ORIGIN . "/api/v1/SendGroupMessage";
-        $nokNokBot = APP_INFO['nokNokBot'];
 
         if ($msgExtArr == array()) {
             $newData = $GLOBALS['msgExt'][$GLOBALS['msgGc']];
@@ -181,6 +178,9 @@ class api
         $postBody = array(
             "content" => $newMsg,
         );
+
+        $appInfo = APP_INFO;
+        $nokNokBot = $appInfo['nokNokBot'];
 
         if ($extMsgType) {
             if ($extMsgType == "markdown_msg") {
@@ -226,7 +226,7 @@ class api
         $postArr['body'] = $postBody;
         $postData = json_encode($postArr);
 
-        $botInfo = APP_INFO['botInfo']['NOKNOK'];
+        $botInfo = $appInfo['botInfo']['NOKNOK'];
 
         $reqRet = $this->requestUrl(
             $reqUrl,
@@ -245,7 +245,6 @@ class api
     /**
      *
      * QQ频道:返回请求API的结果
-     *
      *
      */
     public function requestApiByQQChannel_1($newMsg, $msgExtArr = array())
@@ -338,7 +337,8 @@ class api
         );
         $postData = json_encode($postArr);
 
-        $botInfo = APP_INFO['botInfo']['QQChannel'][0];
+        $appInfo = APP_INFO;
+        $botInfo = $appInfo['botInfo']['QQChannel'][0];
 
         $reqRet = $this->requestUrl(
             $reqUrl,
@@ -357,7 +357,6 @@ class api
     /**
      *
      * QQ频道:返回请求API的结果
-     *
      *
      */
     public function requestApiByQQChannel_2($newMsg, $msgExtArr = array())
@@ -408,7 +407,8 @@ class api
 
         $postData = json_encode($postArr);
 
-        $botInfo = APP_INFO['botInfo']['QQChannel'][1];
+        $appInfo = APP_INFO;
+        $botInfo = $appInfo['botInfo']['QQChannel'][1];
 
         $reqRet = $this->requestUrl(
             $reqUrl,
@@ -417,6 +417,51 @@ class api
                 "Content-Type: application/json",
                 "Authorization: Bot " . $botInfo['id'] . "." . $botInfo['accessToken']
             )
+        );
+
+        if (APP_INFO['debug']) appDebug("output", $postData . "\n\n" . $reqRet);
+
+        return $reqRet;
+    }
+
+    /**
+     *
+     * X星球:返回请求API的结果
+     *
+     */
+    public function requestApiByXXQ($newMsg, $msgExtArr = array())
+    {
+        $newMsg = str_replace("\n", "\\n", $newMsg);
+        $newMsg = str_replace("\u", "\\u", $newMsg);
+
+        $reqUrl = APP_ORIGIN . "/hero/v1/robot.php?type=sendMsgByXXQ";
+
+        if ($msgExtArr == array()) {
+            $newData = $GLOBALS['msgExt'][$GLOBALS['msgGc']];
+            $msgOrigMsg = $newData['msgOrigMsg'];
+        } else {
+            $msgExtData = $msgExtArr;
+            !is_array($msgExtData) ? $newData = json_decode($msgExtData, true) : $newData = $msgExtData;
+            $msgOrigMsg = $newData['msgOrigMsg'];
+        }
+        $extMsgType = $newData['msgType'];
+
+        $msgGuildId = $msgOrigMsg['superGroupId'] ?? 0;
+        $msgChannelId = $msgOrigMsg['chatRoomId'] ?? 0;
+        $fUserId = $msgOrigMsg['fUserId'] ?? 0;
+        $nickname = $msgOrigMsg['nickname'] ?? NULL;
+
+        if ($extMsgType == "at_msg") {
+            $msgAt = '[[\"24\",\"0\",\"2\",\"{\\\\\\"name\\\\\\":\\\\\\"' . $nickname . '\\\\\\",\\\\\\"atUserId\\\\\\":\\\\\\"' . $fUserId . '\\\\\\"}\"]]';
+        } else {
+            $msgAt = NUll;
+        }
+
+        $postData = "superGroupId={$msgGuildId}&chatRoomId={$msgChannelId}&msgAt={$msgAt}&message=" . urlencode($newMsg);
+
+        $reqRet = $this->requestUrl(
+            $reqUrl,
+            $postData
         );
 
         if (APP_INFO['debug']) appDebug("output", $postData . "\n\n" . $reqRet);
@@ -462,7 +507,7 @@ class api
      * 随机字符串
      *
      */
-    public function getRandomString($len, $chars = null)
+    public function getRandomString($len, $chars = NULL)
     {
         if (is_null($chars)) {
             $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -532,7 +577,7 @@ class api
          * 不压缩的只需重命名统一格式即可
          *
          */
-        if ($GLOBALS['msgExt'][FRAME_ID]['imgNewSize'] == false) {
+        if ($GLOBALS['msgExt'][FRAME_ID]['msgImgNewSize'] == false) {
             rename($imgPath, $newImgPath);
         } else {
             $this->imgNewSize($imgPath, $newImgPath);
@@ -710,6 +755,8 @@ class api
 
                 exit(1);
             }
+        } elseif (FRAME_ID == 80000) {
+            $this->requestApiByXXQ($msgContent, $msgExtArr);
         } else {
             exit(1);
         }

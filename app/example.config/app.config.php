@@ -10,15 +10,14 @@ define('FRAME_ID', $_GET['frameId'] ?? 50000);
 define('FRAME_IP', $_GET['frameIp'] ?? "127.0.0.1");
 define('FRAME_GC', $_GET['frameGc'] ?? NULL);
 define('FRAME_KEY', $_POST['key'] ?? NULL);
-//挂机器人的服务器，请求回去的时候需要
 define('GenshinWikiUrl', "https://info.minigg.cn/");
-
 
 /**
  *
  * 卡片信息
  *
  */
+
 define('APP_DESC', "奶香的一刀");
 define('APP_MSG_ID', 1919810);
 define('APP_MSG_NAME', "com.tencent.structmsg");
