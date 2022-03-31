@@ -203,41 +203,41 @@ class genshingacha_actions extends app
                         )
                     )
                 );
-                $appMsg = array(
-                    "template_id" => 24,
-                    "kv" => array(
-                        array(
-                            "key" => "#TITLE#",
-                            "value" => "TITLE"
-                        ),
-                        array(
-                            "key" => "#METADESC#",
-                            "value" => "DESC"
-                        ),
-                        array(
-                            "key" => "#DESC#",
-                            "value" => "TITLE"
-                        ),
-                        array(
-                            "key" => "#PROMPT#",
-                            "value" => "TITLE"
-                        ),
-                        array(
-                            "key" => "#IMG#",
-                            "value" => ""
-                        ),
-                        array(
-                            "key" => "#LINK#",
-                            "value" => ""
-                        ),
-                        array(
-                            "key" => "#SUBTITLE#",
-                            "value" => "SUBTITLE"
-                        )
-                    ),
-                );
                 $ret = json_encode($ret);
                 break;
+            case '十连':
+                if ($this->redisExists("MiniGG-Gacha-Set-" . $msgReceiver)) {
+                    $setJson = $this->redisGet("MiniGG-Gacha-Set-" . $msgReceiver);
+                    switch ($setJson['pray']) {
+                        case 'role':
+                            switch ($setJson['index']) {
+                                case '0':
+                                    $ret = "角色池1";
+                                    break;
+                                case '1':
+                                    $ret = "角色池2";
+                                    break;
+                            }
+                            break;
+                        case 'arm':
+                            switch ($setJson['index']) {
+                                case '0':
+                                    $ret = "武器池1";
+                                    break;
+                                case '1':
+                                    $ret = "武器池2";
+                                    break;
+                            }
+                            break;
+                        case 'perm':
+                            $ret = "常驻池";
+                            break;
+                    }
+                } else {
+                    $reqUrl = $gachaUrl . $GetPondInfo;
+                    $resJson = json_decode($this->requestUrl($reqUrl, "", $authorzation), true);
+                    $this->redisSet("MiniGG-Gacha-PondInfo", $resJson, 14400);
+                }
         }
         /**
          *

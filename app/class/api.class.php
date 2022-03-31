@@ -431,6 +431,7 @@ class api
      */
     public function requestApiByXXQ($newMsg, $msgExtArr = array())
     {
+        $newMsg = str_replace("\r", "\\r", $newMsg);
         $newMsg = str_replace("\n", "\\n", $newMsg);
         $newMsg = str_replace("\u", "\\u", $newMsg);
 

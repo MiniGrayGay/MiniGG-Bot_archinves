@@ -58,7 +58,7 @@ $appInfo['botInfo'] = array(
         "uin" => "12345"
     ),
     "MYPCQQ" => array(
-        //QQ机器人-留空即可
+        //MYPCQQ机器人-无需额外配置
         "id" => "",
         "name" => "",
         "accessToken" => "",
@@ -67,8 +67,8 @@ $appInfo['botInfo'] = array(
     ),
     "WSLY" => array(
         //可爱猫
-        "id" => "", //留空
-        "name" => "", //留空
+        "id" => "", //微信原始id或留空
+        "name" => "", //微信名或留空
         "accessToken" => "", //设置了访问API KEY时填入，否则留空
         "verifyToken" => "", //留空
         "inviteInGroup" => $inviteInGroup[array_rand($inviteInGroup)],
@@ -86,7 +86,7 @@ $appInfo['botInfo'] = array(
         array(
             "id" => "",
             "name" => "",
-            "accessToken" => "",
+            "accessToken" => "", //如果设置了secret填入这里
             "uin" => ""
         ),
         array(
@@ -173,6 +173,7 @@ $appInfo['iconInfo'] = $iconInfo;
 $appInfo['MiniGGApi']['Characters'] = GenshinWikiUrl . "characters?query=";
 $appInfo['MiniGGApi']['Weapons'] = GenshinWikiUrl . "weapons?query=";
 $appInfo['MiniGGApi']['Talents'] = GenshinWikiUrl . "talents?query=";
+$appInfo['MiniGGApi']['GachaSet'] = "https://bot.q.minigg.cn/src/plugins/genshingacha/set.php";
 
 define('APP_INFO', $appInfo);
 
