@@ -249,7 +249,13 @@ class api
      */
     public function requestApiByQQChannel_1($newMsg, $msgExtArr = array())
     {
-        $reqUrl = APP_ORIGIN . "/send_guild_channel_msg";
+        if ($msgOrigMsg['message_type'] == "guild") {
+            $reqUrl = APP_ORIGIN . "/send_guild_channel_msg";
+            $isGuild = true;
+        } else {
+            $reqUrl = APP_ORIGIN . "/send_msg";
+            $isGuild = false;
+        }
 
         if ($msgExtArr == array()) {
             $newData = $GLOBALS['msgExt'][$GLOBALS['msgGc']];

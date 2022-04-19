@@ -1,61 +1,77 @@
 <?php
-
 /**
- *
- * 参数信息
- *
+ * Debug调试
  */
-define('BOT_TYPE', $_GET['botType'] ?? 1); //1 公域，0 私域
+
+$appInfo['debug'] = false;
+
+//----------默认参数信息开始----------
+/**
+ * 框架默认参数-无需修改
+ */
 define('FRAME_ID', $_GET['frameId'] ?? 50000);
-define('FRAME_IP', $_GET['frameIp'] ?? "127.0.0.1");
 define('FRAME_GC', $_GET['frameGc'] ?? NULL);
 define('FRAME_KEY', $_POST['key'] ?? NULL);
-define('GenshinWikiUrl', "https://info.minigg.cn/");
-
-/**
- *
- * 卡片信息
- *
- */
-
+define('FRAME_IP', $_GET['frameIp'] ?? "127.0.0.1");
 define('APP_DESC', "奶香的一刀");
 define('APP_MSG_ID', 1919810);
 define('APP_MSG_NAME', "com.tencent.structmsg");
 define('APP_MSG_TAG', "奶香的一刀");
 define('APP_MSG_TYPE', 1);
 define('APP_VIEW', "news");
+$appKey = array("65e4f038e9857ceb12d481fb58e1e23d");
+$inviteInGroup = array("12345@chatroom");
+define('APP_KEY', $appKey);
+/**
+ * Api服务器地址-无需修改
+ */
+$appInfo['MiniGGApi']['Api'] = "https://info.minigg.cn/";
+$appInfo['MiniGGApi']['GachaSet'] = "https://bot.q.minigg.cn/src/plugins/genshingacha/set.php";
+//----------默认参数信息结束----------
 
-$appInfo['debug'] = false;
+/**
+ * 官方频道Bot接口参数
+ * 1 公域，0 私域
+ */
+
+define('BOT_TYPE', $_GET['botType'] ?? 1);
+
+/**
+ * 命令不存在时兜底回复
+ */
 $appInfo['noKeywords'] = "进不去！怎么想都进不去吧！！！~\n发送【功能】可以查看咱的所有技能!";
 
 /**
- *
- * 主动推送密钥
- *
+ * 机器人信息-收
  */
-$appKey = array(
-    "65e4f038e9857ceb12d481fb58e1e23d", //我
-);
-
-define('APP_KEY', $appKey);
-
-$inviteInGroup = array(
-    "12345@chatroom"
-);
+$originInfo[114514] = "http://127.0.0.1:5700";   //GOCQ
+$originInfo[10000] = "http://127.0.0.1:8010";   //MyPCQQ，默认转发回本机8010端口，如果MyPCQQ与网站不在同一机器按需修改成对应域名
+$originInfo[20000] = "http://127.0.0.1:8073/send";  //微信可爱猫，默认转发回本机8073端口，如果可爱猫与网站不在同一机器按需修改成对应域名
+$originInfo[50000] = "https://openapi.noknok.cn";   //NokNok，默认无需修改
+$originInfo[60000] = "http://127.0.0.1:8020";   //GO-CQhttp默认Http端口为5700，按需修改
+$originInfo[70000] = "https://api.sgroup.qq.com";   //使用沙箱模式时替换URL为 https://sandbox.api.sgroup.qq.com ，沙箱环境只会收到测试频道的事件，且调用openapi仅能操作测试频道
+$originInfo[80000] = "https://api.91m.top"; //X星球，默认无需修改
+$appInfo['originInfo'] = $originInfo;
 
 /**
- *
- * 机器人信息
- *
+ * 机器人设置-发
  */
+
 $appInfo['botInfo'] = array(
     "XIAOAI" => array(
-        //测试中-小爱开放平台-仅支持单行文字的功能
+        //小爱开放平台内测
         "id" => "12345",
         "name" => "小爱同学",
         "accessToken" => NULL,
         "verifyToken" => NULL,
         "uin" => "12345"
+    ),
+    "GOCQ" => array(
+        //GOCQ测试
+        "id" => "3555862665",
+        "name" => "猫尾特调",
+        "accessToken" => NULL, //如果设置了secret填入这里
+        "uin" => "3555862665"
     ),
     "MYPCQQ" => array(
         //MYPCQQ机器人-无需额外配置
@@ -74,7 +90,8 @@ $appInfo['botInfo'] = array(
         "inviteInGroup" => $inviteInGroup[array_rand($inviteInGroup)],
         "uin" => ""
     ),
-    "NOKNOK" => array(//联系NokNok管理员获取
+    "NOKNOK" => array(
+        //联系NokNok管理员获取
         "id" => "", //uid
         "name" => "",   //昵称
         "accessToken" => "",    //token
@@ -84,10 +101,10 @@ $appInfo['botInfo'] = array(
     "QQChannel" => array(
         //第一个array为GO-CQHttp，第二个array为官方API的配置文件
         array(
-            "id" => "",
-            "name" => "",
+            "id" => "3555862665",
+            "name" => "猫尾特调",
             "accessToken" => "", //如果设置了secret填入这里
-            "uin" => ""
+            "uin" => "3555862665"
         ),
         array(
             //QQ官方频道API https://bot.q.qq.com/#/developer/developer-setting
@@ -97,10 +114,18 @@ $appInfo['botInfo'] = array(
             "verifyToken" => "", //开发设置内的 Bot Secret
             "uin" => "" //填入 yarn start:qq 启动WS后，尝试鉴权后的消息user字段内的id
         )
+    ),
+    "XXQ" => array(
+        //X星球内测
+        "id" => "",
+        "name" => "",
+        "accessToken" => "",
+        "verifyToken" => "",
+        "uin" => ""
     )
 );
 
-if (FRAME_ID == 5000) {
+if (FRAME_ID == 2500) {
     $nowRobot = $appInfo['botInfo']['XIAOAI']['uin'];
 } elseif (FRAME_ID == 10000) {
     $nowRobot = $appInfo['botInfo']['MYPCQQ']['uin'];
@@ -112,6 +137,10 @@ if (FRAME_ID == 5000) {
     $nowRobot = $appInfo['botInfo']['QQChannel'][0]['uin'];
 } elseif (FRAME_ID == 70000) {
     $nowRobot = $appInfo['botInfo']['QQChannel'][1]['uin'];
+} elseif (FRAME_ID == 80000) {
+    $nowRobot = $appInfo['botInfo']['XXQ']['uin'];
+} elseif (FRAME_ID == 114514) {
+    $nowRobot = $appInfo['botInfo']['GOCQ']['uin'];
 } else {
     exit(1);
 }
@@ -127,14 +156,6 @@ $t = time();
 define('TIME_T', $t);
 //当前
 
-$originInfo[10000] = "http://127.0.0.1:8010"; //默认转发回本机8010端口，如果MyPCQQ与网站不在同一机器按需修改成对应域名
-$originInfo[20000] = "http://127.0.0.1:8073/send"; //默认转发回本机8073端口，如果可爱猫与网站不在同一机器按需修改成对应域名
-$originInfo[50000] = "https://openapi.noknok.cn";
-$originInfo[60000] = "http://127.0.0.1:8020"; //GO-CQhttp默认Http端口为5700，按需修改
-$originInfo[70000] = "https://api.sgroup.qq.com"; //使用沙箱模式时替换URL为 https://sandbox.api.sgroup.qq.com ，沙箱环境只会收到测试频道的事件，且调用openapi仅能操作测试频道
-//-
-$appInfo['originInfo'] = $originInfo;
-
 $codeInfo[1000] = "您不是管理员";
 $codeInfo[1001] = "该群 或 框架暂不支持该功能";
 $codeInfo[1002] = "内容为空，请稍后再来看看吧";
@@ -143,14 +164,6 @@ $codeInfo[1004] = "玩家不存在 或 未公开";
 $codeInfo[1005] = "可能存在违规内容，请修改后再试试吧~";
 //-
 $appInfo['codeInfo'] = $codeInfo;
-
-$authInfo[1000] = array(
-    ""
-);
-
-$authInfo[1003] = array(
-    "" //舔狗日记、网易云热评、互删句子接口密钥
-);
 
 //-
 $appInfo['authInfo'] = $authInfo;
@@ -169,12 +182,9 @@ $iconInfo[50000] = array(
 );
 //-
 $appInfo['iconInfo'] = $iconInfo;
-
-$appInfo['MiniGGApi']['Characters'] = GenshinWikiUrl . "characters?query=";
-$appInfo['MiniGGApi']['Weapons'] = GenshinWikiUrl . "weapons?query=";
-$appInfo['MiniGGApi']['Talents'] = GenshinWikiUrl . "talents?query=";
-$appInfo['MiniGGApi']['GachaSet'] = "https://bot.q.minigg.cn/src/plugins/genshingacha/set.php";
-
+$appInfo['MiniGGApi']['Characters'] = $appInfo['MiniGGApi']['Api'] . "characters?query=";
+$appInfo['MiniGGApi']['Weapons'] = $appInfo['MiniGGApi']['Api'] . "weapons?query=";
+$appInfo['MiniGGApi']['Talents'] = $appInfo['MiniGGApi']['Api'] . "talents?query=";
 define('APP_INFO', $appInfo);
 
 $whiteListGroup = array();
@@ -190,21 +200,17 @@ $appOrigin = str_replace("127.0.0.1", FRAME_IP, $appOrigin);
 define('APP_ORIGIN', $appOrigin);
 
 /**
- *
  * debug 输出格式
- *
  */
 function appDebug($type, $log)
 {
     if (APP_INFO['debug'] == false) return;
-
     $debugDir = APP_DIR_CACHE . "debug";
 
     /**
-     *
      * 不存在自动创建文件夹
-     *
      */
+
     if (!is_dir($debugDir)) {
         mkdir($debugDir, 0777);
     }

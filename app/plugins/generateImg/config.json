@@ -1,0 +1,37 @@
+{
+  "icon": "pic.icon",
+  "guid": "fc20bd7b-8cfb-4567-8f80-ecb6953ce098",
+  "name": "趣味工具箱",
+  "type": [
+    "工具"
+  ],
+  "desc": "合成一些好玩的图片",
+  "ver": "1.0.0.0",
+  "author": "jmglsi",
+  "url": null,
+  "switch": true,
+  "trigger": {
+    "web": [],
+    "github": [
+      "https://github.com/HibiKier/zhenxun_bot"
+    ],
+    "gitee": [
+      "https://gitee.com/xlphp/php_poster_generation_class"
+    ],
+    "frame": [
+      10000
+    ],
+    "command": [
+      {
+        "keywords": "我有个(.*?)说",
+        "desc": "这个朋友是不是你自己",
+        "demo": "我有个<称呼>说<内容>@某人，示例:我有个朋友说再来点@某人"
+      },
+      {
+        "keywords": "鲁迅说",
+        "desc": "鲁迅他说了什么东西呢",
+        "demo": "鲁迅说<内容>，示例:鲁迅说这话我真说过"
+      }
+    ]
+  }
+}
