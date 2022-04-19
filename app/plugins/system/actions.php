@@ -110,7 +110,7 @@ class system_actions extends app
 
             //获取系统状态
         } elseif ($msgContent == "频道数据") {
-            $ret = "主人，当前一共加了【21】个，其中活跃频道【15】个~";
+            $ret = "主人，当前一共加了【114514】个，其中活跃频道【0】个~";
         } elseif (in_array($msgSender, CONFIG_ADMIN)) {
             if (preg_match("/复述/", $msgContent, $msgMatch)) {
                 $matchValue = $msgMatch[0];
