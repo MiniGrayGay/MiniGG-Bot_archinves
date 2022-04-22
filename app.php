@@ -672,17 +672,24 @@ $GLOBALS['senderStatusInfo'] = (int)$appManager->redisGet("plugins-statusInfo-" 
 if (!$allKeywords) {
     /**
      *
-     * 初始化，管理员需要向机器人发送【功能】注册钩子，只有命中关键词的才会运行相关插件
+     * 触发指定插件，管理员需要向机器人发送【功能】注册钩子，只有命中关键词的才会运行相关插件
      *
      */
     $allPlugins[] = array("name" => "system", "path" => "app/plugins/system");
-} elseif ($sourceStatusInfo != 0) {
+} elseif ($GLOBALS['sourceStatusInfo'] != 0) {
     /**
      *
-     * 全部触发的插件
+     * 触发指定插件
      *
      */
     $allPlugins[] = array("name" => "minigame", "path" => "app/plugins/minigame");
+} elseif ($GLOBALS['senderStatusInfo'] != 0) {
+    /**
+     *
+     * 触发指定插件
+     *
+     */
+    $allPlugins[] = array("name" => "getimg", "path" => "app/plugins/getimg");
 } elseif (preg_match($allKeywords, $msgContentOriginal, $msgMatch_1)) {
     $msgMatch_1 = array_unique($msgMatch_1);
     $msgMatch_1 = array_values($msgMatch_1);
@@ -694,7 +701,7 @@ if (!$allKeywords) {
     if (count($msgMatch_2) > 0) {
         if (preg_match(CONFIG_MSG_WHITELIST, $msgContentOriginal)) {
             //存在白名单
-        } elseif ($senderStatusInfo == 0) {
+        } elseif ($GLOBALS['senderStatusInfo'] == 0) {
             $ret = $appInfo['codeInfo'][1005];
 
             $appManager->appSend($msg['Robot'], $msg['MsgType'], $msg['Source'], $msg['Sender'], $ret);
@@ -706,7 +713,7 @@ if (!$allKeywords) {
 
     /**
      *
-     * 只有触发的关键词才会传递给插件
+     * 触发指定关键词传递给插件
      *
      */
     $allTrigger = json_decode(json_encode($appManager->redisGet("plugins-allTrigger-" . FRAME_ID)), true);
@@ -721,9 +728,9 @@ if (!$allKeywords) {
          *
          */
         if (preg_match("/\{|\[KAM\:image|\[NOKNOK\:image|\[CQ\:image|\[QC\:image/", $forList)) {
-            if ($senderStatusInfo == 1) $allPlugins[] = array("name" => "getimg", "path" => "app/plugins/getimg");
-        } elseif (preg_match("/我有个(.*?)说/", $forList)) {
-            $allPlugins[] = array("name" => "onefriend", "path" => "app/plugins/onefriend");
+            if ($GLOBALS['senderStatusInfo'] == 1) $allPlugins[] = array("name" => "getimg", "path" => "app/plugins/getimg");
+        } elseif (preg_match("/(我有个(.*?)说|鲁迅说)/", $forList)) {
+            $allPlugins[] = array("name" => "generateImg", "path" => "app/plugins/generateImg");
         } else {
             $matchValue = strtolower($forList);
             //coser github roll 等英文触发转小写

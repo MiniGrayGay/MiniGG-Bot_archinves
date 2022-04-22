@@ -18,9 +18,6 @@
     "gitee": [
       "https://gitee.com/xlphp/php_poster_generation_class"
     ],
-    "frame": [
-      10000
-    ],
     "command": [
       {
         "keywords": "我有个(.*?)说",

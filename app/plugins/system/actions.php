@@ -197,10 +197,8 @@ class system_actions extends app
                     }
                 }
             }
-
-            rmdir($aDir);
+            //rmdir($aDir);
         }
-
         $ret = "已清除缓存:\n";
         $ret .= json_encode($dirList);
 
