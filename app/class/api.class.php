@@ -546,6 +546,24 @@ class api
 
     /**
      *
+     * 获取缓存图片
+     *
+     */
+    public function appGetCacheImg($imgName)
+    {
+        //if (strpos(APP_ORIGIN, ":") > -1 && !in_array(FRAME_ID, array(50000, 70000))) {
+        //$http = "http";
+        //} else {
+        $http = "https";
+        //}
+
+        $ret = $http . "://" . $_SERVER['SERVER_NAME'] . "/{$imgName}?t=" . TIME_T;
+
+        return $ret;
+    }
+
+    /**
+     *
      * 将图片压缩缓存到服务器本地 app/cache/:inputPath
      *
      * @param keywords 文件夹
@@ -556,7 +574,14 @@ class api
      */
     public function appDownloadImg($msgSender, $keywords, $inputPath, $outputPath, $imgUrl = NULL, $imgData = NULL)
     {
-        $imgDir = APP_DIR_CACHE . $inputPath;
+        $newCache = APP_DIR_CACHE;
+        $imgDir = $newCache . $inputPath;
+
+        $imgName = md5($msgSender . $keywords . TIME_T) . "_temp.jpg";
+        $imgPath = $imgDir . "/" . $imgName;
+
+        $newImgName = str_replace("_temp", "", $imgName);
+        $newImgPath = str_replace("_temp", "", $imgPath);
 
         /**
          *
@@ -567,15 +592,9 @@ class api
             mkdir($imgDir, 0777);
 
             if ($inputPath != $outputPath) {
-                mkdir(APP_DIR_CACHE . $outputPath, 0777);
+                mkdir($newCache . $outputPath, 0777);
             }
         }
-
-        $imgName = md5($msgSender . $keywords . TIME_T) . "_temp.jpg";
-        $imgPath = $imgDir . "/" . $imgName;
-
-        $newImgName = str_replace("_temp", "", $imgName);
-        $newImgPath = str_replace("_temp", "", $imgPath);
 
         file_put_contents($imgPath, $imgData ? $imgData : $this->requestUrl($imgUrl));
 
@@ -603,7 +622,7 @@ class api
             $http = "https";
         }
 
-        $ret = $http . "://" . $_SERVER['SERVER_NAME'] . "/" . $newImgPath . "?t=" . TIME_T;
+        $ret = $http . "://" . $_SERVER['SERVER_NAME'] . "/{$newImgPath}?t=" . TIME_T;
 
         return array(
             "name" => $newImgName,
