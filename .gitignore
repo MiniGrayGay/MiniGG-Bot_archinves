@@ -5,7 +5,6 @@ node_modules
 app/cache/*
 app/config/*
 app/database/*
-app/resources/*
 app/ws/*
 !app/config/app.definition.php
 !app/ws/example.qq_ws.js

@@ -50,6 +50,7 @@ class generateImg_actions extends app
         //参_原始信息
 
         if (in_array($msgSource, APP_SPECIAL_GROUP)) return;
+
         //特殊群
 
         $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg";
@@ -60,13 +61,7 @@ class generateImg_actions extends app
             $matchValue = $msgMatch[0];
             $sayType = $this->appGetSubstr($msgContent, "我有个", "说") ?? "朋友";
 
-            $s_1 = array("朋友", "土豪", "富婆", "老板", "老板娘", "员工", "打工仔");
-            $s_2 = array("兄弟", "姐妹", "基友", "闺蜜", "对象", "老公", "老婆", "男朋友", "女朋友", "小可爱", "小宝贝");
-            $s_3 = array("战神", "法王", "野王", "野爹", "射爹", "辅王");
-
-            $sayList = array_merge($s_1, $s_2, $s_3);
-
-            if (in_array($sayType, $sayList)) {
+            if ($sayType) {
                 $msgContent = str_replace($matchValue, "", $msgContent);
 
                 if ($msgContent) {
@@ -84,7 +79,7 @@ class generateImg_actions extends app
                     } elseif (FRAME_ID == 70000) {
                         $data = json_decode($msgOrigMsg)->d;
                         $msgAt = $data->mentions ?? NULL;
-                        $msgAtNum = count($msgAt);
+                        if ($msgAt) $msgAtNum = count($msgAt);
 
                         if ($msgAtNum == 2) {
                             /**
@@ -157,10 +152,8 @@ class generateImg_actions extends app
         } elseif (preg_match("/鲁迅说/", $msgContent, $msgMatch)) {
             $matchValue = $msgMatch[0];
             $msgContent = str_replace($matchValue, "", $msgContent);
-
             if ($msgContent) {
                 $img = $this->getLuXunSay($msgSender, $msgContent);
-
                 if ($img == -1) {
                     return;
                 } elseif ($img) {
@@ -329,9 +322,9 @@ class generateImg_actions extends app
 
         $newPath = APP_DIR_CACHE . "luxun";
         $imgName = md5($msgSender . "鲁迅说" . TIME_T) . ".jpg";
-
         if (!is_dir($newPath)) {
-            mkdir($newPath, 0777);
+            mkdir($newPath);
+            chmod($newPath, 0777);
         }
 
         $newImg = $newPath . "/" . $imgName;
@@ -349,7 +342,7 @@ class generateImg_actions extends app
                 ),
             )
         );
-
+        $this->redisSet("Test", __FILE__);
         poster::setConfig($config);
         $res = poster::make($newImg);
 
