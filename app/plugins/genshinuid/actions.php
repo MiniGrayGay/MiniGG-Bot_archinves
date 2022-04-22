@@ -63,11 +63,23 @@ class genshinuid_actions extends app
                 $url = "https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/index?" . $q;
                 //游戏uid
                 $res = $this->mihoyoapi($q, $url);
-                $imgurl = $this->igs($res, $msgContent);
-                //我也不知道为什么QQ频道机器人 at_msg、文本、image_msg 一起发会丢失一个 \n
-                $ret = "UID：" . $msgContent;
-                $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgImgUrl'] = $imgurl;
-                $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg,image_msg";
+                // $this->redisSet("uid-query", $res); // Debug UID Query Result;
+                $imgUrl = $this->igs($res, $msgContent);
+
+                if (FRAME_ID == 10000) {
+                    $ret .= "[{$imgUrl}]";
+                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg";
+                } elseif (FRAME_ID == 50000) {
+                    $ret .= "![]({$imgUrl})";
+                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "markdown_msg";
+                } elseif (in_array(FRAME_ID, array(60000, 70000))) {
+                    $ret = "UID：" . $msgContent;
+                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgImgUrl'] = $imgUrl;
+                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg,image_msg";
+                } else {
+                    $ret = NULL;
+                }
+
             } else {
                 $ret = $this->appCommandErrorMsg($matchValue);
             }
