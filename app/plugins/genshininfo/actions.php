@@ -64,9 +64,8 @@ class genshininfo_actions extends app
 
                     $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg";
                 } elseif (FRAME_ID == 50000) {
-                    $ret .= "![]({$imgUrl})";
-
-                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "markdown_msg";
+                    $ret = file_get_contents(__DIR__ . "/信息/" . $msgContent . ".json");
+                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "image_msg";
                 } elseif (in_array(FRAME_ID, array(60000, 70000))) {
                     $ret = "";
                     $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgImgUrl'] = $imgUrl;
@@ -85,9 +84,8 @@ class genshininfo_actions extends app
 
                     $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg";
                 } elseif (FRAME_ID == 50000) {
-                    $ret .= "![]({$imgUrl})";
-
-                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "markdown_msg";
+                    $ret = file_get_contents(__DIR__ . "/攻略/" . $msgContent . ".json");
+                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "image_msg";
                 } elseif (in_array(FRAME_ID, array(60000, 70000))) {
                     $ret = "";
                     $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgImgUrl'] = $imgUrl;
