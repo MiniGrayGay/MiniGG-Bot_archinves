@@ -887,6 +887,16 @@ class api
         }
     }
 
+    public function retrtrim($tmp)
+    {
+        foreach ($tmp as $resArray) {
+            $tmptrim .= $resArray;
+            $tmptrim .= "、";
+        }
+        $tmp = rtrim($tmptrim, "、");
+        return $tmp;
+    }
+
     /**
      *
      * 网页访问，301、302 返回 User-Agent

@@ -182,9 +182,15 @@ $iconInfo[50000] = array(
 );
 //-
 $appInfo['iconInfo'] = $iconInfo;
+
 $appInfo['MiniGGApi']['Characters'] = $appInfo['MiniGGApi']['Api'] . "characters?query=";
 $appInfo['MiniGGApi']['Weapons'] = $appInfo['MiniGGApi']['Api'] . "weapons?query=";
 $appInfo['MiniGGApi']['Talents'] = $appInfo['MiniGGApi']['Api'] . "talents?query=";
+$appInfo['MiniGGApi']['Constellations'] = $appInfo['MiniGGApi']['Api'] . "constellations?query=";
+$appInfo['MiniGGApi']['Foods'] = $appInfo['MiniGGApi']['Api'] . "foods?query=";
+$appInfo['MiniGGApi']['Enemies'] = $appInfo['MiniGGApi']['Api'] . "enemies?query=";
+$appInfo['MiniGGApi']['Domains'] = $appInfo['MiniGGApi']['Api'] . "domains?query=";
+$appInfo['MiniGGApi']['Artifacts'] = $appInfo['MiniGGApi']['Api'] . "artifacts?query=";
 define('APP_INFO', $appInfo);
 
 $whiteListGroup = array();
