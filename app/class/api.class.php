@@ -186,6 +186,14 @@ class api
             if ($extMsgType == "markdown_msg") {
                 $l2_type = 8;
                 $l3_types = array();
+            } elseif ($extMsgType == "image_msg") {
+                $jsonDecode = json_decode($newMsg);
+                $postBody = array(
+                    "pic_info" => $jsonDecode
+                );
+                $l2_type = 3;
+                $l3_types = array();
+
             } elseif ($extMsgType == "reply_msg") {
                 $l2_type = 1;
                 $l3_types = array(1);
