@@ -25,8 +25,7 @@ define('APP_KEY', $appKey);
 /**
  * Api服务器地址-无需修改
  */
-$appInfo['MiniGGApi']['Api'] = "https://info.minigg.cn/";
-$appInfo['MiniGGApi']['GachaSet'] = "https://bot.q.minigg.cn/src/plugins/genshingacha/set.php";
+define('APP_API_MINIGG', "https://info.minigg.cn/");
 //----------默认参数信息结束----------
 
 /**
@@ -183,14 +182,19 @@ $iconInfo[50000] = array(
 //-
 $appInfo['iconInfo'] = $iconInfo;
 
-$appInfo['MiniGGApi']['Characters'] = $appInfo['MiniGGApi']['Api'] . "characters?query=";
-$appInfo['MiniGGApi']['Weapons'] = $appInfo['MiniGGApi']['Api'] . "weapons?query=";
-$appInfo['MiniGGApi']['Talents'] = $appInfo['MiniGGApi']['Api'] . "talents?query=";
-$appInfo['MiniGGApi']['Constellations'] = $appInfo['MiniGGApi']['Api'] . "constellations?query=";
-$appInfo['MiniGGApi']['Foods'] = $appInfo['MiniGGApi']['Api'] . "foods?query=";
-$appInfo['MiniGGApi']['Enemies'] = $appInfo['MiniGGApi']['Api'] . "enemies?query=";
-$appInfo['MiniGGApi']['Domains'] = $appInfo['MiniGGApi']['Api'] . "domains?query=";
-$appInfo['MiniGGApi']['Artifacts'] = $appInfo['MiniGGApi']['Api'] . "artifacts?query=";
+$miniGGInfo['Api'] = APP_API_MINIGG;
+$miniGGInfo['GachaSet'] = "https://bot.q.minigg.cn/src/plugins/genshingacha/set.php";
+$miniGGInfo['Characters'] = APP_API_MINIGG . "characters?query=";
+$miniGGInfo['Weapons'] = APP_API_MINIGG . "weapons?query=";
+$miniGGInfo['Talents'] = APP_API_MINIGG . "talents?query=";
+$miniGGInfo['Constellations'] = APP_API_MINIGG . "constellations?query=";
+$miniGGInfo['Foods'] = APP_API_MINIGG . "foods?query=";
+$miniGGInfo['Enemies'] = APP_API_MINIGG . "enemies?query=";
+$miniGGInfo['Domains'] = APP_API_MINIGG . "domains?query=";
+$miniGGInfo['Artifacts'] = APP_API_MINIGG . "artifacts?query=";
+
+$appInfo['miniGG'] = $miniGGInfo;
+
 define('APP_INFO', $appInfo);
 
 $whiteListGroup = array();
