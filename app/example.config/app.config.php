@@ -2,58 +2,46 @@
 /**
  * Debug调试
  */
-
 $appInfo['debug'] = false;
 
-//----------默认参数信息开始----------
 /**
- * 框架默认参数-无需修改
+ * 如果Bot不正常可改为当前的IP或者域名，推荐IP
  */
-define('FRAME_ID', $_GET['frameId'] ?? 50000);
-define('FRAME_GC', $_GET['frameGc'] ?? NULL);
-define('FRAME_KEY', $_POST['key'] ?? NULL);
 define('FRAME_IP', $_GET['frameIp'] ?? "127.0.0.1");
-define('APP_DESC', "奶香的一刀");
-define('APP_MSG_ID', 1919810);
-define('APP_MSG_NAME', "com.tencent.structmsg");
-define('APP_MSG_TAG', "奶香的一刀");
-define('APP_MSG_TYPE', 1);
-define('APP_VIEW', "news");
-$appKey = array("65e4f038e9857ceb12d481fb58e1e23d");
-$inviteInGroup = array("12345@chatroom");
-define('APP_KEY', $appKey);
-/**
- * Api服务器地址-无需修改
- */
-define('APP_API_MINIGG', "https://info.minigg.cn/");
-//----------默认参数信息结束----------
 
 /**
- * 官方频道Bot接口参数
+ * QQ官方频道Bot接口参数
  * 1 公域，0 私域
  */
-
 define('BOT_TYPE', $_GET['botType'] ?? 1);
 
 /**
- * 命令不存在时兜底回复
+ * 命令不存在时默认回复
  */
 $appInfo['noKeywords'] = "进不去！怎么想都进不去吧！！！~\n发送【功能】可以查看咱的所有技能!";
 
 /**
- * 机器人信息-收
+ * 机器人信息-发
  */
-$originInfo[114514] = "http://127.0.0.1:5700";   //GOCQ
-$originInfo[10000] = "http://127.0.0.1:8010";   //MyPCQQ，默认转发回本机8010端口，如果MyPCQQ与网站不在同一机器按需修改成对应域名
-$originInfo[20000] = "http://127.0.0.1:8073/send";  //微信可爱猫，默认转发回本机8073端口，如果可爱猫与网站不在同一机器按需修改成对应域名
+$originInfo[10000] = "http://127.0.0.1:8010";   //MyPCQQ，默认转发回本机8010端口，如果MyPCQQ与网站不在同一服务器按需修改成对应域名
+$originInfo[20000] = "http://127.0.0.1:8073/send";  //微信可爱猫，默认转发回本机8073端口，如果可爱猫与网站不在同一服务器按需修改成对应域名
 $originInfo[50000] = "https://openapi.noknok.cn";   //NokNok，默认无需修改
-$originInfo[60000] = "http://127.0.0.1:8020";   //GO-CQhttp默认Http端口为5700，按需修改
+$originInfo[60000] = "http://127.0.0.1:5700";   //GO-CQhttp默认Http通信端口为5700，按需修改
 $originInfo[70000] = "https://api.sgroup.qq.com";   //使用沙箱模式时替换URL为 https://sandbox.api.sgroup.qq.com ，沙箱环境只会收到测试频道的事件，且调用openapi仅能操作测试频道
 $originInfo[80000] = "https://api.91m.top"; //X星球，默认无需修改
 $appInfo['originInfo'] = $originInfo;
 
 /**
- * 机器人设置-发
+ * 框架默认参数-一般情况下无需修改
+ */
+define('FRAME_ID', $_GET['frameId'] ?? 50000);
+define('FRAME_GC', $_GET['frameGc'] ?? NULL);
+define('FRAME_KEY', $_POST['key'] ?? NULL);
+define('APP_API_MINIGG', "https://info.minigg.cn/");
+$inviteInGroup = array("114514@chatroom");
+
+/**
+ * 机器人设置-收
  */
 
 $appInfo['botInfo'] = array(
@@ -64,13 +52,6 @@ $appInfo['botInfo'] = array(
         "accessToken" => NULL,
         "verifyToken" => NULL,
         "uin" => "12345"
-    ),
-    "GOCQ" => array(
-        //GOCQ测试
-        "id" => "3555862665",
-        "name" => "猫尾特调",
-        "accessToken" => NULL, //如果设置了secret填入这里
-        "uin" => "3555862665"
     ),
     "MYPCQQ" => array(
         //MYPCQQ机器人-无需额外配置
@@ -95,15 +76,15 @@ $appInfo['botInfo'] = array(
         "name" => "",   //昵称
         "accessToken" => "",    //token
         "verifyToken" => "",    //verifytoken
-        "uin" => ""
+        "uin" => "" //uid
     ),
     "QQChannel" => array(
         //第一个array为GO-CQHttp，第二个array为官方API的配置文件
         array(
-            "id" => "3555862665",
-            "name" => "猫尾特调",
+            "id" => "", //QQ号
+            "name" => "",   //QQ昵称
             "accessToken" => "", //如果设置了secret填入这里
-            "uin" => "3555862665"
+            "uin" => "" //QQ号
         ),
         array(
             //QQ官方频道API https://bot.q.qq.com/#/developer/developer-setting
@@ -138,8 +119,6 @@ if (FRAME_ID == 2500) {
     $nowRobot = $appInfo['botInfo']['QQChannel'][1]['uin'];
 } elseif (FRAME_ID == 80000) {
     $nowRobot = $appInfo['botInfo']['XXQ']['uin'];
-} elseif (FRAME_ID == 114514) {
-    $nowRobot = $appInfo['botInfo']['GOCQ']['uin'];
 } else {
     exit(1);
 }
@@ -183,7 +162,6 @@ $iconInfo[50000] = array(
 $appInfo['iconInfo'] = $iconInfo;
 
 $miniGGInfo['Api'] = APP_API_MINIGG;
-$miniGGInfo['GachaSet'] = "https://bot.q.minigg.cn/src/plugins/genshingacha/set.php";
 $miniGGInfo['Characters'] = APP_API_MINIGG . "characters?query=";
 $miniGGInfo['Weapons'] = APP_API_MINIGG . "weapons?query=";
 $miniGGInfo['Talents'] = APP_API_MINIGG . "talents?query=";
