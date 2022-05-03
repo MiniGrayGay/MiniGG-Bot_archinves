@@ -6,6 +6,9 @@ class api
      *
      * XIAOAI:返回请求API的结果
      *
+     * @param string $newMsg 回复内容
+     * @param array $msgExtArr 拓展字段
+     * @link https://developers.xiaoai.mi.com
      */
     public function requestApiByXIAOAI($newMsg, $msgExtArr = array())
     {
@@ -40,6 +43,8 @@ class api
      *
      * MPQ:返回请求API的结果
      *
+     * @param string $newMsg 回复内容
+     * @link https://www.yuque.com/mpq/docs
      */
     public function requestApiByMPQ($newMsg)
     {
@@ -79,6 +84,9 @@ class api
      *
      * 可爱猫:未死鲤鱼:返回请求API的结果
      *
+     * @param string $newMsg 回复内容
+     * @param array $msgExtArr 拓展字段
+     * @link http://www.keaimao.com.cn/forum.php
      */
     public function requestApiByWSLY($newMsg, $msgExtArr = array())
     {
@@ -153,6 +161,9 @@ class api
      *
      * NOKNOK:返回请求API的结果
      *
+     * @param string $newMsg 回复内容
+     * @param array $msgExtArr 拓展字段
+     * @link https://bot-docs.github.io/pages/events/1_callback.html
      */
     public function requestApiByNOKNOK($newMsg, $msgExtArr = array())
     {
@@ -186,14 +197,17 @@ class api
             if ($extMsgType == "markdown_msg") {
                 $l2_type = 8;
                 $l3_types = array();
+
+                $newMsg = str_replace("\n", "\n\n", $newMsg);
             } elseif ($extMsgType == "image_msg") {
-                $jsonDecode = json_decode($newMsg);
-                $postBody = array(
-                    "pic_info" => $jsonDecode
-                );
                 $l2_type = 3;
                 $l3_types = array();
 
+                $postData = json_decode($newMsg);
+
+                $postBody = array(
+                    "pic_info" => $postData
+                );
             } elseif ($extMsgType == "reply_msg") {
                 $l2_type = 1;
                 $l3_types = array(1);
@@ -254,16 +268,13 @@ class api
      *
      * QQ频道:返回请求API的结果
      *
+     * @param string $newMsg 回复内容
+     * @param array $msgExtArr 拓展字段
+     * @link https://github.com/Mrs4s/go-cqhttp
      */
     public function requestApiByQQChannel_1($newMsg, $msgExtArr = array())
     {
-        if ($msgOrigMsg['message_type'] == "guild") {
-            $reqUrl = APP_ORIGIN . "/send_guild_channel_msg";
-            $isGuild = true;
-        } else {
-            $reqUrl = APP_ORIGIN . "/send_msg";
-            $isGuild = false;
-        }
+        $reqUrl = APP_ORIGIN . "/send_guild_channel_msg";
 
         if ($msgExtArr == array()) {
             $newData = $GLOBALS['msgExt'][$GLOBALS['msgGc']];
@@ -372,6 +383,9 @@ class api
      *
      * QQ频道:返回请求API的结果
      *
+     * @param string $newMsg 回复内容
+     * @param array $msgExtArr 拓展字段
+     * @link https://q.qq.com
      */
     public function requestApiByQQChannel_2($newMsg, $msgExtArr = array())
     {
@@ -442,6 +456,8 @@ class api
      *
      * X星球:返回请求API的结果
      *
+     * @param string $newMsg 回复内容
+     * @param array $msgExtArr 拓展字段
      */
     public function requestApiByXXQ($newMsg, $msgExtArr = array())
     {
@@ -487,16 +503,14 @@ class api
     /**
      *
      * 处理被添加好友/进群请求
-     * 0  忽略
-     * 10 同意
-     * 20 拒绝
-     * 30 单项同意
      *
+     * @param string $code 0:忽略 10:同意 20:拒绝 30:单项同意
+     * @param string $msg 理由
      */
-    public function appHandle($ret, $msg = "")
+    public function appHandle($code, $msg = "")
     {
         $ret = json_encode(array(
-            "Ret" => (string)$ret,
+            "Ret" => (string)$code,
             "Msg" => !$msg ? "" : $msg
         ), JSON_UNESCAPED_UNICODE);
 
@@ -505,8 +519,10 @@ class api
 
     /**
      *
-     * 错误命令行demo
+     * 命令行错误示例
      *
+     * @param string $keywords 关键词
+     * @return string 返回错误时的示例
      */
     public function appCommandErrorMsg($keywords)
     {
@@ -519,25 +535,10 @@ class api
 
     /**
      *
-     * 随机字符串
-     *
-     */
-    public function getRandomString($len, $chars = NULL)
-    {
-        if (is_null($chars)) {
-            $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        }
-        mt_srand(10000000 * (float)microtime());
-        for ($i = 0, $str = '', $lc = strlen($chars) - 1; $i < $len; $i++) {
-            $str .= $chars[mt_rand(0, $lc)];
-        }
-        return $str;
-    }
-
-    /**
-     *
      * 缩短链接
      *
+     * @param string $longUrl 只有白名单內的链接才能被缩短
+     * @return string 返回缩短后的链接
      */
     public function appGetShortUrl($longUrl)
     {
@@ -554,16 +555,38 @@ class api
 
     /**
      *
+     * 随机字符串
+     *
+     * @param string $len 长度
+     * @param string $chars 填充字符串
+     * @return string 返回生成的随机字符串
+     */
+    public function appGetRandomString($len = 6, $chars = NULL)
+    {
+        if (is_null($chars)) {
+            $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        }
+        mt_srand(10000000 * (float)microtime());
+        for ($i = 0, $str = '', $lc = strlen($chars) - 1; $i < $len; $i++) {
+            $str .= $chars[mt_rand(0, $lc)];
+        }
+        return $str;
+    }
+
+    /**
+     *
      * 获取缓存图片
      *
+     * @param string $imgName 图片名字
+     * @return string 返回完整的缓存链接
      */
     public function appGetCacheImg($imgName)
     {
-        //if (strpos(APP_ORIGIN, ":") > -1 && !in_array(FRAME_ID, array(50000, 70000))) {
-        //$http = "http";
-        //} else {
-        $http = "https";
-        //}
+        if (strpos(APP_ORIGIN, ":") > -1 && !in_array(FRAME_ID, array(50000, 70000))) {
+            $http = "http";
+        } else {
+            $http = "https";
+        }
 
         $ret = $http . "://" . $_SERVER['SERVER_NAME'] . "/{$imgName}?t=" . TIME_T;
 
@@ -572,13 +595,37 @@ class api
 
     /**
      *
+     * 图片、文本检测
+     *
+     * @param string $data 需要检测的内容
+     * @param string $checkType MsgSecCheck 或 MediaCheckAsync
+     * @param int $dataType $checkTyp 为 MediaCheckAsync 时，1:音频 2:图片
+     * @return bool true:存在违规内容 false:正常
+     * @link https://q.qq.com/wiki/develop/miniprogram/server/open_port/port_safe.html
+     */
+    public function appMsgCheckAsync($data, $checkType = "MsgSecCheck", $dataType = 2)
+    {
+        $reqRet = $this->requestUrl(
+            APP_API_ROBOT . "?type=system&aid=0&bid={$checkType}&cid=" . $dataType,
+            "msg=" . urlencode($data)
+        );
+        $resJson = json_decode($reqRet);
+        $resStatus = $resJson->status;
+        $resCode = $resStatus->code;
+
+        return $resCode == 0 ? false : true;
+    }
+
+    /**
+     *
      * 将图片压缩缓存到服务器本地 app/cache/:inputPath
      *
-     * @param keywords 文件夹
-     * @param inputPath 输入路径文件夹名
-     * @param outputPath 输出路径文件夹名，和输入不同时将会替换
-     * @param imgUrl 需要下载的图片链接
-     * @param imgData base64的图片数据
+     * @param string keywords 文件夹
+     * @param string inputPath 输入路径文件夹名
+     * @param string outputPath 输出路径文件夹名，和输入不同时将会替换
+     * @param string imgUrl 需要下载的图片链接
+     * @param string imgData base64的图片数据
+     * @return array 返回图片名字和链接
      */
     public function appDownloadImg($msgSender, $keywords, $inputPath, $outputPath, $imgUrl = NULL, $imgData = NULL)
     {
@@ -641,9 +688,9 @@ class api
     /**
      *
      * desription 压缩图片
+     *
      * @param string $imgSrc 图片路径
      * @param string $imgDist 压缩后保存路径
-     *
      * @link http://www.yuqingqi.com/phpjiaocheng/994.html
      */
     public function imgNewSize($imgSrc, $imgDist)
@@ -692,9 +739,9 @@ class api
     /**
      *
      * desription 判断是否gif动画
-     * @param string $image_file 图片路径
-     * @return boolean t 是 f 否
      *
+     * @param string $image_file 图片路径
+     * @return bool true:是 false:否
      */
     public function imgCheckGif($image_file)
     {
@@ -885,16 +932,6 @@ class api
                 $n += ord($c[3]) & 0x3f;
                 return $n;
         }
-    }
-
-    public function retrtrim($tmp)
-    {
-        foreach ($tmp as $resArray) {
-            $tmptrim .= $resArray;
-            $tmptrim .= "、";
-        }
-        $tmp = rtrim($tmptrim, "、");
-        return $tmp;
     }
 
     /**

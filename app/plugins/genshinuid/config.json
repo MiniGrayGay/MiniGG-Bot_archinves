@@ -6,13 +6,13 @@
     "原神"
   ],
   "desc": "山高狐狸野，八重是我姐！",
-  "ver": "1.0.2",
+  "ver": "1.0.4",
   "author": "MiniGG",
   "url": null,
   "switch": true,
   "trigger": {
     "web": [
-      "https://yuanshen.minigg.cn"
+      "https://igs.minigg.cn"
     ],
     "github": [
       "https://github.com/MiniGrayGay/PaimonUID"
@@ -25,7 +25,7 @@
         "demo": "原神玩家查询<uid>，示例:查询12345678"
       },
       {
-        "keywords": "材料|今日材料|当日材料|今天耍什么",
+        "keywords": "角色材料|武器材料",
         "desc": "查询原神当日材料"
       }
     ]

@@ -83,8 +83,9 @@ class genshinuid_actions extends app
             } else {
                 $ret = $this->appCommandErrorMsg($matchValue);
             }
-        } elseif (preg_match("/材料/", $msgContent)) {
-            $ret = $this->getGenshinDaily();
+        } elseif (preg_match("/角色材料|武器材料/", $msgContent)) {
+            strpos($msgContent, "武器") > -1 ? $matchValue = "武器" : $matchValue = "角色";
+            $ret = $this->getGenshinDaily($matchValue);
         }
         $this->appSend($msgRobot, $msgType, $msgSource, $msgSender, $ret);
     }
@@ -133,26 +134,67 @@ class genshinuid_actions extends app
         return $imgurl;
     }
 
-    function getGenshinDaily()
+    /**
+     *
+     * 获取每日材料
+     *
+     * @link https://bbs.mihoyo.com/ys/obc
+     *
+     * 米游社·原神-观测枢
+     */
+    function getGenshinDaily($msgContent = "角色")
     {
-        $dailyInfo['自由'] = "达达利亚、可莉、埃洛伊、安柏、砂糖、芭芭拉、迪奥娜";
+        //周一四
+        $dailyInfo['自由'] = array(
+            "埃洛伊 达达利亚 可莉 安柏 芭芭拉 迪奥娜 砂糖",
+            "风鹰剑 松籁响起之时 辰砂之纺锤 宗室秘法录 西风秘典 绝弦 西风剑 钟剑 宗室长剑 暗巷闪光 苍翠猎弓 雪葬的星银 幽夜华尔兹 冷刃 铁影阔剑 魔导绪论 鸦羽弓 银剑 口袋魔导书 无锋剑 学徒笔记"
+        );
         //蒙德
-        $dailyInfo['繁荣'] = "七七、刻晴、魈、凝光";
+        $dailyInfo['繁荣'] = array(
+            "申鹤 魈 七七 刻晴 凝光",
+            "和璞鸢 斫峰之刃 白影剑 弓藏 黑岩长剑 黑岩绯玉 黑岩战弓 流月针 千岩古剑 匣里龙吟 匣里日月 暗铁剑 白缨枪 弹弓 翡玉法球"
+        );
         //璃月
-        $dailyInfo['浮世'] = "宵宫、珊瑚宫心海、托马";
+        $dailyInfo['浮世'] = array(
+            "珊瑚宫心海 宵宫 托马",
+            "雾切之回光 不灭月华 白晨之环 恶王丸 天目影打刀 证誓之明瞳"
+        );
         //稻妻
-        $dailyInfo['抗争'] = "琴、莫娜、迪卢克、优菈、班尼特、诺艾尔、雷泽";
+
+        //周二五
+        $dailyInfo['抗争'] = array(
+            "琴 莫娜 迪卢克 班尼特 诺艾尔 雷泽 优菈",
+            "天空之卷 天空之刃 天空之傲 天空之翼 终末嗟叹之诗 流浪乐章 祭礼弓 笛剑 祭礼大剑 黑剑 决斗之枪 龙脊长枪 暗巷的酒与诗 嘟嘟可故事集 降临之剑 黎明神剑 沐浴龙血的剑 讨龙英杰谭 神射手之誓 佣兵重剑 历练的猎弓 训练大剑 猎弓"
+        );
         //蒙德
-        $dailyInfo['勤劳'] = "甘雨、胡桃、枫原万叶、重云、香菱";
+        $dailyInfo['勤劳'] = array(
+            "枫原万叶 胡桃 甘雨 云堇 香菱 重云",
+            "息灾 磐岩结绿 无工之剑 黑岩刺枪 黑岩斩刀 试作澹月 试作金珀 试作斩岩 匣里灭辰 雨裁 昭心 宗室猎枪 吃虎鱼刀 甲级宝钰 信使 以理服人 钺矛"
+        );
         //璃月
-        $dailyInfo['风雅'] = "神里凌华、九条娑罗";
+        $dailyInfo['风雅'] = array(
+            "荒泷一斗 神里绫人 神里绫华 九条裟罗",
+            "波乱月白经津 赤角石溃杵 飞雷之弦振 桂木斩长正 掠食者 矇云之月 破魔之弓"
+        );
         //稻妻
-        $dailyInfo['诗文'] = "温迪、阿贝多、丽莎、凯亚、菲谢尔、罗莎莉亚";
+
+        //周三六
+        $dailyInfo['诗文'] = array(
+            "阿贝多 温迪 罗莎莉亚 菲谢尔 丽莎 凯亚",
+            "四风原典 狼的末路 阿莫斯之弓 天空之脊 苍古自由之誓 祭礼残章 宗室大剑 西风猎弓 宗室长弓 祭礼剑 西风大剑 西风长枪 腐殖之剑 忍冬之果 风花之颂 暗巷猎手 旅行剑 白铁大剑 异世界行记 反曲弓 铁尖枪 新手长枪"
+        );
         //蒙德
-        $dailyInfo['黄金'] = "钟离、辛焱、北斗、行秋、烟绯";
+        $dailyInfo['黄金'] = array(
+            "钟离 行秋 北斗 辛焱 烟绯",
+            "尘世之锁 贯虹之槊 护摩之杖 衔珠海皇 螭骨剑 钢轮弓 千岩长枪 试作古华 试作星镰 铁蜂刺 万国诸海图谱 飞天大御剑 飞天御剑 黑缨枪"
+        );
         //璃月
-        $dailyInfo['天光'] = "雷电将军、早柚";
+        $dailyInfo['天光'] = array(
+            "八重神子 雷电将军 五郎 早柚",
+            "薙草之稻光 冬极白星 喜多院十文字 渔获 断浪长鳍"
+        );
         //稻妻
+
         /**
          *
          * 日 一 二 三 四 五 六
@@ -160,35 +202,41 @@ class genshinuid_actions extends app
          */
         $weekArr = array("日", "一", "二", "三", "四", "五", "六");
         $nowWeek = date("w");
+
+        $msgContent == "武器" ? $retType = 1 : $retType = 0;
+
         $ret = "今天是【周" . $weekArr[$nowWeek] . "】";
+
         if ($nowWeek == 0) {
-            $ret .= "所有角色都可以升～";
+            $ret .= "所有角色武器都可以升～";
         } else {
-            $ret .= "今日素材可升天赋角色 如下:\n";
-            $ret .= "----------------\n";
+            $ret .= "今日素材可" . ($retType == 1 ? "突破的武器" : "升天赋角色") . " 如下:\n";
+            $ret .= "-----\n";
+
             if ($nowWeek == 1 || $nowWeek == 4) {
                 $ret .= "> 自由\n";
-                $ret .= $dailyInfo['自由'] . "\n\n";
+                $ret .= $dailyInfo['自由'][$retType] . "\n";
                 $ret .= "> 繁荣\n";
-                $ret .= $dailyInfo['繁荣'] . "\n\n";
+                $ret .= $dailyInfo['繁荣'][$retType] . "\n";
                 $ret .= "> 浮世\n";
-                $ret .= $dailyInfo['浮世'] . "\n\n";
+                $ret .= $dailyInfo['浮世'][$retType];
             } elseif ($nowWeek == 2 || $nowWeek == 5) {
                 $ret .= "> 抗争\n";
-                $ret .= $dailyInfo['抗争'] . "\n\n";
+                $ret .= $dailyInfo['抗争'][$retType] . "\n";
                 $ret .= "> 勤劳\n";
-                $ret .= $dailyInfo['勤劳'] . "\n\n";
+                $ret .= $dailyInfo['勤劳'][$retType] . "\n";
                 $ret .= "> 风雅\n";
-                $ret .= $dailyInfo['风雅'] . "\n\n";
+                $ret .= $dailyInfo['风雅'][$retType];
             } elseif ($nowWeek == 3 || $nowWeek == 6) {
                 $ret .= "> 诗文\n";
-                $ret .= $dailyInfo['诗文'] . "\n\n";
+                $ret .= $dailyInfo['诗文'][$retType] . "\n";
                 $ret .= "> 黄金\n";
-                $ret .= $dailyInfo['黄金'] . "\n\n";
+                $ret .= $dailyInfo['黄金'][$retType] . "\n";
                 $ret .= "> 天光\n";
-                $ret .= $dailyInfo['天光'] . "\n\n";
+                $ret .= $dailyInfo['天光'][$retType];
             }
         }
+
         return $ret;
     }
 }

@@ -19,7 +19,6 @@ class generateImg_actions extends app
 
         $this->linkRedis();
     }
-
     //解析函数的参数是appManager的引用
 
     function EventFun($msg)
@@ -50,7 +49,6 @@ class generateImg_actions extends app
         //参_原始信息
 
         if (in_array($msgSource, APP_SPECIAL_GROUP)) return;
-
         //特殊群
 
         $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg";
@@ -79,7 +77,7 @@ class generateImg_actions extends app
                     } elseif (FRAME_ID == 70000) {
                         $data = json_decode($msgOrigMsg)->d;
                         $msgAt = $data->mentions ?? NULL;
-                        if ($msgAt) $msgAtNum = count($msgAt);
+                        $msgAtNum = count($msgAt);
 
                         if ($msgAtNum == 2) {
                             /**
@@ -193,6 +191,7 @@ class generateImg_actions extends app
      */
     function getFriendSay($msgSender, $img, $sayType = "朋友", $value = "再来点")
     {
+        if ($this->appMsgCheckAsync($value, "MsgSecCheck")) return -1;
         require_once(APP_DIR_CLASS . "poster.class.php");
 
         $nowPath = __DIR__;
@@ -236,7 +235,7 @@ class generateImg_actions extends app
         $nowValue = str_replace("\n", " ", $nowValue);
 
         $config = array(
-            "bg_url" => $nowPath . "/resources/bg_{$bgColor}.jpg", //宽 575 高 100
+            "bg_url" => $nowPath . "/资源/bg_{$bgColor}.jpg", //宽 575 高 100
             "text" => array(
                 array(
                     "text" => $sayType,
@@ -284,7 +283,7 @@ class generateImg_actions extends app
         if ($t_H >= 19 || $t_H < 6) {
             array_push($config['image'], array(
                 "name" => "newMsg",
-                "url" => $nowPath . "/resources/newMsg.png",
+                "url" => $nowPath . "/资源/newMsg.png",
                 "stream" => 0,
                 "left" => 533,
                 "top" => 57,
@@ -316,21 +315,23 @@ class generateImg_actions extends app
      */
     function getLuXunSay($msgSender, $value = "再来点")
     {
+        if ($this->appMsgCheckAsync($value, "MsgSecCheck")) return -1;
+
         require_once(APP_DIR_CLASS . "poster.class.php");
 
         $nowPath = __DIR__;
 
         $newPath = APP_DIR_CACHE . "luxun";
         $imgName = md5($msgSender . "鲁迅说" . TIME_T) . ".jpg";
+
         if (!is_dir($newPath)) {
-            mkdir($newPath);
-            chmod($newPath, 0777);
+            mkdir($newPath, 0777);
         }
 
         $newImg = $newPath . "/" . $imgName;
 
         $config = array(
-            "bg_url" => $nowPath . "/resources/luxun.jpg",
+            "bg_url" => $nowPath . "/资源/luxun.jpg",
             "text" => array(
                 array(
                     "text" => $value,
@@ -342,7 +343,7 @@ class generateImg_actions extends app
                 ),
             )
         );
-        $this->redisSet("Test", __FILE__);
+
         poster::setConfig($config);
         $res = poster::make($newImg);
 
