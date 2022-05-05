@@ -1,15 +1,1 @@
-[
-  {
-    "image_format": 1,
-    "image_info_array": [
-      {
-        "type": 1,
-        "size": 1455680,
-        "width": 2560,
-        "height": 1440,
-        "url": "https:\/\/knock-im-1300342587.cos.ap-shanghai.myqcloud.com\/ce5877266cf5f77494ad032580cad77f\/dc016e8c184ba1329a995e27ce333b2b.jpg",
-        "md5sum": "dc016e8c184ba1329a995e27ce333b2b"
-      }
-    ]
-  }
-]
+[{"image_format":1,"image_info_array":[{"type":1,"size":1557997,"width":2560,"height":1440,"url":"https:\/\/knock-im-1300342587.cos.ap-shanghai.myqcloud.com\/ce5877266cf5f77494ad032580cad77f\/26fa2bf12a56a34f23b2d9aebf4429ee.jpg","md5sum":"26fa2bf12a56a34f23b2d9aebf4429ee"}]}]
