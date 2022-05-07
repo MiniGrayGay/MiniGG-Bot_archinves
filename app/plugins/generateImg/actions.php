@@ -142,10 +142,7 @@ class generateImg_actions extends app
                     $ret = $this->appCommandErrorMsg("我有个(.*?)说");
                 }
             } else {
-                $ret = "该类型不允许哦，只能是\n";
-                $ret .= implode("、", $s_1) . "\n";
-                $ret .= implode("、", $s_2) . "\n";
-                $ret .= implode("、", $s_3);
+                $ret = "该类型不允许哦。";
             }
         } elseif (preg_match("/鲁迅说/", $msgContent, $msgMatch)) {
             $matchValue = $msgMatch[0];
@@ -325,7 +322,7 @@ class generateImg_actions extends app
         $imgName = md5($msgSender . "鲁迅说" . TIME_T) . ".jpg";
 
         if (!is_dir($newPath)) {
-            mkdir($newPath, 0777);
+            mkdir($newPath, 0644);
         }
 
         $newImg = $newPath . "/" . $imgName;

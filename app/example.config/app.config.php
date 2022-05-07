@@ -200,7 +200,7 @@ function appDebug($type, $log)
      */
 
     if (!is_dir($debugDir)) {
-        mkdir($debugDir, 0777);
+        mkdir($debugDir, 0755);
     }
 
     file_put_contents($debugDir . "/{$type}_" . FRAME_ID . "_" . TIME_T . ".txt", $log);

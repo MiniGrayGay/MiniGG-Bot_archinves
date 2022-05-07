@@ -644,10 +644,10 @@ class api
          *
          */
         if (!is_dir($imgDir)) {
-            mkdir($imgDir, 0777);
+            mkdir($imgDir, 0644);
 
             if ($inputPath != $outputPath) {
-                mkdir($newCache . $outputPath, 0777);
+                mkdir($newCache . $outputPath, 0644);
             }
         }
 
