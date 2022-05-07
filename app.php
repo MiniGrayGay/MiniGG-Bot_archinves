@@ -42,7 +42,7 @@ if (!$reqRet) {
 
         if ($res) {
             echo json_encode(array(
-                'version' => '1.0',
+                'version'  => '1.0',
                 'session_sttributes' => array(),
                 'response' => array(
                     'open_mic' => $appMic,
@@ -263,6 +263,18 @@ if (!$reqRet) {
             $nokNokMsgContent = substr($nokNokMsgContent, strpos($nokNokMsgContent, ")") + 1, strlen($nokNokMsgContent));
         }
 
+        /**
+         *
+         * 移除空格前缀
+         *
+         */
+        $nokNokMsgContent = str_replace(chr(160), " ", $nokNokMsgContent);
+        $nokNokMsgContentIndex = strpos(substr($nokNokMsgContent, 0, 6), " ");
+        appDebug("nokNokMsgContent", strlen($nokNokMsgContentIndex));
+        if ($nokNokMsgContentIndex > -1) {
+            $nokNokMsgContent = substr($nokNokMsgContent, $nokNokMsgContentIndex + 1, strlen($nokNokMsgContent));
+        }
+
         $nokNokMsgImg = $nokNokMsgBody['pic_info'][0]['image_info_array'][0]['url'] ?? NULL;
 
         /**
@@ -394,8 +406,8 @@ if (!$reqRet) {
          */
         if (strpos($QQChannelMsgContent, "<@!") > -1) {
             $QQChannelMsgContent = str_replace("<@!{$QQChannelMsgRobot}>" . chr(32), "", $QQChannelMsgContent);
-            $QQChannelMsgContent = str_replace("<@!{$QQChannelMsgRobot}>" . chr(194) . chr(160), "", $QQChannelMsgContent);
-            $QQChannelMsgContent = str_replace("<@!{$QQChannelMsgRobot}>" . chr(194) . chr(177), "", $QQChannelMsgContent);
+            $QQChannelMsgContent = str_replace("<@!{$QQChannelMsgRobot}>"  . chr(194) . chr(160), "", $QQChannelMsgContent);
+            $QQChannelMsgContent = str_replace("<@!{$QQChannelMsgRobot}>"  . chr(194) . chr(177), "", $QQChannelMsgContent);
             $QQChannelMsgContent = str_replace("<@!{$QQChannelMsgRobot}>", "", $QQChannelMsgContent);
         }
 
@@ -666,8 +678,8 @@ $allKeywords = $appManager->redisGet("plugins-allKeywords-" . FRAME_ID) ?? NULL;
  * 群、成员 全局状态
  *
  */
-$GLOBALS['sourceStatusInfo'] = (int)$appManager->redisGet("plugins-statusInfo-" . FRAME_ID . "-" . $GLOBALS['msgGc']);
-$GLOBALS['senderStatusInfo'] = (int)$appManager->redisGet("plugins-statusInfo-" . FRAME_ID . "-" . $msg['Sender']);
+$GLOBALS['sourceStatusInfo'] = (int) $appManager->redisGet("plugins-statusInfo-" . FRAME_ID . "-" . $GLOBALS['msgGc']);
+$GLOBALS['senderStatusInfo'] = (int) $appManager->redisGet("plugins-statusInfo-" . FRAME_ID . "-" . $msg['Sender']);
 
 if (!$allKeywords) {
     /**
@@ -740,7 +752,7 @@ if (!$allKeywords) {
              * 功能以及机器人统计
              *
              */
-            $pluginsAnalysis = (int)$appManager->redisGet("plugins-analysis-" . $matchValue);
+            $pluginsAnalysis = (int) $appManager->redisGet("plugins-analysis-" . $matchValue);
             $appManager->redisSet("plugins-analysis-" . $matchValue, $pluginsAnalysis + 1);
 
             $allRobot ? $pluginsRobot = $allRobot . "," . $nowRobot : $pluginsRobot = $nowRobot;
@@ -764,7 +776,7 @@ if (count($allPlugins) == 0) {
      * 匹配不到关键词自动退出
      *
      */
-    if (FRAME_ID == 70000 && BOT_TYPE == 1) {
+    if (FRAME_ID == 50000) {
         $appManager->appSend($msg['Robot'], $msg['MsgType'], $msg['Source'], $msg['Sender'], $appInfo['noKeywords']);
     }
 
