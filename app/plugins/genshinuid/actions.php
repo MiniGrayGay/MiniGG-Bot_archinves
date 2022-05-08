@@ -64,17 +64,21 @@ class genshinuid_actions extends app
                 //游戏uid
                 $res = $this->mihoyoapi($q, $url);
                 // $this->redisSet("uid-query", $res); // Debug UID Query Result;
-                $imgUrl = $this->igs($res, $msgContent);
+                $igs = $this->igs($res, $msgContent);
 
                 if (FRAME_ID == 10000) {
-                    $ret .= "[{$imgUrl}]";
+                    $ret .= "[{$igs['kk']}]";
                     $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg";
                 } elseif (FRAME_ID == 50000) {
-                    $ret .= "![]({$imgUrl})";
-                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "markdown_msg";
+                    if($igs['kk'] == "图片绘制失败"){
+                        $ret = "图片绘制失败";
+                    }else{
+                        $ret = json_encode($igs['kk']);
+                        $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "image_msg";
+                    }
                 } elseif (in_array(FRAME_ID, array(60000, 70000))) {
                     $ret = "UID：" . $msgContent;
-                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgImgUrl'] = $imgUrl;
+                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgImgUrl'] = $igs['qq'];
                     $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg,image_msg";
                 } else {
                     $ret = NULL;
@@ -123,13 +127,33 @@ class genshinuid_actions extends app
 
     function igs($res, $msgContent)
     {
-        $url = "https://yuanshen.minigg.cn/generator/user_info?style=egenshin&uid=" . $msgContent . "&nickname=%E6%B4%BE%E8%92%99%E7%9A%84%E7%99%BE%E5%AE%9D%E7%AE%B1";
+        //$url = "https://yuanshen.minigg.cn/generator/user_info?style=egenshin&uid=" . $msgContent . "&nickname=%E6%B4%BE%E8%92%99%E7%9A%84%E7%99%BE%E5%AE%9D%E7%AE%B1";
+        $url = "https://kk.igs.minigg.cn/?style=egenshin&uid=" . $msgContent;
         $response = $this->requestUrl($url, $res, array('Content-Type: application/json; charset=utf-8', 'Content-Length: ' . strlen($res)), "");
         $img = json_decode($response, true);
         if ($img['retcode'] == 0) {
-            $imgurl = "https://yuanshen.minigg.cn" . $img['url'];
+            $image_format = 1;
+            $image_info_array = array(
+                array(
+                    "type" => 1,
+                    "size" => $img['raw']['info']['size'],
+                    "width" => $img['raw']['info']['width'],
+                    "height" => $img['raw']['info']['height'],
+                    "url" => $img['raw']['info']['url'],
+                    "md5sum" => $img['raw']['info']['md5sum'],
+                )
+            );
+            $pic_info = array(
+                array(
+                    "image_format" => $image_format,
+                    "image_info_array" => $image_info_array
+                )
+            );
+            $imgurl['kk'] = $pic_info;
+            $imgurl['qq'] = "https://yuanshen.minigg.cn" . $img['url'];
         } else {
-            $imgurl = "图片绘制失败";
+            $imgurl['kk'] = "图片绘制失败";
+            $imgurl['qq'] = "图片绘制失败";
         }
         return $imgurl;
     }
