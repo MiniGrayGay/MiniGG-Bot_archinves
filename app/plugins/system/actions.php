@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * 这是一个示例插件
+ *
  * 需要注意的几个默认规则:
  * 1.本插件类的文件名必须是action
  * 2.插件类的名称必须是{插件名_actions}
@@ -67,18 +69,44 @@ class system_actions extends app
             } else {
                 $ret = $this->appCommandErrorMsg($matchValue);
             }
-        } elseif (preg_match("/^(功能|菜单|帮助)$/", $msgContent)) {
+        } elseif (preg_match("/订阅/", $msgContent, $msgMatch)) {
+            $matchValue = $msgMatch[0];
+            $msgContent = str_replace($matchValue, "", $msgContent);
+
+            $appInfo = APP_INFO;
+
+            if (!$msgContent || $msgContent == "列表") {
+                $ret = $this->getRssInfo($msgContent);
+            } else {
+                if (FRAME_ID == 70000) {
+                    $nowMsg = json_decode($msgOrigMsg);
+                    $nowData = $nowMsg->d;
+                    $roles = $nowData->member->roles;
+                } else {
+                    $roles = array();
+                }
+
+                /**
+                 *
+                 * QQ频道 2:管理员 4:频道主 5:子频道管理员
+                 *
+                 */
+                if (in_array($msgSender, CONFIG_ADMIN) || in_array(2, $roles) || in_array(4, $roles) || in_array(5, $roles)) {
+                    $ret = $this->updateRssInfo($msgContent);
+                } else {
+                    $ret = $appInfo['codeInfo'][1000];
+                }
+            }
+        } elseif (preg_match("/^(菜单)$/", $msgContent)) {
             $ret = "> 原神功能\n";
-            $ret .= "> 娱乐功能\n";
-            $ret .= "> 系统功能\n";
-            $ret .= "-----\n";
-            $ret .= "输入【分组】查看【技能详情】";
-        } elseif (preg_match("/^(娱乐功能|其他功能|原神功能|系统功能)$/", $msgContent, $msgMatch)) {
+        } elseif (preg_match("/^(功能|帮助|娱乐功能|其他功能|原神功能|系统功能)$/", $msgContent, $msgMatch)) {
             $matchValue = $msgMatch[0];
 
             $menuArr['其他功能'] = "工具";
             $menuArr['娱乐功能'] = "游戏";
             $menuArr['原神功能'] = "原神";
+            $menuArr['功能'] = "原神";
+            $menuArr['帮助'] = "原神";
             $menuArr['系统功能'] = "系统";
 
             $ret = $this->getPluginsInfo($menuArr[$matchValue]);
@@ -91,7 +119,7 @@ class system_actions extends app
                 $nowMsg = json_decode($msgOrigMsg);
                 $nowData = $nowMsg->data[0];
 
-                $ret = "机器人:{$msgRobot} 当前频道:{$msgSource} 子频道:" . $nowData->target_id . " 您的账号:{$msgSender} ts:" . $nowData->ts . " nonce:" . $nowData->nonce;
+                $ret = "机器人:{$msgRobot} 当前频道:{$msgSource} 子频道:" . $nowData->target_id  . " 您的账号:{$msgSender} ts:" . $nowData->ts . " nonce:" . $nowData->nonce;
             } elseif (FRAME_ID == 60000) {
                 $nowMsg = json_decode($msgOrigMsg);
 
@@ -100,6 +128,10 @@ class system_actions extends app
                 $nowMsg = json_decode($msgOrigMsg);
 
                 $ret = "机器人:{$msgRobot} 当前频道:{$msgSource} 子频道:" . $nowMsg->d->channel_id . " 您的账号:" . $msgSender;
+            } elseif (FRAME_ID == 80000) {
+                $nowMsg = json_decode($msgOrigMsg);
+
+                $ret = "机器人:{$msgRobot} 当前频道:{$msgSource} 子频道:" . $nowMsg->chatRoomId . " 您的账号:" . $msgSender;
             } else {
                 return;
             }
@@ -110,7 +142,7 @@ class system_actions extends app
 
             //获取系统状态
         } elseif ($msgContent == "频道数据") {
-            $ret = "主人，当前一共加了【114514】个，其中活跃频道【0】个~";
+            $ret = "主人，当前一共加了【21】个，其中活跃频道【15】个~";
         } elseif (in_array($msgSender, CONFIG_ADMIN)) {
             if (preg_match("/复述/", $msgContent, $msgMatch)) {
                 $matchValue = $msgMatch[0];
@@ -157,8 +189,14 @@ class system_actions extends app
                 $ret = $this->getBlockList();
 
                 //获取黑名单
-            } elseif ($msgContent == "清除缓存") {
-                $ret = $this->cleanSystemCache(APP_DIR_CACHE);
+            } elseif ($msgContent == "清除系统缓存") {
+                $this->cleanRedisCache("plugins-slip-*");
+
+                $ret = $this->cleanAppCache(APP_DIR_CACHE);
+
+                //清除系统缓存
+            } elseif ($msgContent == "清除网站缓存") {
+                $ret = $this->cleanWebCache();
 
                 //清除系统缓存
             }
@@ -172,11 +210,88 @@ class system_actions extends app
 
     /**
      *
+     * 获取订阅列表
+     *
+     */
+    function getRssInfo($msgContent)
+    {
+        $reqRet = $this->requestUrl(
+            APP_API_ROBOT . "?type=rss&frameId=" . FRAME_ID . "&aid=0",
+            "robotUin=" . $GLOBALS['msgRobot'] . "&msgSource=" . $GLOBALS['msgGc']
+        );
+        $resJson = json_decode($reqRet);
+        $resData = $resJson->data;
+        $resStatus = $resJson->status;
+        $resResult = $resData->result;
+        $resRssInfo = $resData->rssInfo;
+        $resArr = $resResult->rows ?? NULL;
+        $resArrNum = count($resArr);
+
+        if ($resStatus->code != 200) {
+            $ret = $resStatus->msg;
+
+            return $ret;
+        }
+
+        $rssKey = array_column($resRssInfo, "name");
+
+        $ret = "";
+
+        if (!$msgContent || $resArrNum == 0) {
+            $ret .= implode(",", $rssKey) . "\n";
+            $ret .= "-----\n";
+            $ret .= "快来订阅吧，订阅<项目名>，示例:订阅王者公告";
+
+            return $ret;
+        }
+
+        for ($rss_i = 0; $rss_i < $resArrNum; $rss_i++) {
+            $forList = $resArr[$rss_i];
+
+            $rssId = $forList->rssId;
+            $switch = $forList->switch;
+
+            $switch == 1 ? $switchText = "已订阅" : $switchText = "x";
+
+            $ret .= "{$rssId} {$switchText}\n";
+        }
+        $ret .= "-----\n";
+        $ret .= "更多订阅即将上线 ;D";
+
+        return $ret;
+    }
+
+    /**
+     *
+     * 更新订阅
+     *
+     */
+    function updateRssInfo($msgContent)
+    {
+        $reqRet = $this->requestUrl(
+            APP_API_ROBOT . "?type=rss&frameId=" . FRAME_ID . "&aid=1",
+            "robotUin=" . $GLOBALS['msgRobot'] . "&msgSource=" . $GLOBALS['msgGc'] . "&rssId=" . $msgContent
+        );
+        $resJson = json_decode($reqRet);
+        $resData = $resJson->data;
+        $resStatus = $resJson->status;
+
+        if ($resStatus->code != 200) {
+            $ret = $resStatus->msg;
+        } else {
+            $ret = $resData;
+        }
+
+        return $ret;
+    }
+
+    /**
+     *
      * 清除系统缓存
      *
      * @link https://www.cnblogs.com/itbsl/p/10430718.html
      */
-    function cleanSystemCache($aDir)
+    function cleanAppCache($aDir)
     {
         if (is_dir($aDir)) {
             $dirs = scandir($aDir);
@@ -189,7 +304,7 @@ class system_actions extends app
                     $sonDir = $aDir . '/' . $dir;
 
                     if (is_dir($sonDir)) {
-                        $this->cleanSystemCache($sonDir);
+                        $this->cleanAppCache($sonDir);
 
                         rmdir($sonDir);
                     } else {
@@ -197,12 +312,54 @@ class system_actions extends app
                     }
                 }
             }
+
             //rmdir($aDir);
         }
-        $ret = "已清除缓存:\n";
-        $ret .= json_encode($dirList);
+
+        $ret = "清除系统缓存:\n";
+        $ret .= implode(",", $dirList);
 
         return $ret;
+    }
+
+    /**
+     *
+     * 清除网站缓存
+     *
+     */
+    function cleanWebCache()
+    {
+        $keyList = array(
+            "*-getHero*",
+            "*-getAppInfo-*",
+            "*-getAppHome-*",
+            "*-getRanking-*"
+        );
+
+        for ($k_i = 0; $k_i < count($keyList); $k_i++) {
+            $forList = $keyList[$k_i];
+
+            $this->cleanRedisCache($forList);
+        }
+
+        $ret = "清除网站缓存:\n";
+        $ret .= implode(",", $keyList);
+
+        return $ret;
+    }
+
+    /**
+     *
+     * 清除 Redis 缓存
+     *
+     */
+    function cleanRedisCache($key)
+    {
+        $keyList = $this->redisKeys($key);
+
+        foreach ($keyList as $value) {
+            $this->redisDel($value);
+        }
     }
 
     /**
@@ -222,7 +379,7 @@ class system_actions extends app
          * 获取系统信息
          *
          */
-        $url_1 = "api_action=Status.Overview&api_agent_app=sysinfo&api_nodeid=1&api_nonce=" . $this->getRandomString(16) . "&api_timestamp=" . TIME_T;
+        $url_1 = "api_action=Status.Overview&api_agent_app=sysinfo&api_nodeid=1&api_nonce=" . $this->appGetRandomString(16) . "&api_timestamp=" . TIME_T;
         $sign_1 = hash_hmac("md5", $url_1, $key);
 
         $newUrl_1 = $host . "/?{$url_1}&api_sign=" . $sign_1;
@@ -241,7 +398,7 @@ class system_actions extends app
          * 获取网络信息
          *
          */
-        $url_2 = "api_action=Network.Info&api_agent_app=sysinfo&api_nodeid=1&api_nonce=" . $this->getRandomString(16) . "&api_timestamp=" . TIME_T;
+        $url_2 = "api_action=Network.Info&api_agent_app=sysinfo&api_nodeid=1&api_nonce=" . $this->appGetRandomString(16) . "&api_timestamp=" . TIME_T;
         $sign_2 = hash_hmac("md5", $url_2, $key);
 
         $newUrl_2 = $host . "/?{$url_2}&api_sign=" . $sign_2;
@@ -260,7 +417,7 @@ class system_actions extends app
         $ret .= "运行时间:" . (floor($UpTime->Total * 100 / 86400) / 100) . " 天\n";
         $ret .= "内存使用:" . str_replace("G", "", $MemInfo->MemUsed) . " / " . str_replace("G", "", $MemInfo->MemTotal) . " G\n";
         $ret .= "存储空间:" . str_replace("G", "", $Disks->Used) . " / " . str_replace("G", "", $Disks->Total) . " G\n";
-        $ret .= "当前负载:" . ($CPUUseRate * 100) . " % CPU使用率:" . $LoadAvg->Last1MinRate . " / " . $LoadAvg->Last5MinRate . " / " . $LoadAvg->Last15MinRate . " %\n";
+        $ret .= "当前负载:" . ($CPUUseRate * 100) .  " % CPU使用率:" . $LoadAvg->Last1MinRate . " / " . $LoadAvg->Last5MinRate . " / " . $LoadAvg->Last15MinRate . " %\n";
         $ret .= "网络接口:↑ " . $NetworkCards->TXSpeed . " | " . $NetworkCards->TX . " / ↓ " . $NetworkCards->RXSpeed . " | " . $NetworkCards->RX . "\n";
         $ret .= "操作系统:" . php_uname();
 
@@ -304,7 +461,7 @@ class system_actions extends app
 
             if ($pluginFrame != [] && !in_array(FRAME_ID, $pluginFrame)) continue;
 
-            $pluginCommand = $resJson->trigger->command;
+            $pluginCommand =  $resJson->trigger->command;
             foreach ($pluginCommand as $commandList) {
                 //$n = $commandIndex + 1;
 
@@ -324,7 +481,7 @@ class system_actions extends app
                 for ($keywordsArr_i = 0; $keywordsArr_i < count($keywordsArr); $keywordsArr_i++) {
                     $forList = $keywordsArr[$keywordsArr_i];
 
-                    $times = (int)$this->redisGet("plugins-analysis-" . $forList);
+                    $times = (int) $this->redisGet("plugins-analysis-" . $forList);
                     $allTimes = $allTimes + $times;
 
                     if ($demo) {

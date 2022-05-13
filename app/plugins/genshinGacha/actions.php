@@ -5,7 +5,7 @@
  * 1.本插件类的文件名必须是action
  * 2.插件类的名称必须是{插件名_actions}
  */
-class genshingacha_actions extends app
+class genshinGacha_actions extends app
 {
     function __construct(&$appManager)
     {
