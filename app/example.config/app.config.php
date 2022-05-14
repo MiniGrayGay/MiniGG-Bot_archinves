@@ -10,6 +10,7 @@ define('FRAME_ID', $_GET['frameId'] ?? 50000);
 define('FRAME_IP', $_GET['frameIp'] ?? "127.0.0.1");
 define('FRAME_GC', $_GET['frameGc'] ?? NULL);
 define('FRAME_KEY', $_POST['key'] ?? NULL);
+define('APP_API_MINIGG', "https://info.minigg.cn");
 define('APP_CD', 5);
 
 $appInfo['debug'] = false;

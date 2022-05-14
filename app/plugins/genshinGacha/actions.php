@@ -49,35 +49,6 @@ class genshinGacha_actions extends app
         $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = NULL;
         $msgContent = str_replace(" ", "", $msgContent);
         $msgContent = strtoupper($msgContent);
-        $gachaMember = "memberCode=" . $msgReceiver;
-        /**
-         * 抽卡接口地址
-         */
-        $gachaUrl = "https://gacha.minigg.cn/api/";
-        $gachaKey = "SmG5TNYyHCFGjnE4";
-        $ArmPrayOne = "ArmPray/PrayOne?";
-        //单抽武器祈愿池
-        $ArmPrayTen = "ArmPray/PrayTen?";
-        //十连武器祈愿池
-        $PermPrayOne = "PermPray/PrayOne?";
-        //单抽常驻祈愿池
-        $PermPrayTen = "PermPray/PrayTen?";
-        //十连常驻祈愿池
-        $RolePrayOne = "RolePray/PrayOne?";
-        //单抽角色祈愿池
-        $RolePrayTen = "RolePray/PrayTen?";
-        //十连角色祈愿池
-        $SetMemberAssign = "PrayInfo/SetMemberAssign?";
-        //设置武器定轨
-        $GetMemberAssign = "PrayInfo/GetMemberAssign?";
-        //获取武器定轨
-        $GetPondInfo = "PrayInfo/GetPondInfo?";
-        //获取卡池信息
-        $GetMemberPrayDetail = "PrayInfo/GetMemberPrayDetail?";
-        //获取成员抽卡分析
-        $GetLuckRanking = "PrayInfo/GetLuckRanking?";
-        //获取授权码内欧气排行
-        $authorzation = array("authorzation:" . $gachaKey);
 
         preg_match("/获取卡池|设置卡池|定轨|单抽|十连/", $msgContent, $msgMatch);
         $matchValue = $msgMatch[0];
