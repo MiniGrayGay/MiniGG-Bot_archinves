@@ -49,24 +49,24 @@ class genshinGacha_actions extends app
         $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = NULL;
         $msgContent = str_replace(" ", "", $msgContent);
         $msgContent = strtoupper($msgContent);
+        $gachaUrl = "https://gacha.microgg.cn";
 
         preg_match("/获取卡池|设置卡池|定轨|单抽|十连/", $msgContent, $msgMatch);
         $matchValue = $msgMatch[0];
         $msgContent = str_replace($matchValue, "", $msgContent);
-        $this->redisSet("msgContent", $msgContent);
+
+        if ($this->redisExists("MiniGG-Gacha-PondInfo")) {
+            $resJson = $this->redisGet("MiniGG-Gacha-PondInfo");
+        } else {
+            $reqUrl = "{$gachaUrl}?Type=GetPondInfo";
+            $resJson = json_decode($this->requestUrl($reqUrl, "", $authorzation), true);
+            $this->redisSet("MiniGG-Gacha-PondInfo", $resJson, 14400);
+        }
+        $rolecount = sizeof($resJson['data']['role']);
+
         switch ($matchValue) {
-            /**
-             * 信息图片
-             */
             case '获取卡池':
-                if ($this->redisExists("MiniGG-Gacha-PondInfo")) {
-                    $resJson = $this->redisGet("MiniGG-Gacha-PondInfo");
-                } else {
-                    $reqUrl = $gachaUrl . $GetPondInfo;
-                    $resJson = json_decode($this->requestUrl($reqUrl, "", $authorzation), true);
-                    $this->redisSet("MiniGG-Gacha-PondInfo", $resJson, 14400);
-                }
-                $rolecount = sizeof($resJson['data']['role']);
+
                 $ret = "【角色祈愿UP池】\n";
                 $ret .= "\n五星角色①：" . $resJson['data']['role']['0']['pondInfo']['star5UpList']['0']['goodsName'];
                 if ($rolecount == 2) {
@@ -80,135 +80,16 @@ class genshinGacha_actions extends app
                 $ret .= "\n\n四星武器：" . $resJson['data']['arm']['0']['pondInfo']['star4UpList']['0']['goodsName'] . "、" . $resJson['data']['arm']['0']['pondInfo']['star4UpList']['1']['goodsName'] . "、" . $resJson['data']['arm']['0']['pondInfo']['star4UpList']['2']['goodsName'];
                 break;
             case '设置卡池':
-                if ($this->redisExists("MiniGG-Gacha-PondInfo")) {
-                    $resJson = $this->redisGet("MiniGG-Gacha-PondInfo");
-                } else {
-                    $reqUrl = $gachaUrl . $GetPondInfo;
-                    $resJson = json_decode($this->requestUrl($reqUrl, "", $authorzation), true);
-                    $this->redisSet("MiniGG-Gacha-PondInfo", $resJson, 14400);
+                if (!$resJson['data']['role']['1']['pondInfo']['star5UpList']['0']['goodsName']) $resJson['data']['role']['1']['pondInfo']['star5UpList']['0']['goodsName'] = $resJson['data']['role']['0']['pondInfo']['star5UpList']['0']['goodsName'];
+
+                if (!in_array($msgContent, array($resJson['data']['role']['0']['pondInfo']['star5UpList']['0']['goodsName'], $resJson['data']['role']['1']['pondInfo']['star5UpList']['0']['goodsName'], $resJson['data']['arm']['0']['pondInfo']['star5UpList']['0']['goodsName'], $resJson['data']['arm']['0']['pondInfo']['star5UpList']['1']['goodsName'], "角色池1", "角色池2", "武器池1", "武器池2"))){
+                    $ret = "请输入卡池名字或卡池序号进行设置";
+                }else {
+                    $ret = ord($msgContent);
                 }
-                $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "json_msg";
-                $t = time();
-                $s = $t . "y8h8tqUAEDzyR6xZQKX6Ak";
-                $c = md5($s);
-                $ret = array(
-                    "template_id" => 23,
-                    "kv" => array(
-                        array(
-                            "key" => "#DESC#",
-                            "value" => "原神模拟抽卡-设置"
-                        ),
-                        array(
-                            "key" => "#PROMPT#",
-                            "value" => "原神模拟抽卡-设置"
-                        ),
-                        array(
-                            "key" => "#LIST#",
-                            "obj" => array(
-                                array(
-                                    "obj_kv" => array(
-                                        array(
-                                            "key" => "desc",
-                                            "value" => "原神模拟抽卡-设置"
-                                        )
-                                    )
-                                ), array(
-                                    "obj_kv" => array(
-                                        array(
-                                            "key" => "desc",
-                                            "value" => "请在30秒内点击对应的卡池名字进行设置"
-                                        )
-                                    )
-                                ), array(
-                                    "obj_kv" => array(
-                                        array(
-                                            "key" => "desc",
-                                            "value" => "角色-" . $resJson['data']['role']['0']['pondInfo']['star5UpList']['0']['goodsName']
-                                        ), array(
-                                            "key" => "link",
-                                            "value" => "https://bot.q.minigg.cn/app/plugins/genshingacha/set.php?userid=" . $msgReceiver . "&token=" . $c . "&pray=role&index=0"
-                                        )
-                                    )
-                                ), array(
-                                    "obj_kv" => array(
-                                        array(
-                                            "key" => "desc",
-                                            "value" => "角色-" . $resJson['data']['role']['1']['pondInfo']['star5UpList']['0']['goodsName']
-                                        ), array(
-                                            "key" => "link",
-                                            "value" => "https://bot.q.minigg.cn/app/plugins/genshingacha/set.php?userid=" . $msgReceiver . "&token=" . $c . "&pray=role&index=1"
-                                        )
-                                    )
-                                ), array(
-                                    "obj_kv" => array(
-                                        array(
-                                            "key" => "desc",
-                                            "value" => "武器-" . $resJson['data']['arm']['0']['pondInfo']['star5UpList']['0']['goodsName']
-                                        ), array(
-                                            "key" => "link",
-                                            "value" => "https://bot.q.minigg.cn/app/plugins/genshingacha/set.php?userid=" . $msgReceiver . "&token=" . $c . "&pray=arm&index=0"
-                                        )
-                                    )
-                                ), array(
-                                    "obj_kv" => array(
-                                        array(
-                                            "key" => "desc",
-                                            "value" => "武器-" . $resJson['data']['arm']['0']['pondInfo']['star5UpList']['1']['goodsName']
-                                        ), array(
-                                            "key" => "link",
-                                            "value" => "https://bot.q.minigg.cn/app/plugins/genshingacha/set.php?userid=" . $msgReceiver . "&token=" . $c . "&pray=arm&index=1"
-                                        )
-                                    )
-                                ), array(
-                                    "obj_kv" => array(
-                                        array(
-                                            "key" => "desc",
-                                            "value" => "常驻"
-                                        ), array(
-                                            "key" => "link",
-                                            "value" => "https://bot.q.minigg.cn/app/plugins/genshingacha/set.php?userid=" . $msgReceiver . "&token=" . $c . "&pray=perm&index=0"
-                                        )
-                                    )
-                                ),
-                            )
-                        )
-                    )
-                );
-                $ret = json_encode($ret);
                 break;
             case '十连':
-                if ($this->redisExists("MiniGG-Gacha-Set-" . $msgReceiver)) {
-                    $setJson = $this->redisGet("MiniGG-Gacha-Set-" . $msgReceiver);
-                    switch ($setJson['pray']) {
-                        case 'role':
-                            switch ($setJson['index']) {
-                                case '0':
-                                    $ret = "角色池1";
-                                    break;
-                                case '1':
-                                    $ret = "角色池2";
-                                    break;
-                            }
-                            break;
-                        case 'arm':
-                            switch ($setJson['index']) {
-                                case '0':
-                                    $ret = "武器池1";
-                                    break;
-                                case '1':
-                                    $ret = "武器池2";
-                                    break;
-                            }
-                            break;
-                        case 'perm':
-                            $ret = "常驻池";
-                            break;
-                    }
-                } else {
-                    $reqUrl = $gachaUrl . $GetPondInfo;
-                    $resJson = json_decode($this->requestUrl($reqUrl, "", $authorzation), true);
-                    $this->redisSet("MiniGG-Gacha-PondInfo", $resJson, 14400);
-                }
+                break;
         }
         /**
          *

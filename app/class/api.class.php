@@ -196,7 +196,7 @@ class api
         );
 
         $appInfo = APP_INFO;
-        $nokNokBot = $appInfo['nokNokBot'];
+        $botInfo = $appInfo['botInfo']['NOKNOK'];
 
         if ($extMsgType) {
             if ($extMsgType == "markdown_msg") {
@@ -221,7 +221,7 @@ class api
                 $oldMsg = substr($msgContent, strpos($msgContent, ")") + 1, strlen($msgContent));
 
                 $newExtData = array(
-                    "content" => "@" . $nokNokBot['name'] . " " . $oldMsg,
+                    "content" => "@" . $botInfo['name'] . " " . $oldMsg,
                     "uid_replied" => $msgSenderUid,
                     "msg_seq" => explode("_", $msgId)[2],
                     "msg_id" => "",
@@ -252,8 +252,6 @@ class api
         $postArr['l3_types'] = $l3_types;
         $postArr['body'] = $postBody;
         $postData = json_encode($postArr);
-
-        $botInfo = $appInfo['botInfo']['NOKNOK'];
 
         $reqRet = $this->requestUrl(
             $reqUrl,
@@ -438,12 +436,28 @@ class api
         $msgId = $msgData['id'] ?? NULL;
 
         if ($msgDirect) {
+            /**
+             *
+             * 私信
+             *
+             */
             $reqUrl = APP_ORIGIN . "/dms/{$msgGuildId}/messages";
         } else {
+            /**
+             *
+             * 频道
+             *
+             */
             $reqUrl = APP_ORIGIN . "/channels/{$msgChannelId}/messages";
         }
 
-        if ($extMsgType == "json_msg") {
+        if ($extMsgType == "markdown_msg") {
+            $newMsg = str_replace("\n", "\n\n", $newMsg);
+
+            $postArr['markdown'] = array(
+                "content" => $newMsg
+            );
+        } elseif ($extMsgType == "json_msg") {
             $postArr['ark'] = json_decode($newMsg, true);
         } elseif (strpos($extMsgType, "at_msg") > -1) {
             $msgAt = "<@!{$msgSender}>";
@@ -451,7 +465,9 @@ class api
             $msgAt = NUll;
         }
 
-        if ($extMsgType == "json_msg") {
+        if ($extMsgType == "markdown_msg") {
+            unset($postArr['content']);
+        } elseif ($extMsgType == "json_msg") {
             $postArr['content'] = NULL;
         } else {
             $postArr['content'] = $msgAt . $newMsg;
@@ -630,6 +646,8 @@ class api
                 $ret .= "错误代码:{$resCode}\n";
                 $ret .= "错误信息:" . $resMessage;
 
+                $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg";
+
                 $this->requestApiByQQChannel_2($ret, $msgExtArr);
 
                 exit(1);
@@ -706,7 +724,7 @@ class api
      * @param string $imgName 图片名字
      * @return string 返回完整的缓存链接
      */
-    public function appGetCacheImg($imgName)
+    public function appGetImgCache($imgName)
     {
         if (strpos(APP_ORIGIN, ":") > -1 && !in_array(FRAME_ID, array(50000, 70000))) {
             $http = "http";
@@ -726,11 +744,11 @@ class api
      * @param string $data 需要检测的内容
      * @param string $checkType MsgSecCheck 或 MediaCheckAsync
      * @param int $dataType $checkTyp 为 MediaCheckAsync 时，1:音频 2:图片
-     * @return bool true:存在违规内容 false:正常
+     * @return bool true:可能存在违规内容 false:正常
      *
      * @link https://q.qq.com/wiki/develop/miniprogram/server/open_port/port_safe.html
      */
-    public function appMsgCheckAsync($data, $checkType = "MsgSecCheck", $dataType = 2)
+    public function appMsgCheckData($data, $checkType = "MsgSecCheck", $dataType = 2)
     {
         $reqRet = $this->requestUrl(
             APP_API_ROBOT . "?type=system&aid=0&bid={$checkType}&cid=" . $dataType,
@@ -741,6 +759,74 @@ class api
         $resCode = $resStatus->code;
 
         return $resCode == 0 ? false : true;
+    }
+
+    /**
+     *
+     * desription 判断是否gif动画
+     *
+     * @param string $imgPath 图片路径
+     * @return bool true:是 false:否
+     */
+    public function appMsgCheckGif($imgPath)
+    {
+        $fp = fopen($imgPath, 'rb');
+        $image_head = fread($fp, 1024);
+        fclose($fp);
+
+        return preg_match("/" . chr(0x21) . chr(0xff) . chr(0x0b) . 'NETSCAPE2.0' . "/", $image_head) ? false : true;
+    }
+
+    /**
+     *
+     * desription 压缩图片
+     *
+     * @param string $imgPath 图片路径
+     * @param string $imgDist 压缩后保存路径
+     *
+     * @link http://www.yuqingqi.com/phpjiaocheng/994.html
+     */
+    public function appMsgImgNewSize($imgPath, $imgDist)
+    {
+        list($width, $height, $type) = getimagesize($imgPath);
+        $newWidth = $width;
+        $newHeight = $height;
+
+        switch ($type) {
+            case 1:
+                $giftype = $this->appMsgCheckGif($imgPath);
+
+                if ($giftype) {
+                    header('Content-Type:image/gif');
+                    $image_wp = imagecreatetruecolor($newWidth, $newHeight);
+                    $image = imagecreatefromgif($imgPath);
+                    imagecopyresampled($image_wp, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+                    imagejpeg($image_wp, $imgDist, 75);
+                    imagedestroy($image_wp);
+                }
+
+                break;
+
+            case 2:
+                header('Content-Type:image/jpeg');
+                $image_wp = imagecreatetruecolor($newWidth, $newHeight);
+                $image = imagecreatefromjpeg($imgPath);
+                imagecopyresampled($image_wp, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+                imagejpeg($image_wp, $imgDist, 75);
+                imagedestroy($image_wp);
+
+                break;
+
+            case 3:
+                header('Content-Type:image/png');
+                $image_wp = imagecreatetruecolor($newWidth, $newHeight);
+                $image = imagecreatefrompng($imgPath);
+                imagecopyresampled($image_wp, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+                imagejpeg($image_wp, $imgDist, 75);
+                imagedestroy($image_wp);
+
+                break;
+        }
     }
 
     /**
@@ -788,7 +874,7 @@ class api
         if ($GLOBALS['msgExt'][FRAME_ID]['msgImgNewSize'] == false) {
             rename($imgPath, $newImgPath);
         } else {
-            $this->imgNewSize($imgPath, $newImgPath);
+            $this->appMsgImgNewSize($imgPath, $newImgPath);
             //压缩图片
 
             unlink($imgPath);
@@ -810,73 +896,6 @@ class api
             "name" => $newImgName,
             "url" => $ret
         );
-    }
-
-    /**
-     *
-     * desription 压缩图片
-     *
-     * @param string $imgSrc 图片路径
-     * @param string $imgDist 压缩后保存路径
-     *
-     * @link http://www.yuqingqi.com/phpjiaocheng/994.html
-     */
-    public function imgNewSize($imgSrc, $imgDist)
-    {
-        list($width, $height, $type) = getimagesize($imgSrc);
-        $newWidth = $width;
-        $newHeight = $height;
-
-        switch ($type) {
-            case 1:
-                $giftype = $this->imgCheckGif($imgSrc);
-
-                if ($giftype) {
-                    header('Content-Type:image/gif');
-                    $image_wp = imagecreatetruecolor($newWidth, $newHeight);
-                    $image = imagecreatefromgif($imgSrc);
-                    imagecopyresampled($image_wp, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
-                    imagejpeg($image_wp, $imgDist, 75);
-                    imagedestroy($image_wp);
-                }
-
-                break;
-
-            case 2:
-                header('Content-Type:image/jpeg');
-                $image_wp = imagecreatetruecolor($newWidth, $newHeight);
-                $image = imagecreatefromjpeg($imgSrc);
-                imagecopyresampled($image_wp, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
-                imagejpeg($image_wp, $imgDist, 75);
-                imagedestroy($image_wp);
-
-                break;
-
-            case 3:
-                header('Content-Type:image/png');
-                $image_wp = imagecreatetruecolor($newWidth, $newHeight);
-                $image = imagecreatefrompng($imgSrc);
-                imagecopyresampled($image_wp, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
-                imagejpeg($image_wp, $imgDist, 75);
-                imagedestroy($image_wp);
-
-                break;
-        }
-    }
-
-    /**
-     *
-     * desription 判断是否gif动画
-     *
-     * @param string $image_file 图片路径
-     * @return bool true:是 false:否
-     */
-    public function imgCheckGif($image_file)
-    {
-        $fp = fopen($image_file, 'rb');
-        $image_head = fread($fp, 1024);
-        fclose($fp);
-        return preg_match("/" . chr(0x21) . chr(0xff) . chr(0x0b) . 'NETSCAPE2.0' . "/", $image_head) ? false : true;
     }
 
     /**
@@ -970,7 +989,6 @@ class api
         }
     }
 
-
     /**
      *
      * 网页访问，301、302 返回 User-Agent
@@ -980,9 +998,9 @@ class api
     {
         $ch = curl_init();
 
-        $urlArr = explode(" ", $url);
+        //$urlArr = explode(" ", $url);
 
-        curl_setopt($ch, CURLOPT_URL, $urlArr[1] ?? $url);
+        curl_setopt($ch, CURLOPT_URL, $url); //$urlArr[1] ??
 
         if ($headers) {
             curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -992,17 +1010,21 @@ class api
         if ($postData) {
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
-        } elseif (count($urlArr) > 1) {
-            $reqType = $urlArr[0];
-
-            if ($reqType == "PUT") {
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-            } elseif ($reqType == "PATCH") {
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH");
-            } elseif ($reqType == "DELETE") {
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
-            }
         }
+
+        /*
+            elseif (count($urlArr) > 1) {
+                $reqType = $urlArr[0];
+
+                if ($reqType == "PUT") {
+                    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+                } elseif ($reqType == "PATCH") {
+                    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH");
+                } elseif ($reqType == "DELETE") {
+                    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+                }
+            }
+        */
 
         if ($cookies) {
             curl_setopt($ch, CURLOPT_COOKIE, $cookies);

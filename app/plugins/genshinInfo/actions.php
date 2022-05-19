@@ -52,7 +52,7 @@ class genshinInfo_actions extends app
         $msgContent = str_replace(" ", "", $msgContent);
         $msgContent = strtoupper($msgContent);
 
-        if (preg_match("/信息|攻略|角色|武器|命之座|命座|天赋|圣遗物|食物|原魔|料理|怪物|副本/", $msgContent, $msgMatch)) {
+        if (preg_match("/信息|攻略|立绘|角色|武器|命之座|命座|天赋|圣遗物|食物|原魔|料理|怪物|副本/", $msgContent, $msgMatch)) {
             $matchValue = $msgMatch[0];
             $msgContent = str_replace($matchValue, "", $msgContent);
 
@@ -120,6 +120,27 @@ class genshinInfo_actions extends app
 
                 break;
 
+            case '立绘':
+                $aliasUrl = "https://tools.genshin.minigg.cn/charMap?query=" . urlencode($msgContent);
+                $aliasReq = $this->requestUrl($aliasUrl);
+                $aliasRet = json_decode($aliasReq, true);
+                $msgContent = $aliasRet['result'];
+                $imgUrl = "https://img.genshin.minigg.cn/gacha/" . urlencode($msgContent) . ".jpg";
+                if (FRAME_ID == 10000) {
+                    $ret .= "[{$imgUrl}]";
+
+                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg";
+                } elseif (FRAME_ID == 50000) {
+                    $ret = file_get_contents(__DIR__ . "/立绘/" . $msgContent . ".json");
+                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "image_msg";
+                } elseif (in_array(FRAME_ID, array(60000, 70000))) {
+                    $ret = "";
+                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgImgUrl'] = $imgUrl;
+                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg,image_msg";
+                } else {
+                    $ret = NULL;
+                }
+                break;
             case '角色':
                 /**
                  *

@@ -2,14 +2,16 @@
 
 require_once("main.php");
 
+$reqRet = file_get_contents("php://input");
+
 /**
  *
  * 信息为空直接跳到黄色网站 ;D
  *
  */
-$reqRet = file_get_contents("php://input");
 if (!$reqRet) {
     header("Location: https://www.minigg.cn");
+
     exit(1);
 } else {
     $appInfo = APP_INFO;
@@ -272,10 +274,10 @@ if (FRAME_ID == 2500) {
 
     /**
      *
-     * 移除空格前缀
+     * 移除首尾空格
      *
      */
-    $nokNokMsgContent = str_replace(chr(160), " ", $nokNokMsgContent);
+    $nokNokMsgContent = rtrim($nokNokMsgContent);
     $nokNokMsgContentIndex = strpos(substr($nokNokMsgContent, 0, 6), " ");
     if ($nokNokMsgContentIndex > -1) {
         $nokNokMsgContent = substr($nokNokMsgContent, $nokNokMsgContentIndex + 1, strlen($nokNokMsgContent));
@@ -750,7 +752,7 @@ if (!$allKeywords) {
 
         /**
          *
-         * 正则相关的的插件比较特殊，需要手动引用
+         * 触发指定插件
          *
          */
         if (preg_match("/\{|\[KAM\:image|\[NOKNOK\:image|\[CQ\:image|\[QC\:image/", $forList)) {
