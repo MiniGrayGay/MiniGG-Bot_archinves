@@ -353,28 +353,10 @@ class genshinInfo_actions extends app
                 break;
 
             case '圣遗物':
-                /**
-                 *
-                 * 圣遗物查询
-                 *
-                 */
+                //新版图片圣遗物
                 $resArray = $this->requestUrl($miniGGInfo['Artifacts'] . urlencode($msgContent));
                 $resJson = json_decode($resArray);
-
-                if (isset($resJson->errcode)) {
-                    $ret = $resJson->errmsg;
-                } elseif (isset($resJson->name)) {
-                    $ret = "【名字】：" . $resJson->name . "\n";
-                    $ret .= "【稀有度】：" . implode("、", $resJson->rarity) . "\n";
-                    $epc = "2pc";
-                    $spc = "4pc";
-                    $ret .= "【2件套效果】：" . $resJson->$epc . "\n";
-                    $ret .= "【4件套效果】：" . $resJson->$spc;
-                } else {
-                    $ret = implode("、", $resJson);
-                }
-
-                break;
+                $ret = file_get_contents("/圣遗物/{$resJson->name}.json");
         }
 
         return $ret;
