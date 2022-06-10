@@ -1,5 +1,7 @@
 <?php
 
+use Overtrue\Pinyin\Pinyin;
+
 /**
  *
  * pluginManager Class
@@ -43,6 +45,11 @@ class app extends api
         $this->redis = new redis();
         $this->redis->connect("127.0.0.1", 6379);
         if ($redisConfig) $this->redis->auth($redisConfig);
+    }
+
+    public function pinyin()
+    {
+        $this->pinyin = new Pinyin();
     }
 
     /**
