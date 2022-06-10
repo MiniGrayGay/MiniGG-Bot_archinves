@@ -359,7 +359,8 @@ class genshinInfo_actions extends app
                 //新版图片圣遗物
                 $resArray = $this->requestUrl($miniGGInfo['Artifacts'] . urlencode($msgContent));
                 $resJson = json_decode($resArray);
-                $ret = file_get_contents("/圣遗物/{$resJson->name}.json");
+                $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "image_msg";
+                $ret = file_get_contents("{$nowPath}/圣遗物/{$resJson->name}.json");
         }
 
         return $ret;
