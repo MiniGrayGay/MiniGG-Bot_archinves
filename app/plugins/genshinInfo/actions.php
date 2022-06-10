@@ -15,6 +15,7 @@ class genshinInfo_actions extends app
         //第三个是插件所执行的方法
         $appManager->register('plugin', $this, 'EventFun');
         $this->linkRedis();
+        $this->pinyin();
     }
 
     //解析函数的参数是appManager的引用
@@ -288,6 +289,8 @@ class genshinInfo_actions extends app
                 break;
 
             case '原魔':
+                $ret = $this->pinyin->convert($msgContent);
+                break;
                 /**
                  *
                  * 原魔查询

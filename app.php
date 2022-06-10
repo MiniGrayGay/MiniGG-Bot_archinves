@@ -1,7 +1,7 @@
 <?php
 
 require_once("main.php");
-
+require_once("vendor/autoload.php");
 $reqRet = file_get_contents("php://input");
 
 /**
