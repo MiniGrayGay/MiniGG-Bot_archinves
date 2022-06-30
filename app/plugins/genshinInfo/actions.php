@@ -15,7 +15,7 @@ class genshinInfo_actions extends app
         //第三个是插件所执行的方法
         $appManager->register('plugin', $this, 'EventFun');
         $this->linkRedis();
-        $this->pinyin();
+        $this->pinyinConvert();
     }
 
     //解析函数的参数是appManager的引用
@@ -106,14 +106,15 @@ class genshinInfo_actions extends app
                  * 攻略图片
                  *
                  */
-
+                $this->Pinyin->permalink($msgContent, "_");
                 $imgUrl = "https://img.genshin.minigg.cn/guide/" . urlencode($msgContent) . ".jpg";
                 if (FRAME_ID == 10000) {
                     $ret .= "[{$imgUrl}]";
                 } elseif (FRAME_ID == 50000) {
                     $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "image_msg";
 
-                    $ret = file_get_contents($nowPath . "/攻略/{$msgContent}.json");
+                    $gong_lue = $this->Pinyin->permalink($msgContent, "_");
+                    $ret = file_get_contents($nowPath . "/gong_lue/{$gong_lue}.json");
                 } elseif (in_array(FRAME_ID, array(60000, 70000))) {
                     $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgImgUrl'] = $imgUrl;
                     $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg,image_msg";
@@ -289,7 +290,7 @@ class genshinInfo_actions extends app
                 break;
 
             case '原魔':
-                $ret = $this->pinyin->convert($msgContent);
+                $ret = $this->Pinyin->convert($msgContent);
                 break;
                 /**
                  *
