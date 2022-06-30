@@ -47,9 +47,9 @@ class app extends api
         if ($redisConfig) $this->redis->auth($redisConfig);
     }
 
-    public function pinyin()
+    public function pinyinConvert()
     {
-        $this->pinyin = new Pinyin();
+        $this->Pinyin = new Pinyin();
     }
 
     /**
