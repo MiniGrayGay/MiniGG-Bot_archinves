@@ -211,11 +211,11 @@ if (FRAME_ID == 2500) {
             "msg" => "ok"
         ));
 
-        $obSize = ob_get_length();
-        header("Content-Length: " . $obSize);
+        $obLength = ob_get_length();
+        header("Content-Length: " . $obLength);
 
         ob_end_flush();
-        if ($obSize) {
+        if ($obLength) {
             ob_flush();
         }
         //输出刷新页面
@@ -247,7 +247,7 @@ if (FRAME_ID == 2500) {
     $nokNokMsgBody = $nokNokMsgData['body'];
 
     $l2_type = $nokNokMsgData['l2_type'];
-    $l3_types = $nokNokMsgData['l3_types'][0];
+    $l3_types = $nokNokMsgData['l3_types'][0] ?? NULL;
 
     if (!in_array($l2_type, array(1, 3)) || ($l3_type != array() && !in_array($l3_type, array(3)))) exit(1);
     //l2_type 1:文本消息 3:图片消息
