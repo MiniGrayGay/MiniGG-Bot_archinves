@@ -6,10 +6,6 @@ class api
      *
      * XIAOAI:返回请求API的结果
      *
-     * @param string $newMsg 回复内容
-     * @param array $msgExtArr 拓展字段，详见 send.php 示例
-     *
-     * @link https://developers.xiaoai.mi.com
      */
     public function requestApiByXIAOAI($newMsg, $msgExtArr = array())
     {
@@ -23,7 +19,7 @@ class api
         $extMsgType = $newData['msgType'];
 
         $reqRet = json_encode(array(
-            'version'  => '1.0',
+            'version' => '1.0',
             'session_sttributes' => array(),
             'response' => array(
                 'open_mic' => true,
@@ -44,9 +40,6 @@ class api
      *
      * MPQ:返回请求API的结果
      *
-     * @param string $newMsg 回复内容
-     *
-     * @link https://www.yuque.com/mpq/docs
      */
     public function requestApiByMPQ($newMsg)
     {
@@ -86,10 +79,6 @@ class api
      *
      * 可爱猫:未死鲤鱼:返回请求API的结果
      *
-     * @param string $newMsg 回复内容
-     * @param array $msgExtArr 拓展字段
-     *
-     * @link http://www.keaimao.com.cn/forum.php
      */
     public function requestApiByWSLY($newMsg, $msgExtArr = array())
     {
@@ -164,15 +153,10 @@ class api
      *
      * NOKNOK:返回请求API的结果
      *
-     * @param string $newMsg 回复内容
-     * @param array $msgExtArr 拓展字段
-     *
-     * @link https://bot-docs.github.io/pages/events/1_callback.html
      */
     public function requestApiByNOKNOK($newMsg, $msgExtArr = array())
     {
         $reqUrl = APP_ORIGIN . "/api/v1/SendGroupMessage";
-        //$reportUrl = APP_ORIGIN . "/api/v1/CommReport";
 
         if ($msgExtArr == array()) {
             $newData = $GLOBALS['msgExt'][$GLOBALS['msgGc']];
@@ -196,23 +180,20 @@ class api
         );
 
         $appInfo = APP_INFO;
-        $botInfo = $appInfo['botInfo']['NOKNOK'];
+        $nokNokBot = $appInfo['nokNokBot'];
 
         if ($extMsgType) {
             if ($extMsgType == "markdown_msg") {
                 $l2_type = 8;
                 $l3_types = array();
-
-                $newMsg = str_replace("\n", "\n\n", $newMsg);
             } elseif ($extMsgType == "image_msg") {
+                $jsonDecode = json_decode($newMsg);
+                $postBody = array(
+                    "pic_info" => $jsonDecode
+                );
                 $l2_type = 3;
                 $l3_types = array();
 
-                $postData = json_decode($newMsg);
-
-                $postBody = array(
-                    "pic_info" => $postData
-                );
             } elseif ($extMsgType == "reply_msg") {
                 $l2_type = 1;
                 $l3_types = array(1);
@@ -221,7 +202,7 @@ class api
                 $oldMsg = substr($msgContent, strpos($msgContent, ")") + 1, strlen($msgContent));
 
                 $newExtData = array(
-                    "content" => "@" . $botInfo['name'] . " " . $oldMsg,
+                    "content" => "@" . $nokNokBot['name'] . " " . $oldMsg,
                     "uid_replied" => $msgSenderUid,
                     "msg_seq" => explode("_", $msgId)[2],
                     "msg_id" => "",
@@ -252,6 +233,10 @@ class api
         $postArr['l3_types'] = $l3_types;
         $postArr['body'] = $postBody;
         $postData = json_encode($postArr);
+        $this->redisSet("post_Noknok", $postData);
+
+
+        $botInfo = $appInfo['botInfo']['NOKNOK'];
 
         $reqRet = $this->requestUrl(
             $reqUrl,
@@ -262,32 +247,7 @@ class api
             )
         );
 
-        /*
-            $reportArr = array(
-                "ts" => $msgTs,
-                "nonce" => $msgNonce,
-                "data_list" => array(
-                    "oper_id" => $botInfo['oper_id'],
-                    "gid" => $msgGuildId,
-                    "target_id" => $msgChannelId,
-                    "to_uid" => $msgSenderUid,
-                    "scope" => "channel"
-                )
-            );
-
-            $reportData = json_encode($reportArr);
-
-            $reportRet = $this->requestUrl(
-                $reportUrl,
-                $reportData,
-                array(
-                    "Content-Type: application/json",
-                    "Authorization: " . $botInfo['accessToken']
-                )
-            );
-        */
-
-        if (APP_INFO['debug']) appDebug("output", $postData . "\n\n" .  $reqRet);
+        if (APP_INFO['debug']) appDebug("output", $postData . "\n\n" . $reqRet);
 
         return $reqRet;
     }
@@ -296,14 +256,16 @@ class api
      *
      * QQ频道:返回请求API的结果
      *
-     * @param string $newMsg 回复内容
-     * @param array $msgExtArr 拓展字段
-     *
-     * @link https://github.com/Mrs4s/go-cqhttp
      */
     public function requestApiByQQChannel_1($newMsg, $msgExtArr = array())
     {
-        $reqUrl = APP_ORIGIN . "/send_guild_channel_msg";
+        if ($msgOrigMsg['message_type'] == "guild") {
+            $reqUrl = APP_ORIGIN . "/send_guild_channel_msg";
+            $isGuild = true;
+        } else {
+            $reqUrl = APP_ORIGIN . "/send_msg";
+            $isGuild = false;
+        }
 
         if ($msgExtArr == array()) {
             $newData = $GLOBALS['msgExt'][$GLOBALS['msgGc']];
@@ -412,10 +374,6 @@ class api
      *
      * QQ频道:返回请求API的结果
      *
-     * @param string $newMsg 回复内容
-     * @param array $msgExtArr 拓展字段
-     *
-     * @link https://q.qq.com
      */
     public function requestApiByQQChannel_2($newMsg, $msgExtArr = array())
     {
@@ -436,38 +394,20 @@ class api
         $msgId = $msgData['id'] ?? NULL;
 
         if ($msgDirect) {
-            /**
-             *
-             * 私信
-             *
-             */
             $reqUrl = APP_ORIGIN . "/dms/{$msgGuildId}/messages";
         } else {
-            /**
-             *
-             * 频道
-             *
-             */
             $reqUrl = APP_ORIGIN . "/channels/{$msgChannelId}/messages";
         }
 
-        if ($extMsgType == "markdown_msg") {
-            $newMsg = str_replace("\n", "\n\n", $newMsg);
-
-            $postArr['markdown'] = array(
-                "content" => $newMsg
-            );
-        } elseif ($extMsgType == "json_msg") {
+        if ($extMsgType == "json_msg") {
             $postArr['ark'] = json_decode($newMsg, true);
         } elseif (strpos($extMsgType, "at_msg") > -1) {
             $msgAt = "<@!{$msgSender}>";
         } else {
-            $msgAt = NUll;
+            $msgAt = NULL;
         }
 
-        if ($extMsgType == "markdown_msg") {
-            unset($postArr['content']);
-        } elseif ($extMsgType == "json_msg") {
+        if ($extMsgType == "json_msg") {
             $postArr['content'] = NULL;
         } else {
             $postArr['content'] = $msgAt . $newMsg;
@@ -481,21 +421,39 @@ class api
             $postArr['image'] = $extMsgImgUrl;
         }
 
-        $postData = json_encode($postArr);
 
         $appInfo = APP_INFO;
         $botInfo = $appInfo['botInfo']['QQChannel'][1];
 
+        $postData = json_encode($postArr);
+
+        $postHeader = array(
+            "Content-Type: application/json",
+            "Authorization: Bot " . $botInfo['id'] . "." . $botInfo['accessToken']
+        );
+
+        if (strpos($extMsgType, "image_file") > -1) {
+
+            $extMsgImgFile = $newData['msgImgFile'] ?? NULL;
+
+            $postData = array(
+                "msg_id" => $msgId,
+                "file_image" => $extMsgImgFile
+            );
+
+            $postHeader = array(
+                "Content-Type: multipart/form-data",
+                "Authorization: Bot " . $botInfo['id'] . "." . $botInfo['accessToken']
+            );
+        }
         $reqRet = $this->requestUrl(
             $reqUrl,
             $postData,
-            array(
-                "Content-Type: application/json",
-                "Authorization: Bot " . $botInfo['id'] . "." . $botInfo['accessToken']
-            )
+            $postHeader
         );
 
-        if (APP_INFO['debug']) appDebug("output", $postData . "\n\n" .  $reqRet);
+
+        if (APP_INFO['debug']) appDebug("output", $postData . "\n\n" . $reqRet);
 
         return $reqRet;
     }
@@ -504,8 +462,6 @@ class api
      *
      * X星球:返回请求API的结果
      *
-     * @param string $newMsg 回复内容
-     * @param array $msgExtArr 拓展字段
      */
     public function requestApiByXXQ($newMsg, $msgExtArr = array())
     {
@@ -543,7 +499,7 @@ class api
             $postData
         );
 
-        if (APP_INFO['debug']) appDebug("output", $postData . "\n\n" .  $reqRet);
+        if (APP_INFO['debug']) appDebug("output", $postData . "\n\n" . $reqRet);
 
         return $reqRet;
     }
@@ -551,18 +507,221 @@ class api
     /**
      *
      * 处理被添加好友/进群请求
+     * 0  忽略
+     * 10 同意
+     * 20 拒绝
+     * 30 单项同意
      *
-     * @param string $code 0:忽略 10:同意 20:拒绝 30:单项同意
-     * @param string $msg 理由
      */
-    public function appHandleByMPQ($code, $msg = "")
+    public function appHandle($ret, $msg = "")
     {
         $ret = json_encode(array(
-            "Ret" => (string) $code,
+            "Ret" => (string)$ret,
             "Msg" => !$msg ? "" : $msg
         ), JSON_UNESCAPED_UNICODE);
 
         echo $ret;
+    }
+
+    /**
+     *
+     * 错误命令行demo
+     *
+     */
+    public function appCommandErrorMsg($keywords)
+    {
+        $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg";
+
+        $keywordsInfo = $this->redisGet("plugins-keywordsInfo-" . urldecode($keywords)) ?? "未知错误";
+
+        return "参数有误，" . $keywordsInfo;
+    }
+
+    /**
+     *
+     * 随机字符串
+     *
+     */
+    public function getRandomString($len, $chars = NULL)
+    {
+        if (is_null($chars)) {
+            $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        }
+        mt_srand(10000000 * (float)microtime());
+        for ($i = 0, $str = '', $lc = strlen($chars) - 1; $i < $len; $i++) {
+            $str .= $chars[mt_rand(0, $lc)];
+        }
+        return $str;
+    }
+
+    /**
+     *
+     * 缩短链接
+     *
+     */
+    public function appGetShortUrl($longUrl)
+    {
+        $reqRet = $this->requestUrl(
+            APP_API_APP . "?type=getShortUrl",
+            "url=" . urlencode($longUrl)
+        );
+        $resJson = json_decode($reqRet);
+        $resData = $resJson->data;
+        $ret = $resData->url ?? "缩短失败";
+
+        return $ret;
+    }
+
+    /**
+     *
+     * 获取缓存图片
+     *
+     */
+    public function appGetCacheImg($imgName)
+    {
+        //if (strpos(APP_ORIGIN, ":") > -1 && !in_array(FRAME_ID, array(50000, 70000))) {
+        //$http = "http";
+        //} else {
+        $http = "https";
+        //}
+
+        $ret = $http . "://" . $_SERVER['SERVER_NAME'] . "/{$imgName}?t=" . TIME_T;
+
+        return $ret;
+    }
+
+    /**
+     *
+     * 将图片压缩缓存到服务器本地 app/cache/:inputPath
+     *
+     * @param keywords 文件夹
+     * @param inputPath 输入路径文件夹名
+     * @param outputPath 输出路径文件夹名，和输入不同时将会替换
+     * @param imgUrl 需要下载的图片链接
+     * @param imgData base64的图片数据
+     */
+    public function appDownloadImg($msgSender, $keywords, $inputPath, $outputPath, $imgUrl = NULL, $imgData = NULL)
+    {
+        $newCache = APP_DIR_CACHE;
+        $imgDir = $newCache . $inputPath;
+
+        $imgName = md5($msgSender . $keywords . TIME_T) . "_temp.jpg";
+        $imgPath = $imgDir . "/" . $imgName;
+
+        $newImgName = str_replace("_temp", "", $imgName);
+        $newImgPath = str_replace("_temp", "", $imgPath);
+
+        /**
+         *
+         * 不存在自动创建文件夹
+         *
+         */
+        if (!is_dir($imgDir)) {
+            mkdir($imgDir, 0777);
+
+            if ($inputPath != $outputPath) {
+                mkdir($newCache . $outputPath, 0777);
+            }
+        }
+
+        file_put_contents($imgPath, $imgData ? $imgData : $this->requestUrl($imgUrl));
+
+        /**
+         *
+         * 不压缩的只需重命名统一格式即可
+         *
+         */
+        if ($GLOBALS['msgExt'][FRAME_ID]['msgImgNewSize'] == false) {
+            rename($imgPath, $newImgPath);
+        } else {
+            $this->imgNewSize($imgPath, $newImgPath);
+            //压缩图片
+
+            unlink($imgPath);
+            //删除原件
+        }
+
+        $newImgPath = str_replace($inputPath . "/", $outputPath . "/", $newImgPath);
+        //输入替换成输出
+
+        if (strpos(APP_ORIGIN, ":") > -1 && !in_array(FRAME_ID, array(50000, 70000))) {
+            $http = "http";
+        } else {
+            $http = "https";
+        }
+
+        $ret = $http . "://" . $_SERVER['SERVER_NAME'] . "/{$newImgPath}?t=" . TIME_T;
+
+        return array(
+            "name" => $newImgName,
+            "url" => $ret
+        );
+    }
+
+    /**
+     *
+     * desription 压缩图片
+     * @param string $imgSrc 图片路径
+     * @param string $imgDist 压缩后保存路径
+     *
+     * @link http://www.yuqingqi.com/phpjiaocheng/994.html
+     */
+    public function imgNewSize($imgSrc, $imgDist)
+    {
+        list($width, $height, $type) = getimagesize($imgSrc);
+        $newWidth = $width;
+        $newHeight = $height;
+
+        switch ($type) {
+            case 1:
+                $giftype = $this->imgCheckGif($imgSrc);
+
+                if ($giftype) {
+                    header('Content-Type:image/gif');
+                    $image_wp = imagecreatetruecolor($newWidth, $newHeight);
+                    $image = imagecreatefromgif($imgSrc);
+                    imagecopyresampled($image_wp, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+                    imagejpeg($image_wp, $imgDist, 75);
+                    imagedestroy($image_wp);
+                }
+
+                break;
+
+            case 2:
+                header('Content-Type:image/jpeg');
+                $image_wp = imagecreatetruecolor($newWidth, $newHeight);
+                $image = imagecreatefromjpeg($imgSrc);
+                imagecopyresampled($image_wp, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+                imagejpeg($image_wp, $imgDist, 75);
+                imagedestroy($image_wp);
+
+                break;
+
+            case 3:
+                header('Content-Type:image/png');
+                $image_wp = imagecreatetruecolor($newWidth, $newHeight);
+                $image = imagecreatefrompng($imgSrc);
+                imagecopyresampled($image_wp, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+                imagejpeg($image_wp, $imgDist, 75);
+                imagedestroy($image_wp);
+
+                break;
+        }
+    }
+
+    /**
+     *
+     * desription 判断是否gif动画
+     * @param string $image_file 图片路径
+     * @return boolean t 是 f 否
+     *
+     */
+    public function imgCheckGif($image_file)
+    {
+        $fp = fopen($image_file, 'rb');
+        $image_head = fread($fp, 1024);
+        fclose($fp);
+        return preg_match("/" . chr(0x21) . chr(0xff) . chr(0x0b) . 'NETSCAPE2.0' . "/", $image_head) ? false : true;
     }
 
     /**
@@ -646,8 +805,6 @@ class api
                 $ret .= "错误代码:{$resCode}\n";
                 $ret .= "错误信息:" . $resMessage;
 
-                $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg";
-
                 $this->requestApiByQQChannel_2($ret, $msgExtArr);
 
                 exit(1);
@@ -657,245 +814,6 @@ class api
         } else {
             exit(1);
         }
-    }
-
-    ##### 以上为框架的出口，可以自行拓展
-
-    /**
-     *
-     * 命令行错误示例
-     *
-     * @param string $keywords 关键词
-     * @return string 返回错误时的示例
-     */
-    public function appCommandErrorMsg($keywords)
-    {
-        $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg";
-
-        $keywordsInfo = $this->redisGet("plugins-keywordsInfo-" . urldecode($keywords)) ?? "未知错误";
-
-        return "参数有误，" . $keywordsInfo;
-    }
-
-    /**
-     *
-     * 缩短链接
-     *
-     * @param string $longUrl 只有白名单內的链接才能被缩短
-     * @return string 返回缩短后的链接
-     */
-    public function appGetShortUrl($longUrl)
-    {
-        $reqRet = $this->requestUrl(
-            APP_API_APP . "?type=getShortUrl",
-            "url=" . urlencode($longUrl)
-        );
-        $resJson = json_decode($reqRet);
-        $resData = $resJson->data;
-        $ret = $resData->url ?? "缩短失败";
-
-        return $ret;
-    }
-
-    /**
-     *
-     * 随机字符串
-     *
-     * @param string $len 长度
-     * @param string $chars 填充字符串
-     * @return string 返回生成的随机字符串
-     */
-    public function appGetRandomString($len = 6, $chars = NULL)
-    {
-        if (is_null($chars)) {
-            $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        }
-        mt_srand(10000000 * (float) microtime());
-        for ($i = 0, $str = '', $lc = strlen($chars) - 1; $i < $len; $i++) {
-            $str .= $chars[mt_rand(0, $lc)];
-        }
-        return $str;
-    }
-
-    /**
-     *
-     * 获取缓存图片
-     *
-     * @param string $imgName 图片名字
-     * @return string 返回完整的缓存链接
-     */
-    public function appGetImgCache($imgName)
-    {
-        if (strpos(APP_ORIGIN, ":") > -1 && !in_array(FRAME_ID, array(50000, 70000))) {
-            $http = "http";
-        } else {
-            $http = "https";
-        }
-
-        $ret = $http . "://" . $_SERVER['SERVER_NAME'] . "/{$imgName}?t=" . TIME_T;
-
-        return $ret;
-    }
-
-    /**
-     *
-     * 图片、文本检测
-     *
-     * @param string $data 需要检测的内容
-     * @param string $checkType MsgSecCheck 或 MediaCheckAsync
-     * @param int $dataType $checkTyp 为 MediaCheckAsync 时，1:音频 2:图片
-     * @return bool true:可能存在违规内容 false:正常
-     *
-     * @link https://q.qq.com/wiki/develop/miniprogram/server/open_port/port_safe.html
-     */
-    public function appMsgCheckData($data, $checkType = "MsgSecCheck", $dataType = 2)
-    {
-        $reqRet = $this->requestUrl(
-            APP_API_ROBOT . "?type=system&aid=0&bid={$checkType}&cid=" . $dataType,
-            "msg=" . urlencode($data)
-        );
-        $resJson = json_decode($reqRet);
-        $resStatus = $resJson->status;
-        $resCode = $resStatus->code;
-
-        return $resCode == 0 ? false : true;
-    }
-
-    /**
-     *
-     * desription 判断是否gif动画
-     *
-     * @param string $imgPath 图片路径
-     * @return bool true:是 false:否
-     */
-    public function appMsgCheckGif($imgPath)
-    {
-        $fp = fopen($imgPath, 'rb');
-        $image_head = fread($fp, 1024);
-        fclose($fp);
-
-        return preg_match("/" . chr(0x21) . chr(0xff) . chr(0x0b) . 'NETSCAPE2.0' . "/", $image_head) ? false : true;
-    }
-
-    /**
-     *
-     * desription 压缩图片
-     *
-     * @param string $imgPath 图片路径
-     * @param string $imgDist 压缩后保存路径
-     *
-     * @link http://www.yuqingqi.com/phpjiaocheng/994.html
-     */
-    public function appMsgImgNewSize($imgPath, $imgDist)
-    {
-        list($width, $height, $type) = getimagesize($imgPath);
-        $newWidth = $width;
-        $newHeight = $height;
-
-        switch ($type) {
-            case 1:
-                $giftype = $this->appMsgCheckGif($imgPath);
-
-                if ($giftype) {
-                    header('Content-Type:image/gif');
-                    $image_wp = imagecreatetruecolor($newWidth, $newHeight);
-                    $image = imagecreatefromgif($imgPath);
-                    imagecopyresampled($image_wp, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
-                    imagejpeg($image_wp, $imgDist, 75);
-                    imagedestroy($image_wp);
-                }
-
-                break;
-
-            case 2:
-                header('Content-Type:image/jpeg');
-                $image_wp = imagecreatetruecolor($newWidth, $newHeight);
-                $image = imagecreatefromjpeg($imgPath);
-                imagecopyresampled($image_wp, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
-                imagejpeg($image_wp, $imgDist, 75);
-                imagedestroy($image_wp);
-
-                break;
-
-            case 3:
-                header('Content-Type:image/png');
-                $image_wp = imagecreatetruecolor($newWidth, $newHeight);
-                $image = imagecreatefrompng($imgPath);
-                imagecopyresampled($image_wp, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
-                imagejpeg($image_wp, $imgDist, 75);
-                imagedestroy($image_wp);
-
-                break;
-        }
-    }
-
-    /**
-     *
-     * 将图片压缩缓存到服务器本地 app/cache/:inputPath
-     *
-     * @param string keywords 文件夹
-     * @param string inputPath 输入路径文件夹名
-     * @param string outputPath 输出路径文件夹名，和输入不同时将会替换
-     * @param string imgUrl 需要下载的图片链接
-     * @param string imgData base64的图片数据
-     * @return array 返回图片名字和链接
-     */
-    public function appDownloadImg($msgSender, $keywords, $inputPath, $outputPath, $imgUrl = NULL, $imgData = NULL)
-    {
-        $newCache = APP_DIR_CACHE;
-        $imgDir = $newCache . $inputPath;
-
-        $imgName = md5($msgSender . $keywords . TIME_T) . "_temp.jpg";
-        $imgPath = $imgDir . "/" . $imgName;
-
-        $newImgName = str_replace("_temp", "", $imgName);
-        $newImgPath = str_replace("_temp", "", $imgPath);
-
-        /**
-         *
-         * 不存在自动创建文件夹
-         *
-         */
-        if (!is_dir($imgDir)) {
-            mkdir($imgDir, 0755);
-
-            if ($inputPath != $outputPath) {
-                mkdir($newCache . $outputPath, 0755);
-            }
-        }
-
-        file_put_contents($imgPath, $imgData ? $imgData : $this->requestUrl($imgUrl));
-
-        /**
-         *
-         * 不压缩的只需重命名统一格式即可
-         *
-         */
-        if ($GLOBALS['msgExt'][FRAME_ID]['msgImgNewSize'] == false) {
-            rename($imgPath, $newImgPath);
-        } else {
-            $this->appMsgImgNewSize($imgPath, $newImgPath);
-            //压缩图片
-
-            unlink($imgPath);
-            //删除原件
-        }
-
-        $newImgPath = str_replace($inputPath . "/", $outputPath . "/", $newImgPath);
-        //输入替换成输出
-
-        if (strpos(APP_ORIGIN, ":") > -1 && !in_array(FRAME_ID, array(50000, 70000))) {
-            $http = "http";
-        } else {
-            $http = "https";
-        }
-
-        $ret = $http . "://" . $_SERVER['SERVER_NAME'] . "/{$newImgPath}?t=" . TIME_T;
-
-        return array(
-            "name" => $newImgName,
-            "url" => $ret
-        );
     }
 
     /**
@@ -989,6 +907,47 @@ class api
         }
     }
 
+    public function retrtrim($tmp)
+    {
+        foreach ($tmp as $resArray) {
+            $tmptrim .= $resArray;
+            $tmptrim .= "、";
+        }
+        $tmp = rtrim($tmptrim, "、");
+        return $tmp;
+    }
+
+    /**
+     *
+     * 原神角色名字alias
+     *
+     */
+    //public function genshinAlias($name){
+    //    $alias = $this->arraySearch($name, APP_INFO['genshinAlias']);
+    //    return $alias[0][1];
+    //}
+
+    /**
+     *
+     * 遍历数组搜索
+     *
+     */
+
+    public function array_search_re($needle, $haystack, $a = 0, $nodes_temp = array())
+    {
+        global $nodes_found;
+        $a++;
+        foreach ($haystack as $key1 => $value1) {
+            $nodes_temp[$a] = $key1;
+            if (is_array($value1)) {
+                array_search_re($needle, $value1, $a, $nodes_temp);
+            } else if ($value1 === $needle) {
+                $nodes_found[] = $nodes_temp;
+            }
+        }
+        return $nodes_found;
+    }
+
     /**
      *
      * 网页访问，301、302 返回 User-Agent
@@ -998,9 +957,7 @@ class api
     {
         $ch = curl_init();
 
-        //$urlArr = explode(" ", $url);
-
-        curl_setopt($ch, CURLOPT_URL, $url); //$urlArr[1] ??
+        curl_setopt($ch, CURLOPT_URL, $url);
 
         if ($headers) {
             curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -1011,20 +968,6 @@ class api
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
         }
-
-        /*
-            elseif (count($urlArr) > 1) {
-                $reqType = $urlArr[0];
-
-                if ($reqType == "PUT") {
-                    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-                } elseif ($reqType == "PATCH") {
-                    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH");
-                } elseif ($reqType == "DELETE") {
-                    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
-                }
-            }
-        */
 
         if ($cookies) {
             curl_setopt($ch, CURLOPT_COOKIE, $cookies);
