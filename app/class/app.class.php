@@ -1,6 +1,7 @@
 <?php
 
 use Overtrue\Pinyin\Pinyin;
+use Intervention\Image\ImageManagerStatic as Image;
 
 /**
  *
