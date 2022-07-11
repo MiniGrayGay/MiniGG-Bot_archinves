@@ -7,7 +7,7 @@
  * 1.本插件类的文件名必须是action
  * 2.插件类的名称必须是{插件名_actions}
  */
-class demo_actions extends app
+class genshinImg_actions extends app
 {
     function __construct(&$appManager)
     {
@@ -16,7 +16,7 @@ class demo_actions extends app
         //第二个参数是appManager的引用
         //第三个是插件所执行的方法
         $appManager->register('plugin', $this, 'EventFun');
-
+        $this->IMS();
         $this->linkRedis();
     }
 
@@ -67,30 +67,9 @@ class demo_actions extends app
          * 正则匹配
          *
          */
-        if (preg_match("/^(image)$/", $msgContent, $msgMatch)) {
-            $ret = NULL;
-        } elseif ($msgContent == "图片") {
-            $ret = NULL;
-        }
-
+        $img = $this->manager->canvas(1920, 1080);
+        $img->save('img.png');
+        $ret = "success";
         $this->appSend($msgRobot, $msgType, $msgSource, $msgSender, $ret);
-    }
-
-    /**
-     *
-     * 获取一言
-     *
-     */
-    function getHitokoto()
-    {
-        $reqRet = $this->requestUrl("https://v1.hitokoto.cn");
-        $resJson = json_decode($reqRet);
-        $resId = $resJson->id;
-        $resFrom = $resJson->from;
-        $resHitokoto = $resJson->hitokoto;
-
-        $ret = "{$resHitokoto} - {$resFrom}";
-
-        return FRAME_ID == 50000 ? "[{$ret}](https://hitokoto.cn?id={$resId})" : $ret;
     }
 }
