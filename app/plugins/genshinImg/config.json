@@ -1,0 +1,29 @@
+{
+  "icon": "pic.icon",
+  "guid": "fc45e9d5-9991-c726-d9df-011f5b0b7eb3",
+  "name": "图片测试",
+  "type": [
+    "工具"
+  ],
+  "desc": "图片测试",
+  "ver": "1.0.0.0",
+  "author": "minigg",
+  "url": null,
+  "switch": true,
+  "trigger": {
+    "web": [],
+    "frame": [],
+    "command": [
+      {
+        "keywords": "图片",
+        "desc": "这是注册的一个关键词",
+        "show": false
+      },
+      {
+        "keywords": "image",
+        "desc": "这是一个测试",
+        "show": false
+      }
+    ]
+  }
+}
