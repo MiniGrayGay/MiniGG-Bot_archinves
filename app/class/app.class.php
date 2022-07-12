@@ -1,5 +1,6 @@
 <?php
 
+use Intervention\Image\ImageManager;
 use Overtrue\Pinyin\Pinyin;
 
 /**
@@ -50,6 +51,11 @@ class app extends api
     public function pinyinConvert()
     {
         $this->Pinyin = new Pinyin();
+    }
+
+    public function IMS()
+    {
+        $this->manager = new ImageManager(['driver' => 'imagick']);
     }
 
     /**
