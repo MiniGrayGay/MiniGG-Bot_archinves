@@ -1,0 +1,6 @@
+{
+    "require": {
+        "intervention/image": "^2.7",
+        "overtrue/pinyin": "^4.0"
+    }
+}

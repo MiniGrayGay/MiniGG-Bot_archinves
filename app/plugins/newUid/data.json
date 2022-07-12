@@ -1,0 +1,197 @@
+{
+  "retcode": 0,
+  "message": "OK",
+  "data": {
+    "role": null,
+    "avatars": [
+      {
+        "id": 10000037,
+        "image": "https://upload-os-bbs.mihoyo.com/game_record/genshin/character_icon/UI_AvatarIcon_Ganyu.png",
+        "name": "甘雨",
+        "element": "Cryo",
+        "fetter": 10,
+        "level": 90,
+        "rarity": 5,
+        "actived_constellation_num": 6
+      },
+      {
+        "id": 10000042,
+        "image": "https://upload-os-bbs.mihoyo.com/game_record/genshin/character_icon/UI_AvatarIcon_Keqing.png",
+        "name": "刻晴",
+        "element": "Electro",
+        "fetter": 10,
+        "level": 90,
+        "rarity": 5,
+        "actived_constellation_num": 6
+      },
+      {
+        "id": 10000046,
+        "image": "https://upload-os-bbs.mihoyo.com/game_record/genshin/character_icon/UI_AvatarIcon_Hutao.png",
+        "name": "胡桃",
+        "element": "Pyro",
+        "fetter": 10,
+        "level": 90,
+        "rarity": 5,
+        "actived_constellation_num": 6
+      },
+      {
+        "id": 10000051,
+        "image": "https://upload-os-bbs.mihoyo.com/game_record/genshin/character_icon/UI_AvatarIcon_Eula.png",
+        "name": "优菈",
+        "element": "Cryo",
+        "fetter": 10,
+        "level": 90,
+        "rarity": 5,
+        "actived_constellation_num": 6
+      },
+      {
+        "id": 10000002,
+        "image": "https://upload-os-bbs.mihoyo.com/game_record/genshin/character_icon/UI_AvatarIcon_Ayaka.png",
+        "name": "神里绫华",
+        "element": "Cryo",
+        "fetter": 10,
+        "level": 89,
+        "rarity": 5,
+        "actived_constellation_num": 6
+      },
+      {
+        "id": 10000022,
+        "image": "https://upload-os-bbs.mihoyo.com/game_record/genshin/character_icon/UI_AvatarIcon_Venti.png",
+        "name": "温迪",
+        "element": "Anemo",
+        "fetter": 10,
+        "level": 89,
+        "rarity": 5,
+        "actived_constellation_num": 6
+      },
+      {
+        "id": 10000041,
+        "image": "https://upload-os-bbs.mihoyo.com/game_record/genshin/character_icon/UI_AvatarIcon_Mona.png",
+        "name": "莫娜",
+        "element": "Hydro",
+        "fetter": 10,
+        "level": 89,
+        "rarity": 5,
+        "actived_constellation_num": 6
+      },
+      {
+        "id": 10000052,
+        "image": "https://upload-os-bbs.mihoyo.com/game_record/genshin/character_icon/UI_AvatarIcon_Shougun.png",
+        "name": "雷电将军",
+        "element": "Electro",
+        "fetter": 10,
+        "level": 89,
+        "rarity": 5,
+        "actived_constellation_num": 6
+      }
+    ],
+    "stats": {
+      "active_day_number": 404,
+      "achievement_number": 492,
+      "win_rate": 0,
+      "anemoculus_number": 66,
+      "geoculus_number": 131,
+      "avatar_number": 42,
+      "way_point_number": 136,
+      "domain_number": 31,
+      "spiral_abyss": "12-3",
+      "precious_chest_number": 291,
+      "luxurious_chest_number": 114,
+      "exquisite_chest_number": 1080,
+      "common_chest_number": 1370,
+      "electroculus_number": 181,
+      "magic_chest_number": 45
+    },
+    "city_explorations": [],
+    "world_explorations": [
+      {
+        "level": 10,
+        "exploration_percentage": 1000,
+        "icon": "https://upload-os-bbs.mihoyo.com/game_record/genshin/city_icon/UI_ChapterIcon_Daoqi.png",
+        "name": "稻妻",
+        "type": "Reputation",
+        "offerings": [
+          {
+            "name": "神樱眷顾",
+            "level": 40
+          }
+        ],
+        "id": 4
+      },
+      {
+        "level": 12,
+        "exploration_percentage": 1000,
+        "icon": "https://upload-os-bbs.mihoyo.com/game_record/genshin/city_icon/UI_ChapterIcon_Dragonspine.png",
+        "name": "龙脊雪山",
+        "type": "Offering",
+        "offerings": [
+          {
+            "name": "忍冬之树",
+            "level": 12
+          }
+        ],
+        "id": 3
+      },
+      {
+        "level": 8,
+        "exploration_percentage": 1000,
+        "icon": "https://upload-os-bbs.mihoyo.com/game_record/genshin/city_icon/UI_ChapterIcon_Liyue.png",
+        "name": "璃月",
+        "type": "Reputation",
+        "offerings": [],
+        "id": 2
+      },
+      {
+        "level": 8,
+        "exploration_percentage": 1000,
+        "icon": "https://upload-os-bbs.mihoyo.com/game_record/genshin/city_icon/UI_ChapterIcon_Mengde.png",
+        "name": "蒙德",
+        "type": "Reputation",
+        "offerings": [],
+        "id": 1
+      }
+    ],
+    "homes": [
+      {
+        "level": 10,
+        "visit_num": 64,
+        "comfort_num": 21720,
+        "item_num": 1325,
+        "name": "罗浮洞",
+        "icon": "https://upload-os-bbs.mihoyo.com/game_record/genshin/home/UI_HomeworldModule_2_Pic.png",
+        "comfort_level_name": "贝阙珠宫",
+        "comfort_level_icon": "https://upload-os-bbs.mihoyo.com/game_record/genshin/home/UI_Homeworld_Comfort_10.png"
+      },
+      {
+        "level": 10,
+        "visit_num": 64,
+        "comfort_num": 21720,
+        "item_num": 1325,
+        "name": "翠黛峰",
+        "icon": "https://upload-os-bbs.mihoyo.com/game_record/genshin/home/UI_HomeworldModule_1_Pic.png",
+        "comfort_level_name": "贝阙珠宫",
+        "comfort_level_icon": "https://upload-os-bbs.mihoyo.com/game_record/genshin/home/UI_Homeworld_Comfort_10.png"
+      },
+      {
+        "level": 10,
+        "visit_num": 64,
+        "comfort_num": 21720,
+        "item_num": 1325,
+        "name": "清琼岛",
+        "icon": "https://upload-os-bbs.mihoyo.com/game_record/genshin/home/UI_HomeworldModule_3_Pic.png",
+        "comfort_level_name": "贝阙珠宫",
+        "comfort_level_icon": "https://upload-os-bbs.mihoyo.com/game_record/genshin/home/UI_Homeworld_Comfort_10.png"
+      },
+      {
+        "level": 10,
+        "visit_num": 64,
+        "comfort_num": 21720,
+        "item_num": 1325,
+        "name": "绘绮庭",
+        "icon": "https://upload-os-bbs.mihoyo.com/game_record/genshin/home/UI_HomeworldModule_4_Pic.png",
+        "comfort_level_name": "贝阙珠宫",
+        "comfort_level_icon": "https://upload-os-bbs.mihoyo.com/game_record/genshin/home/UI_Homeworld_Comfort_10.png"
+      }
+    ]
+  }
+}
