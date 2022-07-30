@@ -18,6 +18,15 @@ class newUid_actions extends app
         $appManager->register('plugin', $this, 'EventFun');
         $this->IMS();
         $this->linkRedis();
+
+        $this->mihoyo_headers[] = "Content-Type:" . "application/x-www-form-urlencoded; charset=UTF-8";
+        $this->mihoyo_headers[] = 'x-rpc-app_version: 2.11.1';
+        $this->mihoyo_headers[] = 'User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/2.11.1';
+        $this->mihoyo_headers[] = 'x-rpc-client_type: 5';
+        $this->mihoyo_headers[] = 'Referer: https://webstatic.mihoyo.com/';
+        $this->mihoyo_url['o'] = "https://api-takumi.mihoyo.com";
+        $this->mihoyo_url['n'] = "https://api-takumi-record.mihoyo.com";
+        $this->get_ck = $this->get_ck();
     }
 
     //解析函数的参数是appManager的引用
@@ -67,16 +76,14 @@ class newUid_actions extends app
             $msgContent = str_replace($matchValue, "", $msgContent);
             $uid = $msgContent;
             if (preg_match('/^([1-2]|5)\d{8}$/', $uid)) {
-                $cookie = $this->get_ck();
-                $infoJson = $this->get_info($uid, $cookie);
+                $infoJson = $this->get_info($uid);
                 $infoArray = json_decode($infoJson);
                 foreach ($infoArray->data->avatars as $v) {
                     $character_ids[] = $v->id;
                 }
-                $characterJson = $this->get_character($uid, $character_ids, $cookie);
+                $characterJson = $this->get_character($uid, $character_ids);
                 $characterArray = json_decode($characterJson);
-                $ret = $this->create_uid_image($uid, $infoArray, $characterArray);
-                $ret .= "success";
+                $ret = "success";
             }
         }
 
@@ -89,71 +96,25 @@ class newUid_actions extends app
         $this->appSend($msgRobot, $msgType, $msgSource, $msgSender, $ret);
     }
 
-    function create_uid_image($uid, $infoArray, $characterArray = NULL)
+    function get_character($uid, $character_ids, $server_id = "cn_gf01")
     {
-        if(count($infoArray->data->avatars) <= 8){
-            $GenshinUID_count = count($infoArray->data->avatars);
-            $GenshinUID_height = 990 + 110 * $GenshinUID_count;
-            $GenshinUID = $this->manager->canvas(900, $GenshinUID_height);
-            $GenshinUID = $GenshinUID->insert(file_get_contents(__DIR__ . "/src/img/texture2d/panle_1.png"), "top-left", 0, 0);
-            $GenshinUID = $GenshinUID->insert(file_get_contents(__DIR__ . "/src/img/texture2d/avatar_fg.png"), "top-left", 114, 95);
-            $GenshinUID->text("UID: " . $uid, 235, 163, function($font) {
-                $font->file(__DIR__ . "/src/fonts/yuanshen.ttf");
-                $font->size(14);
-                $font->color('#fdf6e3');
-                $font->align('center');
-                $font->valign('top');
-            });
-            $GenshinUID->save('test.jpg');
-            return __DIR__;
-        }else{
-            return "yunzai";
-        }
-    }
-
-    function get_enka_network($uid)
-    {
-        $base_server = "https://enka.shinshin.moe";
-        $mirror_server = "https://enka.microgg.cn";
-        $url = $mirror_server . "/u/" . $uid . "/__data.json";
-        return $this->requestUrl($url);
-    }
-
-    function get_character($uid, $character_ids, $ck, $server_id = "cn_gf01")
-    {
-        if (preg_match('/^(5)\d{8}$/', $uid)) {
-            $server_id = "cn_qd01";
-        }
-        $o_url = "https://api-takumi.mihoyo.com";
-        $n_url = "https://api-takumi-record.mihoyo.com";
-        $url = $n_url . "/game_record/app/genshin/api/character";
-        $headers[] = "Content-Type:" . "application/x-www-form-urlencoded; charset=UTF-8";
-        $headers[] = "DS:" . $this->get_ds_token(NULL, array("character_ids" => $character_ids, "role_id" => $uid, "server" => $server_id));
-        $headers[] = 'x-rpc-app_version: 2.11.1';
-        $headers[] = 'User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/2.11.1';
-        $headers[] = 'x-rpc-client_type: 5';
-        $headers[] = 'Referer: https://webstatic.mihoyo.com/';
+        if (preg_match('/^(5)\d{8}$/', $uid)) $server_id = "cn_qd01";
+        $url = $this->mihoyo_url['n'] . "/game_record/app/genshin/api/character";
         $postArray = array("character_ids" => $character_ids,"role_id" => $uid,"server" => $server_id);
-        $postData = json_encode($postArray);
-        return $this->requestUrl($url, $postData, $headers, $ck);
+        $headers = $this->mihoyo_headers;
+        $headers[] = "DS:" . $this->get_ds_token(NULL, $postArray);
+        $this->redisSet("DS", $headers);
+        return $this->requestUrl($url, json_encode($postArray), $headers, $this->get_ck);
     }
 
-    function get_info($uid, $ck, $server_id = "cn_gf01")
+    function get_info($uid, $server_id = "cn_gf01")
     {
-        if (preg_match('/^(5)\d{8}$/', $uid)) {
-            $server_id = "cn_qd01";
-        }
-        $o_url = "https://api-takumi.mihoyo.com";
-        $n_url = "https://api-takumi-record.mihoyo.com";
-        $url = $n_url . "/game_record/app/genshin/api/index?role_id=" . $uid . "&server=" . $server_id;
-        $headers[] = "Content-Type:" . "application/x-www-form-urlencoded; charset=UTF-8";
-        $headers[] = "DS:" . $this->get_ds_token("role_id=" . $uid . "&server=" . $server_id);
-        $headers[] = 'x-rpc-app_version: 2.11.1';
-        $headers[] = 'User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/2.11.1';
-        $headers[] = 'x-rpc-client_type: 5';
-        $headers[] = 'Referer: https://webstatic.mihoyo.com/';
-        $postData = NULL;
-        return $this->requestUrl($url, $postData, $headers, $ck);
+        if (preg_match('/^(5)\d{8}$/', $uid)) $server_id = "cn_qd01";
+        $params = "role_id=" . $uid . "&server=" . $server_id;
+        $url = $this->mihoyo_url['n'] . "/game_record/app/genshin/api/index?" . $params;
+        $headers = $this->mihoyo_headers;
+        $headers[] = "DS:" . $this->get_ds_token($params);
+        return $this->requestUrl($url, NULL, $headers, $this->get_ck);
     }
 
     function get_ds_token($q, $b = NULL)
