@@ -2,6 +2,7 @@
 
 use Intervention\Image\ImageManager;
 use Overtrue\Pinyin\Pinyin;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  *
@@ -56,6 +57,11 @@ class app extends api
     public function IMS()
     {
         $this->manager = new ImageManager(['driver' => 'imagick']);
+    }
+
+    public function PHP_YAML()
+    {
+        $this->phpyaml = new Yaml();
     }
 
     /**
