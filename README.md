@@ -1,7 +1,7 @@
 <p align="center"><a href="https://microgg.coding.net/public/microgg/GenshinUID/git/files"><img src="https://img.genshin.minigg.cn/minigg.png" width="256" height="256" alt="GenshinUID"></a></p>
 <h1 align="center">GenshinUID-PHP</h1>
-<h3 align="center">♾️基于<a href="https://bot.q.qq.com/wiki/develop/api/" target="_blank">QQ官方频道WebSocket API</a>的原神多功能Bot♾️</h3>
-<h4 align="center">同时兼容GO-CQHttp/微信可爱猫/Noknok</h4>
+<h3 align="center">♾️基于 <a href="https://bot.q.qq.com/wiki/develop/api/" target="_blank">QQ官方频道WebSocket API</a> & <a href="https://www.noknok.cn/" target="_blank">Noknok</a> 的原神多功能Bot♾️</h3>
+<h4 align="center">同时兼容GO-CQHttp/微信可爱猫</h4>
 <p align="center">
 <a href="#" target="_blank">安装文档</a> &nbsp; · &nbsp;
 <a href="#" target="_blank">指令列表</a> &nbsp; · &nbsp;
@@ -17,7 +17,7 @@
 # | 框架
 
 ## 环境
-> PHP ≥ 7.3
+> PHP ≥ `7.3`
 ### 已测试环境
 | PHP版本   | 系统                                                  |
 |---------|-----------------------------------------------------|
@@ -36,6 +36,8 @@
 | 50000   | [NOKNOK 机器人](https://www.noknok.cn)                                       | NOKNOK       | 密钥     | ✓    | ✗  |
 | 60000   | [go-cqhttp](https://github.com/Mrs4s/go-cqhttp/blob/master/docs/guild.md) | QQ频道 (GO-CQ) | 密钥     | ✓    | ✓  |
 | 70000   | [QQ 机器人](https://bot.q.qq.com/)                                           | QQ频道 (官方)    | 密钥     | ✗    | ✓  |
+
+> MyPCQQ 由于各方面原因，作者已经弃坑，是一个已经停摆的项目，不再提供维护和更新。
 
 ## 数据
 
