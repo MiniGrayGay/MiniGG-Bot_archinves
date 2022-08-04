@@ -435,10 +435,30 @@ class api
         if (strpos($extMsgType, "image_file") > -1) {
 
             $extMsgImgFile = $newData['msgImgFile'] ?? NULL;
-
+            $extMsgImgFileType = getimagesize($extMsgImgFile);
+            switch ($extMsgImgFileType['mime']){
+                case 'image/png':
+                    $extMsgImgFileType = ".png";
+                    break;
+                case 'image/gif':
+                    $extMsgImgFileType = ".gif";
+                    break;
+                case 'image/jpeg':
+                    $extMsgImgFileType = ".jpg";
+                    break;
+                case 'image/bmp':
+                    $extMsgImgFileType = ".bmp";
+                    break;
+                case 'image/webp':
+                    $extMsgImgFileType = ".webp";
+                    break;
+                default:
+                    $extMsgImgFileType = "";
+                    break;
+            }
             $postData = array(
                 "msg_id" => $msgId,
-                "file_image" => $extMsgImgFile
+                "file_image" => new \CURLFile($extMsgImgFile, 'multipart/form-data', time() . $extMsgImgFileType)
             );
 
             $postHeader = array(
