@@ -1,11 +1,11 @@
 {
   "icon": "pic.icon",
   "guid": "fc45e9d5-9991-c726-d9df-011f5b0b7eb3",
-  "name": "图片测试",
+  "name": "原神UID查询",
   "type": [
     "原神"
   ],
-  "desc": "图片测试",
+  "desc": "通过原神UID或米游社ID生成玩家信息卡片，支持天空岛服务器（米哈游官服）、世界树服务器（大陆渠道服）",
   "ver": "1.0.0.0",
   "author": "minigg",
   "url": null,
@@ -15,13 +15,9 @@
     "frame": [],
     "command": [
       {
-        "keywords": "图片",
-        "desc": "这是注册的一个关键词",
-        "show": true
-      },
-      {
         "keywords": "uid",
-        "desc": "新版UID查询测试",
+        "desc": "uid+<你的uid>",
+        "demo": "如查询的uid为137727130，可输入\nuid137727130",
         "show": true
       }
     ]
