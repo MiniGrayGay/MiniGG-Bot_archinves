@@ -148,10 +148,11 @@ PS：只有初始化过的命令才能使用，避免全部命令都使用轮询
 ## 丨感谢
 
 - [YuanShen_User_Info](https://github.com/Womsxd/YuanShen_User_Info) - 米游社API
-- [@KimigaiiWuyi](https://github.com/KimigaiiWuyi)
+- [@KimigaiiWuyi](https://github.com/KimigaiiWuyi) - Wuyi哥哥好优siu
 - [@erinilis](https://github.com/yuyumoko) - UID查询卡片设计
 - [@Wansn-w](https://github.com/Wansn-w) - IGS图片生成器
 - [@猫冬](https://bbs.mihoyo.com/ys/accountCenter/postList?id=74019947) - 原神攻略的**授权**使用
-- [@Enka.Network](https://enka.shinshin.moe/) - 展柜面板的数据来源
+- [@Enka.Network](https://enka.network/) - 展柜面板的数据来源
+- [@逍遥](https://github.com/ctrlcvs/xiaoyao_plus) - 新版图鉴图片来自这位大佬
 
 # 总会有地上的生灵，敢于直面雷霆的威光！

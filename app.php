@@ -759,6 +759,8 @@ if (!$allKeywords) {
             if ($GLOBALS['senderStatusInfo'] == 1) $allPlugins[] = array("name" => "getimg", "path" => "app/plugins/getimg");
         } elseif (preg_match("/(我有个(.*?)说|鲁迅说)/", $forList)) {
             $allPlugins[] = array("name" => "generateImg", "path" => "app/plugins/generateImg");
+        } elseif (preg_match("/(.*?)图鉴/", $forList)) {
+            $allPlugins[] = array("name" => "genshinXiaoyao", "path" => "app/plugins/genshinXiaoyao");
         } else {
             $matchValue = strtolower($forList);
             //coser github roll 等英文触发转小写
