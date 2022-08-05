@@ -162,7 +162,7 @@ class genshinXiaoyao_actions extends app
                     $name_tujian = $shiwu_tujian;
                 }
 
-                $ret = file_get_contents(__DIR__ . "/resources/{$type_tujian}/{$name_tujian}.json");
+                $ret = file_get_contents(__DIR__ . "/resources/xiaoyao_plus/{$type_tujian}/{$name_tujian}.json");
             }elseif (FRAME_ID == 70000){
                 if($juese_tujian){
                     $type_tujian = "juese_tujian";
@@ -184,7 +184,7 @@ class genshinXiaoyao_actions extends app
                     $name_tujian = $shiwu_tujian;
                 }
                 $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "image_file";
-                $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgImgFile'] = __DIR__ . "/resources/{$type_tujian}/{$name_tujian}.png";
+                $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgImgFile'] = __DIR__ . "/resources/xiaoyao_plus/{$type_tujian}/{$name_tujian}.png";
                 $ret = "image_file";
             }
 
