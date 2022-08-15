@@ -3,6 +3,7 @@
         "intervention/image": "^2.7",
         "overtrue/pinyin": "^4.0",
         "symfony/yaml": "^6.0",
-        "intervention/imagecache": "^2.5"
+        "intervention/imagecache": "^2.5",
+        "php-webdriver/webdriver": "^1.12"
     }
 }
