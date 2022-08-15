@@ -36,3 +36,4 @@ require_once(APP_DIR_CONFIG . "app.database.php");
 
 define('APP_DIR_CACHE', "app/cache/");
 define('APP_DIR_PLUGINS', "app/plugins/");
+const APP_DIR_RESOURCES = "app/resources/";

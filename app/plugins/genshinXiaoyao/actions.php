@@ -100,7 +100,7 @@ class genshinXiaoyao_actions extends app
             if(!$shengyiwu_tujian){
                 $shengyiwu_tujian_name = implode("|", array_keys($shengyiwu_tujian_array));
                 if (preg_match("/^(" . $shengyiwu_tujian_name . ")$/", $msgContent)){
-                    $mijin_tujian = $msgContent;
+                    $shengyiwu_tujian = $msgContent;
                 }
             }
 
@@ -112,7 +112,7 @@ class genshinXiaoyao_actions extends app
             if(!$mijin_tujian){
                 $mijin_tujian_name = implode("|", array_keys($mijin_tujian_array));
                 if (preg_match("/^(" . $mijin_tujian_name . ")$/", $msgContent)){
-                    $mijin_tujian = $msgContent;
+                    $shiwu_tujian = $msgContent;
                 }
             }
 
@@ -124,7 +124,19 @@ class genshinXiaoyao_actions extends app
             if(!$wuqi_tujian){
                 $wuqi_tujian_name = implode("|", array_keys($wuqi_tujian_array));
                 if (preg_match("/^(" . $wuqi_tujian_name . ")$/", $msgContent)){
-                    $mijin_tujian = $msgContent;
+                    $wuqi_tujian = $msgContent;
+                }
+            }
+
+            /**
+             * 道具图鉴
+             */
+            $daoju_tujian_array = json_decode(file_get_contents(__DIR__ . "/resources/daoju_tujian.json"), true);
+            $daoju_tujian = implode($this->array_search_mu($msgContent, $daoju_tujian_array));
+            if(!$daoju_tujian){
+                $daoju_tujian_name = implode("|", array_keys($daoju_tujian_array));
+                if (preg_match("/^(" . $daoju_tujian_name . ")$/", $msgContent)){
+                    $daoju_tujian = $msgContent;
                 }
             }
 
@@ -140,52 +152,41 @@ class genshinXiaoyao_actions extends app
                 }
             }
 
+            if($juese_tujian){
+                $type_tujian = "juese_tujian";
+                $name_tujian = $juese_tujian;
+            }elseif ($wuqi_tujian){
+                $type_tujian = "wuqi_tujian";
+                $name_tujian = $wuqi_tujian;
+            }elseif ($shengyiwu_tujian){
+                $type_tujian = "shengyiwu_tujian";
+                $name_tujian = $shengyiwu_tujian;
+            }elseif ($yuanmo_tujian){
+                $type_tujian = "yuanmo_tujian";
+                $name_tujian = $yuanmo_tujian;
+            }elseif ($daoju_tujian){
+                $type_tujian = "daoju_tujian";
+                $name_tujian = $daoju_tujian;
+            }elseif ($mijin_tujian){
+                $type_tujian = "mijin_tujian";
+                $name_tujian = $mijin_tujian;
+            }elseif ($shiwu_tujian){
+                $type_tujian = "shiwu_tujian";
+                $name_tujian = $shiwu_tujian;
+            }
+
             if(FRAME_ID == 50000){
                 $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "image_msg";
-                if($juese_tujian){
-                    $type_tujian = "juese_tujian";
-                    $name_tujian = $juese_tujian;
-                }elseif ($wuqi_tujian){
-                    $type_tujian = "wuqi_tujian";
-                    $name_tujian = $wuqi_tujian;
-                }elseif ($shengyiwu_tujian){
-                    $type_tujian = "shengyiwu_tujian";
-                    $name_tujian = $shengyiwu_tujian;
-                }elseif ($yuanmo_tujian){
-                    $type_tujian = "yuanmo_tujian";
-                    $name_tujian = $yuanmo_tujian;
-                }elseif ($mijin_tujian){
-                    $type_tujian = "mijin_tujian";
-                    $name_tujian = $mijin_tujian;
-                }elseif ($shiwu_tujian){
-                    $type_tujian = "shiwu_tujian";
-                    $name_tujian = $shiwu_tujian;
-                }
-
                 $ret = file_get_contents(__DIR__ . "/resources/xiaoyao_plus/{$type_tujian}/{$name_tujian}.json");
             }elseif (FRAME_ID == 70000){
-                if($juese_tujian){
-                    $type_tujian = "juese_tujian";
-                    $name_tujian = $juese_tujian;
-                }elseif ($wuqi_tujian){
-                    $type_tujian = "wuqi_tujian";
-                    $name_tujian = $wuqi_tujian;
-                }elseif ($shengyiwu_tujian){
-                    $type_tujian = "shengyiwu_tujian";
-                    $name_tujian = $shengyiwu_tujian;
-                }elseif ($yuanmo_tujian){
-                    $type_tujian = "yuanmo_tujian";
-                    $name_tujian = $yuanmo_tujian;
-                }elseif ($mijin_tujian){
-                    $type_tujian = "mijin_tujian";
-                    $name_tujian = $mijin_tujian;
-                }elseif ($shiwu_tujian){
-                    $type_tujian = "shiwu_tujian";
-                    $name_tujian = $shiwu_tujian;
-                }
                 $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "image_file";
                 $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgImgFile'] = __DIR__ . "/resources/xiaoyao_plus/{$type_tujian}/{$name_tujian}.png";
                 $ret = "image_file";
+            }elseif (FRAME_ID == 10000){
+                $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg";
+                $MyPCQQImg = json_decode(file_get_contents(__DIR__ . "/resources/xiaoyao_plus/{$type_tujian}/{$name_tujian}.json"), true);
+                $MyPCQQImg = $MyPCQQImg[0]['image_info_array'][0]['url'];
+                $ret = "[{$MyPCQQImg}]";
             }
 
         }
