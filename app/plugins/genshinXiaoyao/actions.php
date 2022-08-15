@@ -56,7 +56,7 @@ class genshinXiaoyao_actions extends app
         /**
          * 图鉴目录
          */
-        $Atlas_list_array = json_decode(file_get_contents(__DIR__ . "/resources/Atlas_list.json"), true);
+        $Atlas_list_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "xiaoyao_plus/Atlas_list.json"), true);
         $Atlas_list_keys = array_keys($Atlas_list_array);
         if (preg_match("/^(" . implode("|", $Atlas_list_keys) . ")$/", $msgContent)) {
             foreach ($Atlas_list_keys as $value) {
@@ -74,16 +74,16 @@ class genshinXiaoyao_actions extends app
             /**
              * 角色图鉴-Yaml
              */
-            $juese_tujian_array = $this->phpyaml->parseFile(__DIR__ . '/resources/juese_tujian.yaml');
+            $juese_tujian_array = $this->phpyaml->parseFile(APP_DIR_RESOURCES . "xiaoyao_plus/juese_tujian.yaml");
             $juese_tujian = $this->array_search_mu($msgContent, $juese_tujian_array);
-            $roleid_juese = json_decode(file_get_contents(__DIR__ . "/resources/roleid_juese.json"), true);
+            $roleid_juese = json_decode(file_get_contents(APP_DIR_RESOURCES . "xiaoyao_plus/roleid_juese.json"), true);
             $juese_tujian = $roleid_juese[implode($juese_tujian)];
             $this->redisSet("juese", $juese_tujian);
 
             /**
              * 秘境图鉴
              */
-            $mijin_tujian_array = json_decode(file_get_contents(__DIR__ . "/resources/mijin_tujian.json"), true);
+            $mijin_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "xiaoyao_plus/mijin_tujian.json"), true);
             $mijin_tujian = implode($this->array_search_mu($msgContent, $mijin_tujian_array));
             if(!$mijin_tujian){
                 $mijin_tujian_name = implode("|", array_keys($mijin_tujian_array));
@@ -95,7 +95,7 @@ class genshinXiaoyao_actions extends app
             /**
              * 圣遗物图鉴
              */
-            $shengyiwu_tujian_array = json_decode(file_get_contents(__DIR__ . "/resources/shengyiwu_tujian.json"), true);
+            $shengyiwu_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "xiaoyao_plus/shengyiwu_tujian.json"), true);
             $shengyiwu_tujian = implode($this->array_search_mu($msgContent, $shengyiwu_tujian_array));
             if(!$shengyiwu_tujian){
                 $shengyiwu_tujian_name = implode("|", array_keys($shengyiwu_tujian_array));
@@ -107,7 +107,7 @@ class genshinXiaoyao_actions extends app
             /**
              * 食物图鉴
              */
-            $shiwu_tujian_array = json_decode(file_get_contents(__DIR__ . "/resources/shiwu_tujian.json"), true);
+            $shiwu_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "xiaoyao_plus/shiwu_tujian.json"), true);
             $shiwu_tujian = implode($this->array_search_mu($msgContent, $shiwu_tujian_array));
             if(!$mijin_tujian){
                 $mijin_tujian_name = implode("|", array_keys($mijin_tujian_array));
@@ -119,7 +119,7 @@ class genshinXiaoyao_actions extends app
             /**
              * 武器图鉴
              */
-            $wuqi_tujian_array = json_decode(file_get_contents(__DIR__ . "/resources/wuqi_tujian.json"), true);
+            $wuqi_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "xiaoyao_plus/wuqi_tujian.json"), true);
             $wuqi_tujian = implode($this->array_search_mu($msgContent, $wuqi_tujian_array));
             if(!$wuqi_tujian){
                 $wuqi_tujian_name = implode("|", array_keys($wuqi_tujian_array));
@@ -131,7 +131,7 @@ class genshinXiaoyao_actions extends app
             /**
              * 道具图鉴
              */
-            $daoju_tujian_array = json_decode(file_get_contents(__DIR__ . "/resources/daoju_tujian.json"), true);
+            $daoju_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "xiaoyao_plus/daoju_tujian.json"), true);
             $daoju_tujian = implode($this->array_search_mu($msgContent, $daoju_tujian_array));
             if(!$daoju_tujian){
                 $daoju_tujian_name = implode("|", array_keys($daoju_tujian_array));
@@ -143,7 +143,7 @@ class genshinXiaoyao_actions extends app
             /**
              * 原魔图鉴
              */
-            $yuanmo_tujian_array = json_decode(file_get_contents(__DIR__ . "/resources/yuanmo_tujian.json"), true);
+            $yuanmo_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "xiaoyao_plus/yuanmo_tujian.json"), true);
             $yuanmo_tujian = implode($this->array_search_mu($msgContent, $yuanmo_tujian_array));
             if(!$yuanmo_tujian){
                 $yuanmo_tujian_name = implode("|", array_keys($yuanmo_tujian_array));
@@ -177,14 +177,14 @@ class genshinXiaoyao_actions extends app
 
             if(FRAME_ID == 50000){
                 $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "image_msg";
-                $ret = file_get_contents(__DIR__ . "/resources/xiaoyao_plus/{$type_tujian}/{$name_tujian}.json");
+                $ret = file_get_contents(APP_DIR_RESOURCES . "xiaoyao_plus/{$type_tujian}/{$name_tujian}.json");
             }elseif (FRAME_ID == 70000){
                 $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "image_file";
-                $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgImgFile'] = __DIR__ . "/resources/xiaoyao_plus/{$type_tujian}/{$name_tujian}.png";
+                $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgImgFile'] = APP_DIR_RESOURCES . "xiaoyao_plus/{$type_tujian}/{$name_tujian}.png";
                 $ret = "image_file";
             }elseif (FRAME_ID == 10000){
                 $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg";
-                $MyPCQQImg = json_decode(file_get_contents(__DIR__ . "/resources/xiaoyao_plus/{$type_tujian}/{$name_tujian}.json"), true);
+                $MyPCQQImg = json_decode(file_get_contents(APP_DIR_RESOURCES . "xiaoyao_plus/{$type_tujian}/{$name_tujian}.json"), true);
                 $MyPCQQImg = $MyPCQQImg[0]['image_info_array'][0]['url'];
                 $ret = "[{$MyPCQQImg}]";
             }
