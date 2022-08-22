@@ -23,73 +23,7 @@ if (!$reqRet) {
  * 需要在 api.class.php 增加入口的回复 API ，也需要在 config/app.config.php 修改机器人信息，否则无法替换
  *
  */
-if (FRAME_ID == 2500) {
-    $resJson = json_decode($reqRet, true);
-
-    $resSession = $resJson['session'] ?? array();
-    $XIAOAIMsgSource = $resSession['application']['app_id'] ?? 0;
-    $XIAOAIMsgSender = $resSession['user']['user_id'] ?? 0;
-
-    $resRequest = $resJson['request'] ?? array();
-    $XIAOAIMsgType = $resRequest['type'] ?? 2;
-    $XIAOAIMsgId = $resRequest['request_id'] ?? NULL;
-    $XIAOAIMsgContent = $resRequest['intent']['query'] ?? NULL;
-    $XIAOAIMsgNoResponse = $msgRequest['no_response'] ?? NULL;
-    $XIAOAIMsgRobot = $resRequest['intent']['app_id'] ?? 0;
-
-    $appMic = true;
-
-    if ($XIAOAIMsgNoResponse) {
-        $res = "主人，还在嘛？";
-    } elseif ($XIAOAIMsgType == 0) {
-        $res = "你好，主人。";
-    } elseif ($XIAOAIMsgType == 2) {
-        $res = "再见，主人！";
-
-        $appMic = false;
-    }
-
-    if ($res) {
-        echo json_encode(array(
-            'version'  => '1.0',
-            'session_sttributes' => array(),
-            'response' => array(
-                'open_mic' => $appMic,
-                'to_speak' => array(
-                    'type' => 0,
-                    'text' => $res
-                )
-            ),
-            'is_session_end' => false
-        ));
-
-        exit(0);
-    }
-
-    $msgContentOriginal = $XIAOAIMsgContent;
-
-    $msg = array(
-        "Ver" => 0,
-        "Pid" => 0,
-        "Port" => 0,
-        "MsgID" => $XIAOAIMsgId,
-        "OrigMsg" => $reqRet ? base64_encode($reqRet) : NULL,
-        "Robot" => $XIAOAIMsgRobot,
-        "MsgType" => $XIAOAIMsgType,
-        "MsgSubType" => 0,
-        //"MsgFileUrl" => $XIAOAIMsgFileUrl,
-        "Content" => $XIAOAIMsgContent ? base64_encode(urldecode($XIAOAIMsgContent)) : NULL,
-        "Source" => $XIAOAIMsgSource,
-        "SubSource" => NULL,
-        //"SourceName" => $XIAOAIMsgSourceName ? $XIAOAIMsgSourceName : NULL,
-        "Sender" => $XIAOAIMsgSender,
-        //"SenderName" => $XIAOAIMsgSenderName ? $XIAOAIMsgSenderName : NULL,
-        "Receiver" => $XIAOAIMsgSender,
-        //"ReceiverName" => $XIAOAIMsgSenderName ? $XIAOAIMsgSenderName : NULL,
-    );
-
-    //XIAOAI:统一格式
-} elseif (FRAME_ID == 10000) {
+if (FRAME_ID == 10000) {
     $resJson = json_decode($reqRet, true);
 
     if ($resJson['MsgType'] == -1 || $resJson['MsgType'] == 1002) exit(1);
@@ -470,47 +404,6 @@ if (FRAME_ID == 2500) {
     );
 
     //QQChannel:官方:统一格式
-} elseif (FRAME_ID == 80000) {
-    $resJson = json_decode($reqRet, true);
-
-    $XXQMsgType = $resJson['type'] ?? "text";
-    $XXQMsgContent = $resJson['message'] ?? NULL;
-
-    /**
-     *
-     * 机器人号码
-     *
-     */
-    $XXQMsgRobot = $appInfo['botInfo']['XXQ']['uin'] ?? NULL;
-
-    $XXQMsgId = $resJson['messageId'] ?? NULL;
-    $XXQMsgSource = $resJson['superGroupId'] ?? NULL;
-    $XXQMsgSubSource = $resJson['chatRoomId'] ?? NULL;
-    $XXQMsgSender = $resJson['fUserId'] ?? NULL;
-
-    $msgContentOriginal = $XXQMsgContent;
-
-    $msg = array(
-        "Ver" => 0,
-        "Pid" => 0,
-        "Port" => 0,
-        "MsgID" => $XXQMsgId,
-        "OrigMsg" => $reqRet ? base64_encode($reqRet) : NULL,
-        "Robot" => $XXQMsgRobot,
-        "MsgType" => $XXQMsgType,
-        "MsgSubType" => 0,
-        //"MsgFileUrl" => $XXQMsgFileUrl,
-        "Content" => $XXQMsgContent ? base64_encode(urldecode($XXQMsgContent)) : NULL,
-        "Source" => $XXQMsgSource,
-        "SubSource" => $XXQMsgSubSource,
-        //"SourceName" => $XXQMsgSourceName ? $XXQMsgSourceName : NULL,
-        "Sender" => $XXQMsgSender,
-        //"SenderName" => $XXQMsgSenderName ? $XXQMsgSenderName : NULL,
-        "Receiver" => $XXQMsgSender,
-        //"ReceiverName" => $XXQMsgSenderName ? $XXQMsgSenderName : NULL,
-    );
-
-    //X星球:统一格式
 } else {
     exit(1);
 }
