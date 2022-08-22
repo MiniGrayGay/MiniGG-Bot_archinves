@@ -120,6 +120,12 @@ if (FRAME_ID == 10000) {
     );
 
     //可爱猫:未死鲤鱼:统一格式
+} elseif (FRAME_ID == 30000) {
+    //$resJson = json_decode($reqRet, true);
+    appDebug('GO-CQ', $reqRet);
+    if ($resJson['message_type'] == "guild")
+    $QQChannelMsgSubType = $resJson['sub_type'] ?? NULL;
+    $QQChannelMsgPostType = $resJson['post_type'] ?? NULL;
 } elseif (FRAME_ID == 50000) {
     $resJson = json_decode($reqRet, true);
 

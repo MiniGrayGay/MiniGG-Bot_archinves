@@ -49,9 +49,6 @@ class demo_actions extends app
         $msgOrigMsg = base64_decode($msg['OrigMsg']);
         //参_原始信息
 
-        if (in_array($msgSource, APP_SPECIAL_GROUP)) return;
-        //特殊群
-
         /**
          *
          * 这是返回时的消息类型，除了 MyPCQQ 机器，其他的都得特殊处理
