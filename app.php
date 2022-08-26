@@ -5,13 +5,10 @@ require_once("vendor/autoload.php");
 $reqRet = file_get_contents("php://input");
 
 /**
- *
  * 信息为空直接跳到黄色网站 ;D
- *
  */
 if (!$reqRet) {
     header("Location: https://www.minigg.cn");
-
     exit(1);
 } else {
     $appInfo = APP_INFO;
@@ -481,33 +478,7 @@ if ($allRobot) {
     if (in_array($nowRobot, $allRobotArr) || in_array($nowSender, $allRobotArr)) exit(1);
 }
 
-/**
- *
- * 填写的机器人才会触发，默认全部
- *
- */
-if (count(CONFIG_ROBOT) > 0) {
-    if (!in_array($msg['Robot'], CONFIG_ROBOT)) exit(1);
-}
-
-/**
- *
- * 黑名单的对象不会触发，默认无黑名单
- *
- */
-if (count(CONFIG_USER_BLOCKLIST) > 0) {
-    if (in_array($msg['Sender'], CONFIG_USER_BLOCKLIST)) exit(1);
-}
-
 if (FRAME_ID == 10000) {
-    /**
-     *
-     * 黑名单的群不会触发，默认无黑名单
-     *
-     */
-    if (CONFIG_GROUP_BLOCKLIST) {
-        if ($msg['MsgType'] == 2 && in_array($msg['Source'], CONFIG_GROUP_BLOCKLIST)) exit(1);
-    }
 
     /**
      *
@@ -557,14 +528,6 @@ if (FRAME_ID == 10000) {
         $appManager->appHandleByMPQ($retMsg, $config_event_group['user']['invite']['text']);
     }
 } elseif (FRAME_ID == 20000) {
-    /**
-     *
-     * 黑名单的群不会触发，默认无黑名单
-     *
-     */
-    if (CONFIG_GROUP_BLOCKLIST) {
-        if ($msg['MsgType'] == 200 && in_array($msg['Source'], CONFIG_GROUP_BLOCKLIST)) exit(1);
-    }
 
     /**
      *
@@ -620,23 +583,6 @@ if (!$allKeywords) {
 } elseif (preg_match($allKeywords, $msgContentOriginal, $msgMatch_1)) {
     $msgMatch_1 = array_unique($msgMatch_1);
     $msgMatch_1 = array_values($msgMatch_1);
-
-    preg_match(CONFIG_MSG_BLOCKLIST, $msgContentOriginal, $msgMatch_2);
-    $msgMatch_2 = array_unique($msgMatch_2);
-    $msgMatch_2 = array_values($msgMatch_2);
-
-    if (count($msgMatch_2) > 0) {
-        if (preg_match(CONFIG_MSG_WHITELIST, $msgContentOriginal)) {
-            //存在白名单
-        } elseif ($GLOBALS['senderStatusInfo'] == 0) {
-            $ret = $appInfo['codeInfo'][1005];
-
-            $appManager->appSend($msg['Robot'], $msg['MsgType'], $msg['Source'], $msg['Sender'], $ret);
-
-            //存在黑名单
-            exit(1);
-        }
-    }
 
     /**
      *
