@@ -15,7 +15,6 @@ class genshinXiaoyao_actions extends app
         //第三个是插件所执行的方法
         $appManager->register('plugin', $this, 'EventFun');
         $this->linkRedis();
-        $this->PHP_YAML();
     }
 
     //解析函数的参数是appManager的引用
@@ -72,7 +71,7 @@ class genshinXiaoyao_actions extends app
             /**
              * 角色图鉴-Yaml
              */
-            $juese_tujian_array = $this->phpyaml->parseFile(APP_DIR_RESOURCES . "xiaoyao_plus/juese_tujian.yaml");
+            $juese_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "xiaoyao_plus/juese_tujian.json"));
             $juese_tujian = $this->array_search_mu($msgContent, $juese_tujian_array);
             $roleid_juese = json_decode(file_get_contents(APP_DIR_RESOURCES . "xiaoyao_plus/roleid_juese.json"), true);
             $juese_tujian = $roleid_juese[implode($juese_tujian)];
