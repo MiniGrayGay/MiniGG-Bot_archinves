@@ -80,6 +80,7 @@ define('TIME_T', $t);
 
 $originInfo[10000] = "http://127.0.0.1:8010";
 $originInfo[20000] = "http://127.0.0.1:8073/send";
+$originInfo[20000] = "http://127.0.0.1:5700";
 $originInfo[50000] = "https://openapi.noknok.cn";
 $originInfo[60000] = "http://127.0.0.1:8020";
 $originInfo[70000] = "https://api.sgroup.qq.com";

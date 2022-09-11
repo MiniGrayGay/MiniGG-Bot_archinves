@@ -116,13 +116,95 @@ if (FRAME_ID == 10000) {
         //"ReceiverName" => $kamMsgSenderName ? urldecode($kamMsgSenderName) : NULL,
     );
 
-    //可爱猫:未死鲤鱼:统一格式
+    // 可爱猫:未死鲤鱼:统一格式
 } elseif (FRAME_ID == 30000) {
-    //$resJson = json_decode($reqRet, true);
-    appDebug('GO-CQ', $reqRet);
-    if ($resJson['message_type'] == "guild")
-    $QQChannelMsgSubType = $resJson['sub_type'] ?? NULL;
-    $QQChannelMsgPostType = $resJson['post_type'] ?? NULL;
+    $resJson = json_decode($reqRet, true);
+    $GOCQMsgMainType = $resJson['message_type'] ?? NULL;
+    $GOCQMsgSubType = $resJson['sub_type'] ?? NULL;
+
+    //判断消息类型
+    if($GOCQMsgMainType == "private"){
+        //私聊消息
+        if($GOCQMsgSubType == "friend"){
+            $GOCQMsgType = "private_friend";
+            $GOCQMsgSource = $resJson['user_id'];
+            //好友消息
+        }elseif ($GOCQMsgSubType == "group"){
+            $GOCQMsgType = "private_group";
+            $GOCQMsgSource = $resJson['user_id'];
+            //群临时会话
+        }elseif ($GOCQMsgSubType == "group_self"){
+            $GOCQMsgType = "private_group_self";
+            //群消息-自身
+            exit(1);
+            //暂不处理
+        }else{
+            $GOCQMsgType = "other";
+            //未知消息
+        }
+    }elseif ($GOCQMsgMainType == "group"){
+        //群消息
+        if($GOCQMsgSubType == "normal"){
+            $GOCQMsgType = "group_normal";
+            //群正常消息
+        }elseif ($GOCQMsgSubType == "anonymous"){
+            $GOCQMsgType = "group_anonymous";
+            //群匿名消息
+        }elseif ($GOCQMsgSubType == "notice"){
+            $GOCQMsgType = "group_notice";
+            //群系统提示
+        }else{
+            $GOCQMsgType = "group_normal";
+        }
+    }elseif ($GOCQMsgMainType == "guild"){
+        $GOCQMsgType = "guild";
+        $GOCQMsgPostType = $resJson['post_type'] ?? NULL;
+        //频道消息
+    }else{
+        exit(1);
+        //匹配不到消息类型退出
+    }
+    // 处理非频道消息
+    if (!$GOCQMsgType == "guild") {
+        // 机器人号码
+        $GOCQMsgRobot = $resJson['self_id'] ?? NULL;
+    }
+
+    // GOCQ消息内容
+    $GOCQMsgContent = $resJson['message'] ?? NULL;
+
+    // 去除消息at
+    if (strpos($GOCQMsgContent, "[CQ:at") > -1) {
+        $GOCQMsgContent = str_replace("[CQ:at,qq={$resJson['self_id']}] ", "", $GOCQMsgContent);
+    }
+
+    // 消息id
+    $GOCQMsgId = $resJson['message_id'] ?? NULL;
+    $GOCQMsgSource = $resJson['user_id'] ?? NULL;
+
+    $GOCQMsgSenderName = $resJson['sender']['nickname'] ?? NULL;
+
+    $msg = array(
+        "Ver" => 0,
+        "Pid" => 0,
+        "Port" => 0,
+        "MsgID" => $GOCQMsgId,
+        "OrigMsg" => $reqRet ? base64_encode($reqRet) : NULL,
+        "Robot" => $GOCQMsgRobot,
+        "MsgType" => $GOCQMsgType,
+        "MsgSubType" => $GOCQMsgSubType,
+        //"MsgFileUrl" => $QQChannelMsgFileUrl,
+        "Content" => $GOCQMsgContent ? base64_encode(urldecode($GOCQMsgContent)) : NULL,
+        "Source" => $GOCQMsgSource,
+        //"SubSource" => $QQChannelMsgSubSource,
+        //"SourceName" => $QQChannelMsgSourceName ? $QQChannelMsgSourceName : NULL,
+        "Sender" => $GOCQMsgSender,
+        "SenderName" => $GOCQMsgSenderName ?? NULL,
+        "Receiver" => $GOCQMsgSender,
+        //"ReceiverName" => $GOCQMsgSenderName ? $GOCQMsgSenderName : NULL,
+    );
+
+
 } elseif (FRAME_ID == 50000) {
     $resJson = json_decode($reqRet, true);
 

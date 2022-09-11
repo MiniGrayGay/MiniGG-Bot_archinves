@@ -151,6 +151,122 @@ class api
 
     /**
      *
+     * GO-CQ:返回请求API的结果
+     *
+     */
+    public function requestApiByGQCQ($newMsg, $msgExtArr = array())
+    {
+        if ($msgOrigMsg['message_type'] == "group") {
+            $reqUrl = APP_ORIGIN . "/send_group_msg";
+        } elseif($msgOrigMsg['message_type'] == "friend") {
+            $reqUrl = APP_ORIGIN . "/send_msg";
+        }
+
+        if ($msgExtArr == array()) {
+            $newData = $GLOBALS['msgExt'][$GLOBALS['msgGc']];
+        } else {
+            $msgExtData = $msgExtArr;
+            !is_array($msgExtData) ? $newData = json_decode($msgExtData, true) : $newData = $msgExtData;
+        }
+        $msgOrigMsg = $newData['msgOrigMsg'];
+        $extMsgType = $newData['msgType'];
+
+        $msgGuildId = $msgOrigMsg['guild_id'] ?? 0;
+        $msgChannelId = $msgOrigMsg['channel_id'] ?? 0;
+        $msgId = $msgOrigMsg['message_id'] ?? 0;
+        $msgSender = $msgOrigMsg['sender']['user_id'] ?? 0;
+
+        $postMsg = [];
+
+        if (strpos($extMsgType, "reply_msg") > -1) {
+            $postMsg[] = array(
+                "type" => "reply",
+                "data" => array(
+                    "id" => $msgId
+                )
+            );
+        }
+
+        if (strpos($extMsgType, "at_msg") > -1) {
+            $msgAtQQChannel = $newData['msgAtQQChannel'] ?? array();
+            $msgAtType = $msgAtQQChannel['at_type'];
+
+            $postMsg[] = array(
+                "type" => "at",
+                "data" => array(
+                    "qq" => $msgAtType == 2 ? "all" : $msgSender
+                )
+            );
+
+            //$postMsg = array_reverse($postMsg);
+            //at 靠前
+        }
+
+        if (strpos($extMsgType, "image_msg") > -1) {
+            $extMsgImgUrl = $newData['msgImgUrl'] ?? NULL;
+
+            $postMsg[] = array(
+                "type" => "image",
+                "data" => array(
+                    "file" => $extMsgImgUrl
+                )
+            );
+        }
+        //可以叠加
+
+        if ($extMsgType == "json_msg") {
+            $postMsg[] = array(
+                "type" => "json",
+                "data" => array(
+                    "data" => $newMsg
+                )
+            );
+        }
+
+        if ($extMsgType == "xml_msg") {
+            $postMsg[] = array(
+                "type" => "xml",
+                "data" => array(
+                    "data" => $newMsg
+                )
+            );
+        }
+
+        if ($newMsg) {
+            $postMsg[] = array(
+                "type" => "text",
+                "data" => array(
+                    "text" => $newMsg
+                )
+            );
+        }
+
+        $postArr = array(
+            "guild_id" => $msgGuildId,
+            "channel_id" => $msgChannelId,
+            "message" => $postMsg
+        );
+        $postData = json_encode($postArr);
+
+        $appInfo = APP_INFO;
+        $botInfo = $appInfo['botInfo']['QQChannel'][0];
+
+        $reqRet = $this->requestUrl(
+            $reqUrl,
+            $postData,
+            array(
+                "Content-Type: application/json",
+                "Authorization: " . $botInfo['accessToken']
+            )
+        );
+
+        if (APP_INFO['debug']) appDebug("output", $postData . "\n\n" . $reqRet);
+
+        return $reqRet;
+    }
+
+    /**
+     *
      * NOKNOK:返回请求API的结果
      *
      */
