@@ -31,7 +31,7 @@
 
 | frameId | 框架                                                                        | 平台           | 鉴权     | HTTP | WS |
 |---------|---------------------------------------------------------------------------|--------------|----------|------|----|
-| 10000   | [MyPCQQ](https://www.mypcqq.cc)                                           | 电脑QQ         | 白名单IP | ✓    | ✗  |
+| 10000   | [MyPCQQ](https://www.mypcqq.cc)                                           | 电脑QQ(即将废弃)   | 白名单IP | ✓    | ✗  |
 | 20000   | [可爱猫](http://www.keaimao.com.cn/forum.php)                                | 微信           | 密钥     | ✓    | ✗  |
 | 50000   | [NOKNOK 机器人](https://www.noknok.cn)                                       | NOKNOK       | 密钥     | ✓    | ✗  |
 | 60000   | [go-cqhttp](https://github.com/Mrs4s/go-cqhttp/blob/master/docs/guild.md) | QQ频道 (GO-CQ) | 密钥     | ✓    | ✓  |

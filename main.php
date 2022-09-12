@@ -25,15 +25,15 @@ header("Content-type: application/json; charset=utf-8");
  *
  */
 
-define('APP_DIR_CLASS', "app/class/");
+const APP_DIR_CLASS = "app/class/";
 require_once(APP_DIR_CLASS . "api.class.php");
 require_once(APP_DIR_CLASS . "app.class.php");
 
-define('APP_DIR_CONFIG', "app/config/");
+const APP_DIR_CONFIG = "app/config/";
 require_once(APP_DIR_CONFIG . "app.config.php");
 require_once(APP_DIR_CONFIG . "app.definition.php");
 require_once(APP_DIR_CONFIG . "app.database.php");
 
-define('APP_DIR_CACHE', "app/cache/");
-define('APP_DIR_PLUGINS', "app/plugins/");
+const APP_DIR_CACHE = "app/cache/";
+const APP_DIR_PLUGINS = "app/plugins/";
 const APP_DIR_RESOURCES = "app/resources/";
