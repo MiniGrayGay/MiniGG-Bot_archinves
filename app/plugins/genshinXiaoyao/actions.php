@@ -71,16 +71,15 @@ class genshinXiaoyao_actions extends app
             /**
              * 角色图鉴-Yaml
              */
-            $juese_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "xiaoyao_plus/juese_tujian.json"));
+            $juese_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "altnames/juese_tujian.json"));
             $juese_tujian = $this->array_search_mu($msgContent, $juese_tujian_array);
-            $roleid_juese = json_decode(file_get_contents(APP_DIR_RESOURCES . "xiaoyao_plus/roleid_juese.json"), true);
+            $roleid_juese = json_decode(file_get_contents(APP_DIR_RESOURCES . "altnames/roleid_juese.json"), true);
             $juese_tujian = $roleid_juese[implode($juese_tujian)];
-            $this->redisSet("juese", $juese_tujian);
 
             /**
              * 秘境图鉴
              */
-            $mijin_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "xiaoyao_plus/mijin_tujian.json"), true);
+            $mijin_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "altnames/mijin_tujian.json"), true);
             $mijin_tujian = implode($this->array_search_mu($msgContent, $mijin_tujian_array));
             if(!$mijin_tujian){
                 $mijin_tujian_name = implode("|", array_keys($mijin_tujian_array));
@@ -92,7 +91,7 @@ class genshinXiaoyao_actions extends app
             /**
              * 圣遗物图鉴
              */
-            $shengyiwu_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "xiaoyao_plus/shengyiwu_tujian.json"), true);
+            $shengyiwu_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "altnames/shengyiwu_tujian.json"), true);
             $shengyiwu_tujian = implode($this->array_search_mu($msgContent, $shengyiwu_tujian_array));
             if(!$shengyiwu_tujian){
                 $shengyiwu_tujian_name = implode("|", array_keys($shengyiwu_tujian_array));
@@ -104,7 +103,7 @@ class genshinXiaoyao_actions extends app
             /**
              * 食物图鉴
              */
-            $shiwu_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "xiaoyao_plus/shiwu_tujian.json"), true);
+            $shiwu_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "altnames/shiwu_tujian.json"), true);
             $shiwu_tujian = implode($this->array_search_mu($msgContent, $shiwu_tujian_array));
             if(!$mijin_tujian){
                 $mijin_tujian_name = implode("|", array_keys($mijin_tujian_array));
@@ -116,7 +115,7 @@ class genshinXiaoyao_actions extends app
             /**
              * 武器图鉴
              */
-            $wuqi_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "xiaoyao_plus/wuqi_tujian.json"), true);
+            $wuqi_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "altnames/wuqi_tujian.json"), true);
             $wuqi_tujian = implode($this->array_search_mu($msgContent, $wuqi_tujian_array));
             if(!$wuqi_tujian){
                 $wuqi_tujian_name = implode("|", array_keys($wuqi_tujian_array));
@@ -128,7 +127,7 @@ class genshinXiaoyao_actions extends app
             /**
              * 道具图鉴
              */
-            $daoju_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "xiaoyao_plus/daoju_tujian.json"), true);
+            $daoju_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "altnames/daoju_tujian.json"), true);
             $daoju_tujian = implode($this->array_search_mu($msgContent, $daoju_tujian_array));
             if(!$daoju_tujian){
                 $daoju_tujian_name = implode("|", array_keys($daoju_tujian_array));
@@ -140,7 +139,7 @@ class genshinXiaoyao_actions extends app
             /**
              * 原魔图鉴
              */
-            $yuanmo_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "xiaoyao_plus/yuanmo_tujian.json"), true);
+            $yuanmo_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "altnames/yuanmo_tujian.json"), true);
             $yuanmo_tujian = implode($this->array_search_mu($msgContent, $yuanmo_tujian_array));
             if(!$yuanmo_tujian){
                 $yuanmo_tujian_name = implode("|", array_keys($yuanmo_tujian_array));

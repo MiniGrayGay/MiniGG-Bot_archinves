@@ -1,0 +1,24 @@
+{
+  "icon": "pic.icon",
+  "guid": "6f5a601c-dde1-899d-be6c-ec9e73b12b0e",
+  "name": "原神西风驿站攻略",
+  "type": [
+    "原神"
+  ],
+  "desc": "西风驿站",
+  "ver": "1.0.0.0",
+  "author": "小灰灰",
+  "url": null,
+  "switch": true,
+  "trigger": {
+    "web": [],
+    "frame": [],
+    "command": [
+      {
+        "keywords": "攻略|(.*?)攻略",
+        "desc": "输入<角色名+攻略>查看西风驿站攻略",
+        "show": true
+      }
+    ]
+  }
+}
