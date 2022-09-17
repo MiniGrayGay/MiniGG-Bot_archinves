@@ -1,0 +1,79 @@
+{
+  "icon": "pic.icon",
+  "guid": "7b0aa85c-a69c-74c7-fa8e-c8368c834202",
+  "name": "GenshinUID_Help",
+  "type": [
+    "原神"
+  ],
+  "desc": "GenshinUID帮助",
+  "ver": "3.1",
+  "author": "小灰灰",
+  "url": null,
+  "switch": true,
+  "trigger": {
+    "web": [],
+    "frame": [],
+    "command": [
+      {
+        "keywords": "强制刷新+<UID>",
+        "desc": "刷新角色面板",
+        "show": true
+      },
+      {
+        "keywords": "查询展柜角色",
+        "desc": "查询已缓存角色面板",
+        "show": true
+      },
+      {
+        "keywords": "<角色名>用什么",
+        "desc": "查看角色养成",
+        "show": true
+      },
+      {
+        "keywords": "<武器名>给谁用",
+        "desc": "查询武器适合的角色",
+        "show": true
+      },
+      {
+        "keywords": "<角色名>攻略",
+        "desc": "西风驿站攻略图",
+        "show": true
+      },
+      {
+        "keywords": "<角色名>参考面板",
+        "desc": "角色小毕业面板参考",
+        "show": true
+      },
+      {
+        "keywords": "活动列表",
+        "desc": "查询游戏当前活动的列表",
+        "show": true
+      },
+      {
+        "keywords": "任务<名字>",
+        "desc": "查询相关任务的攻略",
+        "show": true
+      },
+      {
+        "keywords": "血量表",
+        "desc": "所有怪物的血量对照表",
+        "show": true
+      },
+      {
+        "keywords": "抗性表",
+        "desc": "所有怪物的抗性对照表",
+        "show": true
+      },
+      {
+        "keywords": "伤害乘区",
+        "desc": "伤害乘区计算对照表",
+        "show": true
+      },
+      {
+        "keywords": "查询+<UID>",
+        "desc": "查询游戏角色数据",
+        "show": true
+      }
+    ]
+  }
+}
