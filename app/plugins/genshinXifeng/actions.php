@@ -95,4 +95,14 @@ class genshinXifeng_actions extends app
 
         $this->appSend($msgRobot, $msgType, $msgSource, $msgSender, $ret);
     }
+
+    function array_search_mu($search, $array, $i = 0, $found = array())
+    {
+        foreach ($array as $key => $value) {
+            $needle = array_search($search, $value);
+            if ($needle === 0) $found[] = $key;
+            if ($needle) $found[] = $key;
+        }
+        return $found;
+    }
 }
