@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * 感谢米游社猫冬大佬提供的原神攻略图
+ * @dataProvider https://bbs.mihoyo.com/ys/collection/642956
+ */
 class genshinXifeng_actions extends app
 {
     function __construct(&$appManager)
