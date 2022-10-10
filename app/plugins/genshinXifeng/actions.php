@@ -74,7 +74,7 @@ class genshinXifeng_actions extends app
         /**
          * 角色图鉴-Yaml
          */
-        $juese_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "altnames/juese_tujian.json"));
+        $juese_tujian_array = $this->phpyaml->parseFile(APP_DIR_RESOURCES . "altnames/roldName.yaml");
         $juese_tujian = $this->array_search_mu($msgContent, $juese_tujian_array);
         $roleid_juese = json_decode(file_get_contents(APP_DIR_RESOURCES . "altnames/roleid_juese.json"), true);
         $juese_tujian = $roleid_juese[implode($juese_tujian)];
