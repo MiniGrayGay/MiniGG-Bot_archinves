@@ -1,51 +1,28 @@
 <?php
 
-/**
- * 需要注意的几个默认规则:
- * 1.本插件类的文件名必须是action
- * 2.插件类的名称必须是{插件名_actions}
- */
 class wzryMiniGG_actions extends app
 {
     function __construct(&$appManager)
     {
-        //注册这个插件
-        //第一个参数是钩子的名称
-        //第二个参数是appManager的引用
-        //第三个是插件所执行的方法
         $appManager->register('plugin', $this, 'EventFun');
 
         $this->linkRedis();
     }
 
-    //解析函数的参数是appManager的引用
-
     function EventFun($msg)
     {
         $msgPort = $msg['Port'];
-        //监听的服务端口，范围为 8010-8020
         $msgPid = $msg['Pid'];
-        //进程ID
         $msgVer = $msg['Ver'];
-        //机器人版本
         $msgId = $msg['MsgID'];
-        ///信息序号
         $msgRobot = $msg['Robot'];
-        //参_机器人
         $msgType = $msg['MsgType'];
-        //参_信息类型
         $msgSubType = $msg['MsgSubType'];
-        //参_信息子类型
         $msgSource = $msg['Source'];
-        //参_信息来源
         $msgSender = $msg['Sender'];
-        //参_触发对象_主动
         $msgReceiver = $msg['Receiver'];
-        //参_触发对象_被动
         $msgContent = base64_decode($msg['Content']);
-        //参_信息内容
         $msgOrigMsg = base64_decode($msg['OrigMsg']);
-        //参_原始信息
 
         if (in_array($msgSource, APP_SPECIAL_GROUP)) return;
         //特殊群
