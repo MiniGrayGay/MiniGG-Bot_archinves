@@ -67,15 +67,10 @@ class genshinXiaoyao_actions extends app
                 $matchValue = $msgMatch[0];
                 $msgContent = str_replace($matchValue, "", $msgContent);
             }
-            if (preg_match("/^图鉴/", $msgContent, $msgMatch)) {
-                $matchValue = $msgMatch[0];
-                $msgContent = str_replace($matchValue, "", $msgContent);
-            }
 
             /**
              * 角色图鉴-Yaml
              */
-            $this->redisSet("debug", $msgContent);
             $juese_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "altnames/juese_tujian.json"));
             $juese_tujian = $this->array_search_mu($msgContent, $juese_tujian_array);
             $roleid_juese = json_decode(file_get_contents(APP_DIR_RESOURCES . "altnames/roleid_juese.json"), true);
