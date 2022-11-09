@@ -58,11 +58,10 @@ class genshinXiaoyao_actions extends app
              * 角色图鉴-Yaml
              * @link https://raw.githubusercontent.com/Le-niao/Yunzai-Bot/main/plugins/genshin/defSet/role/name.yaml
              */
-            $juese_tujian_array = $this->phpyaml->parseFile(APP_DIR_RESOURCES . "altnames/roldName.yaml");
+            $juese_tujian_array = $this->phpyaml->parseFile(APP_DIR_RESOURCES . "altnames/roleName.yaml");
             $juese_tujian = $this->array_search_mu($msgContent, $juese_tujian_array);
-            //$roleid_juese = json_decode(file_get_contents(APP_DIR_RESOURCES . "altnames/roleid_juese.json"), true);
-            //$juese_tujian = $roleid_juese[implode($juese_tujian)];
-            $juese_tujian = $juese_tujian_array[$juese_tujian][0];
+            $roleid_juese = json_decode(file_get_contents(APP_DIR_RESOURCES . "altnames/roleid_juese.json"), true);
+            $juese_tujian = $roleid_juese[implode($juese_tujian)];
 
             /**
              * 秘境图鉴
