@@ -60,13 +60,14 @@ class genshinXiaoyao_actions extends app
              */
             $juese_tujian_array = $this->phpyaml->parseFile(APP_DIR_RESOURCES . "altnames/roldName.yaml");
             $juese_tujian = $this->array_search_mu($msgContent, $juese_tujian_array);
-            $roleid_juese = json_decode(file_get_contents(APP_DIR_RESOURCES . "altnames/roleid_juese.json"), true);
-            $juese_tujian = $roleid_juese[implode($juese_tujian)];
+            //$roleid_juese = json_decode(file_get_contents(APP_DIR_RESOURCES . "altnames/roleid_juese.json"), true);
+            //$juese_tujian = $roleid_juese[implode($juese_tujian)];
+            $juese_tujian = $juese_tujian_array[$juese_tujian][0];
 
             /**
              * 秘境图鉴
              */
-            $mijin_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "altnames/mijin_tujian.json"), true);
+            $mijin_tujian_array = $this->phpyaml->parseFile(APP_DIR_RESOURCES . "altnames/mijin_tujian.yaml");
             $mijin_tujian = implode($this->array_search_mu($msgContent, $mijin_tujian_array));
             if(!$mijin_tujian){
                 $mijin_tujian_name = implode("|", array_keys($mijin_tujian_array));
@@ -78,7 +79,7 @@ class genshinXiaoyao_actions extends app
             /**
              * 圣遗物图鉴
              */
-            $shengyiwu_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "altnames/shengyiwu_tujian.json"), true);
+            $shengyiwu_tujian_array = $this->phpyaml->parseFile(APP_DIR_RESOURCES . "altnames/shengyiwu_tujian.yaml");
             $shengyiwu_tujian = implode($this->array_search_mu($msgContent, $shengyiwu_tujian_array));
             if(!$shengyiwu_tujian){
                 $shengyiwu_tujian_name = implode("|", array_keys($shengyiwu_tujian_array));
@@ -90,7 +91,7 @@ class genshinXiaoyao_actions extends app
             /**
              * 食物图鉴
              */
-            $shiwu_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "altnames/shiwu_tujian.json"), true);
+            $shiwu_tujian_array = $this->phpyaml->parseFile(APP_DIR_RESOURCES . "altnames/shiwu_tujian.yaml");
             $shiwu_tujian = implode($this->array_search_mu($msgContent, $shiwu_tujian_array));
             if(!$mijin_tujian){
                 $mijin_tujian_name = implode("|", array_keys($mijin_tujian_array));
@@ -102,7 +103,7 @@ class genshinXiaoyao_actions extends app
             /**
              * 武器图鉴
              */
-            $wuqi_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "altnames/wuqi_tujian.json"), true);
+            $wuqi_tujian_array = $this->phpyaml->parseFile(APP_DIR_RESOURCES . "altnames/wuqi_tujian.yaml");
             $wuqi_tujian = implode($this->array_search_mu($msgContent, $wuqi_tujian_array));
             if(!$wuqi_tujian){
                 $wuqi_tujian_name = implode("|", array_keys($wuqi_tujian_array));
@@ -114,7 +115,7 @@ class genshinXiaoyao_actions extends app
             /**
              * 道具图鉴
              */
-            $daoju_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "altnames/daoju_tujian.json"), true);
+            $daoju_tujian_array = $this->phpyaml->parseFile(APP_DIR_RESOURCES . "altnames/daoju_tujian.yaml");
             $daoju_tujian = implode($this->array_search_mu($msgContent, $daoju_tujian_array));
             if(!$daoju_tujian){
                 $daoju_tujian_name = implode("|", array_keys($daoju_tujian_array));
@@ -126,7 +127,7 @@ class genshinXiaoyao_actions extends app
             /**
              * 原魔图鉴
              */
-            $yuanmo_tujian_array = json_decode(file_get_contents(APP_DIR_RESOURCES . "altnames/yuanmo_tujian.json"), true);
+            $yuanmo_tujian_array = $this->phpyaml->parseFile(APP_DIR_RESOURCES . "altnames/yuanmo_tujian.yaml");
             $yuanmo_tujian = implode($this->array_search_mu($msgContent, $yuanmo_tujian_array));
             if(!$yuanmo_tujian){
                 $yuanmo_tujian_name = implode("|", array_keys($yuanmo_tujian_array));
