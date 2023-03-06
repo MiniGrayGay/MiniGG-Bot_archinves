@@ -1,5 +1,5 @@
 <p align="center"><a href="https://microgg.coding.net/public/microgg/GenshinUID/git/files"><img src="https://img.genshin.minigg.cn/minigg.png" width="256" height="256" alt="GenshinUID"></a></p>
-<h1 align="center">GenshinUID-PHP</h1>
+<h1 align="center">MiniGG-Bot</h1>
 <h3 align="center">♾️基于 <a href="https://bot.q.qq.com/wiki/develop/api/" target="_blank">QQ官方频道WebSocket API</a> & <a href="https://www.noknok.cn/" target="_blank">Noknok</a> 的原神多功能Bot♾️</h3>
 <h4 align="center">同时兼容GO-CQHttp/微信可爱猫</h4>
 <p align="center">
@@ -26,32 +26,31 @@
 
 
 ## 协议
+> 回调地址:http://your.domain/app.php?frameId=10000&frameIp=127.0.0.1&frameGc=123456 ，frameId 不填默认 50000
 
-> 回调地址:http://your.domain/app.php?frameId=50000&frameIp=127.0.0.1&frameGc=123456 ，frameId 不填默认 50000
-
-| frameId | 框架                                                                        | 平台           | 鉴权     | HTTP | WS |
-|---------|---------------------------------------------------------------------------|--------------|----------|------|----|
-| 10000   | [MyPCQQ](https://www.mypcqq.cc)                                           | 电脑QQ(即将废弃)   | 白名单IP | ✓    | ✗  |
-| 20000   | [可爱猫](http://www.keaimao.com.cn/forum.php)                                | 微信           | 密钥     | ✓    | ✗  |
-| 50000   | [NOKNOK 机器人](https://www.noknok.cn)                                       | NOKNOK       | 密钥     | ✓    | ✗  |
-| 60000   | [go-cqhttp](https://github.com/Mrs4s/go-cqhttp/blob/master/docs/guild.md) | QQ频道 (GO-CQ) | 密钥     | ✓    | ✓  |
-| 70000   | [QQ 机器人](https://bot.q.qq.com/)                                           | QQ频道 (官方)    | 密钥     | ✗    | ✓  |
+| frameId | 框架                                                                                                   | 平台     | 鉴权     | HTTP | WS |
+|---------|--------------------------------------------------------------------------------------------------------|----------|----------|------|----|
+| 2500    | [小米小爱开放平台](https://developers.xiaoai.mi.com)                                                   | 小爱音箱 | -        | ✓    | ✗  |
+| 10000   | [MyPCQQ](https://www.mypcqq.cc)                                                                        | 电脑 QQ  | 白名单IP | ✓    | ✗  |
+| 20000   | [可爱猫](http://www.keaimao.com.cn/forum.php)                                                          | 微信     | 密钥     | ✓    | ✗  |
+| 50000   | [NOKNOK](https://bot-docs.github.io/pages/events/1_callback.html)                                      | NOKNOK   | 密钥     | ✓    | ✗  |
+| 60000   | [go-cqhttp](https://github.com/Mrs4s/go-cqhttp/blob/master/docs/guild.md)                              | 手机 QQ  | 密钥     | ✓    | ✓  |
+| 70000   | [QQ 机器人](https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&inviteCode=1d9lY8&from=181074&biz=ka) | QQ 频道  | 密钥     | ✗    | ✓  |
+| 80000   | [王者营地](https://pvp.qq.com)                                                                         | 王者营地 | -        | ✓    | ✗  |
 
 > MyPCQQ 由于各方面原因，作者已经弃坑，是一个已经停摆的项目，不再提供维护和更新。
 
 ## 数据
+> **-** 表示不确定，且很大概率不行，**小爱音箱** 只有语音文本回复
 
-> **-** 表示不确定，且很大概率不行。
-
-| msgType      | MyPCQQ | 可爱猫 | NOKNOK 机器人 | QQ频道 (GO-CQ) | QQ频道 (官方) |
-|--------------|--------|--------|---------------|-----------|-----------|
-| 文本         | ✓      | ✓      | ✓             | ✓         | ✓         |
-| 图片         | ✓      | 本地   | ✓             | ✓         | ✓         |
-| at_msg       | ✓      | ✓      | ✓             | ✓         | ✓         |
-| reply_msg    | ✗      | ✗      | ✓             | ✓         | 需申请       |
-| markdown_msg | ✗      | ✗      | ✓             | ✗         | 需申请       |
-| json_msg     | -      | -      | -             | -         | ✓         |
-| xml_msg      | ✓      | -      | -             | ✓         | -         |
+| frameType     | 文本 | 图片 | at_msg | reply_msg | markdown_msg |
+|---------------|------|------|--------|-----------|--------------|
+| MyPCQQ        | ✓    | ✓    | ✓      | ✗         | ✗            |
+| 可爱猫        | ✓    | 本地 | ✓      | ✗         | ✗            |
+| NOKNOK 机器人 | ✓    | ✗    | ✓      | ✓         | ✓            |
+| go-cqhttp     | ✓    | ✓    | ✓      | ✓         | ✗            |
+| QQ 机器人     | ✓    | ✓    | ✓      | ✗         | ✗            |
+| 王者营地      | ✓    | ✗    | ✓      | ✗         | ✗            |
 
 # 配置
 

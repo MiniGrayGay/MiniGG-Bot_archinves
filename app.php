@@ -1,14 +1,17 @@
 <?php
 
 require_once("main.php");
-require_once("vendor/autoload.php");
+
 $reqRet = file_get_contents("php://input");
 
 /**
- * 信息为空直接跳到黄色网站 ;D
+ *
+ * 信息为空直接跳到爱发电 ;D
+ *
  */
 if (!$reqRet) {
     header("Location: https://www.minigg.cn");
+
     exit(1);
 } else {
     $appInfo = APP_INFO;
@@ -20,7 +23,73 @@ if (!$reqRet) {
  * 需要在 api.class.php 增加入口的回复 API ，也需要在 config/app.config.php 修改机器人信息，否则无法替换
  *
  */
-if (FRAME_ID == 10000) {
+if (FRAME_ID == 2500) {
+    $resJson = json_decode($reqRet, true);
+
+    $resSession = $resJson['session'] ?? array();
+    $XIAOAIMsgSource = $resSession['application']['app_id'] ?? 0;
+    $XIAOAIMsgSender = $resSession['user']['user_id'] ?? 0;
+
+    $resRequest = $resJson['request'] ?? array();
+    $XIAOAIMsgType = $resRequest['type'] ?? 2;
+    $XIAOAIMsgId = $resRequest['request_id'] ?? NULL;
+    $XIAOAIMsgContent = $resRequest['intent']['query'] ?? NULL;
+    $XIAOAIMsgNoResponse = $msgRequest['no_response'] ?? NULL;
+    $XIAOAIMsgRobot = $resRequest['intent']['app_id'] ?? 0;
+
+    $appMic = true;
+
+    if ($XIAOAIMsgNoResponse) {
+        $res = "主人，还在嘛？";
+    } elseif ($XIAOAIMsgType == 0) {
+        $res = "你好，主人。";
+    } elseif ($XIAOAIMsgType == 2) {
+        $res = "再见，主人！";
+
+        $appMic = false;
+    }
+
+    if ($res) {
+        echo json_encode(array(
+            'version'  => '1.0',
+            'session_sttributes' => array(),
+            'response' => array(
+                'open_mic' => $appMic,
+                'to_speak' => array(
+                    'type' => 0,
+                    'text' => $res
+                )
+            ),
+            'is_session_end' => false
+        ));
+
+        exit(0);
+    }
+
+    $msgContentOriginal = $XIAOAIMsgContent;
+
+    $msg = array(
+        "Ver" => 0,
+        "Pid" => 0,
+        "Port" => 0,
+        "MsgID" => $XIAOAIMsgId,
+        "OrigMsg" => $reqRet ? base64_encode($reqRet) : NULL,
+        "Robot" => $XIAOAIMsgRobot,
+        "MsgType" => $XIAOAIMsgType,
+        "MsgSubType" => 0,
+        //"MsgFileUrl" => $XIAOAIMsgFileUrl,
+        "Content" => $XIAOAIMsgContent ? base64_encode(urldecode($XIAOAIMsgContent)) : NULL,
+        "Source" => $XIAOAIMsgSource,
+        "SubSource" => NULL,
+        //"SourceName" => $XIAOAIMsgSourceName ? $XIAOAIMsgSourceName : NULL,
+        "Sender" => $XIAOAIMsgSender,
+        //"SenderName" => $XIAOAIMsgSenderName ? $XIAOAIMsgSenderName : NULL,
+        "Receiver" => $XIAOAIMsgSender,
+        //"ReceiverName" => $XIAOAIMsgSenderName ? $XIAOAIMsgSenderName : NULL,
+    );
+
+    //XIAOAI:统一格式
+} elseif (FRAME_ID == 10000) {
     $resJson = json_decode($reqRet, true);
 
     if ($resJson['MsgType'] == -1 || $resJson['MsgType'] == 1002) exit(1);
@@ -77,14 +146,10 @@ if (FRAME_ID == 10000) {
 
     /**
      *
-     * 图片消息
+     * 图片、文件消息
      *
      */
     $kamMsgFileUrl = $_POST['file_url'] ?? NULL;
-
-    if ($kamMsgFileUrl) {
-        $kamMsgContent = "[KAM:image,url={$kamMsgFileUrl}]";
-    }
 
     $kamType = $_POST['type'] ?? 0;
     $kamMsgType = $_POST['msg_type'] ?? 0;
@@ -105,7 +170,7 @@ if (FRAME_ID == 10000) {
         "Robot" => $kamMsgRobot,
         "MsgType" => $kamType,
         "MsgSubType" => $kamMsgType,
-        //"MsgFileUrl" => $kamMsgFileUrl,
+        "MsgFileUrl" => $kamMsgFileUrl,
         "Content" => $kamMsgContent ? base64_encode(urldecode($kamMsgContent)) : NULL,
         "Source" => $kamMsgSource,
         "SubSource" => NULL,
@@ -116,95 +181,7 @@ if (FRAME_ID == 10000) {
         //"ReceiverName" => $kamMsgSenderName ? urldecode($kamMsgSenderName) : NULL,
     );
 
-    // 可爱猫:未死鲤鱼:统一格式
-} elseif (FRAME_ID == 30000) {
-    $resJson = json_decode($reqRet, true);
-    $GOCQMsgMainType = $resJson['message_type'] ?? NULL;
-    $GOCQMsgSubType = $resJson['sub_type'] ?? NULL;
-
-    //判断消息类型
-    if($GOCQMsgMainType == "private"){
-        //私聊消息
-        if($GOCQMsgSubType == "friend"){
-            $GOCQMsgType = "private_friend";
-            $GOCQMsgSource = $resJson['user_id'];
-            //好友消息
-        }elseif ($GOCQMsgSubType == "group"){
-            $GOCQMsgType = "private_group";
-            $GOCQMsgSource = $resJson['user_id'];
-            //群临时会话
-        }elseif ($GOCQMsgSubType == "group_self"){
-            $GOCQMsgType = "private_group_self";
-            //群消息-自身
-            exit(1);
-            //暂不处理
-        }else{
-            $GOCQMsgType = "other";
-            //未知消息
-        }
-    }elseif ($GOCQMsgMainType == "group"){
-        //群消息
-        if($GOCQMsgSubType == "normal"){
-            $GOCQMsgType = "group_normal";
-            //群正常消息
-        }elseif ($GOCQMsgSubType == "anonymous"){
-            $GOCQMsgType = "group_anonymous";
-            //群匿名消息
-        }elseif ($GOCQMsgSubType == "notice"){
-            $GOCQMsgType = "group_notice";
-            //群系统提示
-        }else{
-            $GOCQMsgType = "group_normal";
-        }
-    }elseif ($GOCQMsgMainType == "guild"){
-        $GOCQMsgType = "guild";
-        $GOCQMsgPostType = $resJson['post_type'] ?? NULL;
-        //频道消息
-    }else{
-        exit(1);
-        //匹配不到消息类型退出
-    }
-    // 处理非频道消息
-    if (!$GOCQMsgType == "guild") {
-        // 机器人号码
-        $GOCQMsgRobot = $resJson['self_id'] ?? NULL;
-    }
-
-    // GOCQ消息内容
-    $GOCQMsgContent = $resJson['message'] ?? NULL;
-
-    // 去除消息at
-    if (strpos($GOCQMsgContent, "[CQ:at") > -1) {
-        $GOCQMsgContent = str_replace("[CQ:at,qq={$resJson['self_id']}] ", "", $GOCQMsgContent);
-    }
-
-    // 消息id
-    $GOCQMsgId = $resJson['message_id'] ?? NULL;
-    $GOCQMsgSource = $resJson['user_id'] ?? NULL;
-
-    $GOCQMsgSenderName = $resJson['sender']['nickname'] ?? NULL;
-
-    $msg = array(
-        "Ver" => 0,
-        "Pid" => 0,
-        "Port" => 0,
-        "MsgID" => $GOCQMsgId,
-        "OrigMsg" => $reqRet ? base64_encode($reqRet) : NULL,
-        "Robot" => $GOCQMsgRobot,
-        "MsgType" => $GOCQMsgType,
-        "MsgSubType" => $GOCQMsgSubType,
-        //"MsgFileUrl" => $QQChannelMsgFileUrl,
-        "Content" => $GOCQMsgContent ? base64_encode(urldecode($GOCQMsgContent)) : NULL,
-        "Source" => $GOCQMsgSource,
-        //"SubSource" => $QQChannelMsgSubSource,
-        //"SourceName" => $QQChannelMsgSourceName ? $QQChannelMsgSourceName : NULL,
-        "Sender" => $GOCQMsgSender,
-        "SenderName" => $GOCQMsgSenderName ?? NULL,
-        "Receiver" => $GOCQMsgSender,
-        //"ReceiverName" => $GOCQMsgSenderName ? $GOCQMsgSenderName : NULL,
-    );
-
-
+    //可爱猫:未死鲤鱼:统一格式
 } elseif (FRAME_ID == 50000) {
     $resJson = json_decode($reqRet, true);
 
@@ -234,6 +211,7 @@ if (FRAME_ID == 10000) {
         header("Content-Length: " . $obLength);
 
         ob_end_flush();
+
         if ($obLength) {
             ob_flush();
         }
@@ -357,7 +335,7 @@ if (FRAME_ID == 10000) {
     $QQChannelMsgSubType = $resJson['sub_type'] ?? NULL;
     $QQChannelMsgPostType = $resJson['post_type'] ?? NULL;
 
-    if (!$QQChannelMsgType || $QQChannelMsgType != "guild" || $QQChannelMsgSubType != "channel") exit(1);
+    //if (!$QQChannelMsgType || $QQChannelMsgType != "guild" || $QQChannelMsgSubType != "channel") exit(1);
     //排除非频道信息
 
     $QQChannelMsgContent = $resJson['message'] ?? NULL;
@@ -489,6 +467,47 @@ if (FRAME_ID == 10000) {
     );
 
     //QQChannel:官方:统一格式
+} elseif (FRAME_ID == 80000) {
+    $resJson = json_decode($reqRet, true);
+
+    $XXQMsgType = $resJson['type'] ?? "text";
+    $XXQMsgContent = $resJson['message'] ?? NULL;
+
+    /**
+     *
+     * 机器人号码
+     *
+     */
+    $XXQMsgRobot = $appInfo['botInfo']['XXQ']['uin'] ?? NULL;
+
+    $XXQMsgId = $resJson['messageId'] ?? NULL;
+    $XXQMsgSource = $resJson['superGroupId'] ?? NULL;
+    $XXQMsgSubSource = $resJson['chatRoomId'] ?? NULL;
+    $XXQMsgSender = $resJson['fUserId'] ?? NULL;
+
+    $msgContentOriginal = $XXQMsgContent;
+
+    $msg = array(
+        "Ver" => 0,
+        "Pid" => 0,
+        "Port" => 0,
+        "MsgID" => $XXQMsgId,
+        "OrigMsg" => $reqRet ? base64_encode($reqRet) : NULL,
+        "Robot" => $XXQMsgRobot,
+        "MsgType" => $XXQMsgType,
+        "MsgSubType" => 0,
+        //"MsgFileUrl" => $XXQMsgFileUrl,
+        "Content" => $XXQMsgContent ? base64_encode(urldecode($XXQMsgContent)) : NULL,
+        "Source" => $XXQMsgSource,
+        "SubSource" => $XXQMsgSubSource,
+        //"SourceName" => $XXQMsgSourceName ? $XXQMsgSourceName : NULL,
+        "Sender" => $XXQMsgSender,
+        //"SenderName" => $XXQMsgSenderName ? $XXQMsgSenderName : NULL,
+        "Receiver" => $XXQMsgSender,
+        //"ReceiverName" => $XXQMsgSenderName ? $XXQMsgSenderName : NULL,
+    );
+
+    //X星球:统一格式
 } else {
     exit(1);
 }
@@ -539,6 +558,7 @@ $GLOBALS['msgSender'] = $msg['Sender'];
 $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = NULL;
 $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgOrigMsg'] = $resJson;
 $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgImgUrl'] = NULL;
+$GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgImgFile'] = NULL;
 $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgImgNewSize'] = true;
 $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgAtNokNok'] = array();
 
@@ -560,7 +580,33 @@ if ($allRobot) {
     if (in_array($nowRobot, $allRobotArr) || in_array($nowSender, $allRobotArr)) exit(1);
 }
 
+/**
+ *
+ * 填写的机器人才会触发，默认全部
+ *
+ */
+if (count(CONFIG_ROBOT) > 0) {
+    if (!in_array($msg['Robot'], CONFIG_ROBOT)) exit(1);
+}
+
+/**
+ *
+ * 黑名单的对象不会触发，默认无黑名单
+ *
+ */
+if (count(CONFIG_USER_BLOCKLIST) > 0) {
+    if (in_array($msg['Sender'], CONFIG_USER_BLOCKLIST)) exit(1);
+}
+
 if (FRAME_ID == 10000) {
+    /**
+     *
+     * 黑名单的群不会触发，默认无黑名单
+     *
+     */
+    if (CONFIG_GROUP_BLOCKLIST) {
+        if ($msg['MsgType'] == 2 && in_array($msg['Source'], CONFIG_GROUP_BLOCKLIST)) exit(1);
+    }
 
     /**
      *
@@ -610,6 +656,14 @@ if (FRAME_ID == 10000) {
         $appManager->appHandleByMPQ($retMsg, $config_event_group['user']['invite']['text']);
     }
 } elseif (FRAME_ID == 20000) {
+    /**
+     *
+     * 黑名单的群不会触发，默认无黑名单
+     *
+     */
+    if (CONFIG_GROUP_BLOCKLIST) {
+        if ($msg['MsgType'] == 200 && in_array($msg['Source'], CONFIG_GROUP_BLOCKLIST)) exit(1);
+    }
 
     /**
      *
@@ -620,6 +674,8 @@ if (FRAME_ID == 10000) {
         $config_event_robot = json_decode(CONFIG_EVENT_ROBOT, true);
 
         if ($config_event_robot['passive']['add']['switch'] == true) {
+            $appManager->appSetMsgType("json_msg");
+
             $newData = array();
             $newData['type'] = 303;
             $newData['robot_wxid'] = $msg['Robot'];
@@ -661,10 +717,27 @@ if (!$allKeywords) {
      * 触发指定插件
      *
      */
-    $allPlugins[] = array("name" => "getimg", "path" => "app/plugins/getimg");
+    $allPlugins[] = array("name" => "getImg", "path" => "app/plugins/getImg");
 } elseif (preg_match($allKeywords, $msgContentOriginal, $msgMatch_1)) {
     $msgMatch_1 = array_unique($msgMatch_1);
     $msgMatch_1 = array_values($msgMatch_1);
+
+    preg_match(CONFIG_MSG_BLOCKLIST, $msgContentOriginal, $msgMatch_2);
+    $msgMatch_2 = array_unique($msgMatch_2);
+    $msgMatch_2 = array_values($msgMatch_2);
+
+    if (count($msgMatch_2) > 0) {
+        if (preg_match(CONFIG_MSG_WHITELIST, $msgContentOriginal)) {
+            //存在白名单
+        } elseif ($GLOBALS['senderStatusInfo'] == 0) {
+            $ret = $appInfo['codeInfo'][1005];
+
+            $appManager->appSend($msg['Robot'], $msg['MsgType'], $msg['Source'], $msg['Sender'], $ret);
+
+            //存在黑名单
+            exit(1);
+        }
+    }
 
     /**
      *
@@ -673,7 +746,6 @@ if (!$allKeywords) {
      */
     $allTrigger = json_decode(json_encode($appManager->redisGet("plugins-allTrigger-" . FRAME_ID)), true);
 
-    $allPlugins = array();
     for ($allMsgMatch_i = 0; $allMsgMatch_i < count($msgMatch_1); $allMsgMatch_i++) {
         $forList = $msgMatch_1[$allMsgMatch_i];
 
@@ -682,12 +754,10 @@ if (!$allKeywords) {
          * 触发指定插件
          *
          */
-        if (preg_match("/\{|\[KAM\:image|\[NOKNOK\:image|\[CQ\:image|\[QC\:image/", $forList)) {
-            if ($GLOBALS['senderStatusInfo'] == 1) $allPlugins[] = array("name" => "getimg", "path" => "app/plugins/getimg");
-        } elseif (preg_match("/(我有个(.*?)说|鲁迅说)/", $forList)) {
+        if (preg_match("/\{|\[KAM\:image|\[NOKNOK\:image|\[CQ\:image|\[QC\:image/", $forList, $msgMatch)) {
+            if ($GLOBALS['senderStatusInfo'] == 1) $allPlugins[] = array("name" => "getImg", "path" => "app/plugins/getImg");
+        } elseif (preg_match("/(我有个(.*?)说|鲁迅说)/", $forList, $msgMatch)) {
             $allPlugins[] = array("name" => "generateImg", "path" => "app/plugins/generateImg");
-        } elseif (preg_match("/(.*?)图鉴/", $forList)) {
-            $allPlugins[] = array("name" => "genshinXiaoyao", "path" => "app/plugins/genshinXiaoyao");
         } else {
             $matchValue = strtolower($forList);
             //coser github roll 等英文触发转小写
@@ -714,6 +784,13 @@ if (!$allKeywords) {
         }
     }
 }
+
+/**
+ *
+ * 触发指定插件
+ *
+ */
+//$allPlugins[] = array("name" => "aila", "path" => "app/plugins/aila");
 
 if (count($allPlugins) == 0) {
     /**

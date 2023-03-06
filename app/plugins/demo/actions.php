@@ -19,7 +19,6 @@ class demo_actions extends app
 
         $this->linkRedis();
     }
-
     //解析函数的参数是appManager的引用
 
     function EventFun($msg)
@@ -49,14 +48,16 @@ class demo_actions extends app
         $msgOrigMsg = base64_decode($msg['OrigMsg']);
         //参_原始信息
 
+        if (in_array($msgSource, APP_SPECIAL_GROUP)) return;
+        //特殊群
+
         /**
          *
          * 这是返回时的消息类型，除了 MyPCQQ 机器，其他的都得特殊处理
          *
          * @link https://jmglsi.coding.net/public/bot.91m.top/backend/git/files#user-content-%E6%95%B0%E6%8D%AE
          */
-        //$GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = NULL;
-        $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg";
+        //$this->appSetMsgType();
         $msgContent = str_replace(" ", "", $msgContent);
 
         /**
@@ -65,6 +66,8 @@ class demo_actions extends app
          *
          */
         if (preg_match("/^(你好|我好|大家好)$/", $msgContent, $msgMatch)) {
+            FRAME_ID == 70000 ? $this->appSetMsgType("reply_msg") : $this->appSetMsgType();
+
             $matchValue = $msgMatch[0];
             $msgContent = str_replace($matchValue, "", $msgContent);
             //将关键词替换掉
@@ -87,16 +90,17 @@ class demo_actions extends app
                 $ret = "[PUSH_MSG_IMG]";
 
                 if (FRAME_ID == 10000) {
+                    $this->appSetMsgType("at_msg");
+
                     $ret .= "[{$img}]";
-
-                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg";
                 } elseif (FRAME_ID == 50000) {
-                    $ret .= "![]({$img})";
+                    $this->appSetMsgType("markdown_msg");
 
-                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "markdown_msg";
+                    $ret .= "![]({$img})";
                 } elseif (in_array(FRAME_ID, array(60000, 70000))) {
+                    $this->appSetMsgType("at_msg,image_msg");
+
                     $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgImgUrl'] = $img;
-                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "at_msg,image_msg";
                 } else {
                     $ret .= "无图片查看可以网页查看哦~\n";
                     $ret .= $this->appGetShortUrl($img) . "\n";
@@ -104,6 +108,14 @@ class demo_actions extends app
             } else {
                 $ret = APP_INFO['codeInfo'][1002];
             }
+        } elseif (FRAME_ID == 70000 && $msgContent == "json") {
+            $this->appSetMsgType("json_msg");
+
+            $ret = '{"template_id":1,"kv":[{"key":"#DESC#","value":"机器人订阅消息"},{"key":"#PROMPT#","value":"XX机器人"},{"key":"#TITLE#","value":"XX机器人消息"},{"key":"#META_LIST#","obj":[{"obj_kv":[{"key":"name","value":"aaa"},{"key":"age","value":"3"}]},{"obj_kv":[{"key":"name","value":"bbb"},{"key":"age","value":"4"}]}]}]}';
+        } elseif (FRAME_ID == 70000 && $msgContent == "md") {
+            $this->appSetMsgType("markdown_msg");
+
+            $ret = '{"custom_template_id":1,"params":[{"key":"title","values":["标题"]},{"key":"para1","values":["段落1"]},{"key":"para2","values":["段落2"]},{"key":"desc","values":["简介"]},{"key":"content","values":["在这个子频道非常开心"]},{"key":"link_introduction","values":["链接介绍"]}]}';
         }
 
         $this->appSend($msgRobot, $msgType, $msgSource, $msgSender, $ret);

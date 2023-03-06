@@ -1,8 +1,6 @@
 <?php
 
-use Intervention\Image\ImageManager;
-use Overtrue\Pinyin\Pinyin;
-use Symfony\Component\Yaml\Yaml;
+use Predis\Client;
 
 /**
  *
@@ -44,24 +42,10 @@ class app extends api
         $redisConfig = APP_REDIS_CONFIG[0] ?? NULL;
         //Redis
 
-        $this->redis = new redis();
-        $this->redis->connect("127.0.0.1", 6379);
-        if ($redisConfig) $this->redis->auth($redisConfig);
-    }
-
-    public function pinyinConvert()
-    {
-        $this->Pinyin = new Pinyin();
-    }
-
-    public function IMS()
-    {
-        $this->manager = new ImageManager(['driver' => 'imagick']);
-    }
-
-    public function PHP_YAML()
-    {
-        $this->phpyaml = new Yaml();
+        $this->redis = new Client(
+            array("host" => "127.0.0.1", "port" => 6379),
+            $redisConfig ? array("parameters" => array("password" => $redisConfig)) : NULL
+        );
     }
 
     /**

@@ -48,7 +48,10 @@ class system_actions extends app
         $msgOrigMsg = base64_decode($msg['OrigMsg']);
         //参_原始信息
 
-        $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = NULL;
+        if (in_array($msgSource, APP_SPECIAL_GROUP)) return;
+        //特殊群
+
+        $this->appSetMsgType();
         $msgContent = str_replace(" ", "", $msgContent);
 
         if (preg_match("/加群/", $msgContent, $msgMatch)) {
@@ -94,21 +97,19 @@ class system_actions extends app
                     $ret = $appInfo['codeInfo'][1000];
                 }
             }
-        } elseif (preg_match("/^(菜单)$/", $msgContent)) {
-            $ret = "> 原神功能\n";
-        } elseif (preg_match("/^(功能|帮助|娱乐功能|其他功能|原神功能|系统功能)$/", $msgContent, $msgMatch)) {
+        } elseif (preg_match("/^(主菜单)$/", $msgContent, $msgMatch)) {
+            $ret .= "> 原神功能\n";
+            $ret .= "> 王者功能\n";
+            $ret .= "-----\n";
+            $ret .= "输入【上方分组】，查看详细列表\n";
+        } elseif (preg_match("/^(((原神|王者(荣耀)?|系统)(功能|相关)?)|帮助|功能|菜单)$/", $msgContent, $msgMatch)) {
             $matchValue = $msgMatch[0];
 
-            $menuArr['其他功能'] = "工具";
-            $menuArr['娱乐功能'] = "游戏";
-            $menuArr['原神功能'] = "原神";
-            $menuArr['功能'] = "原神";
-            $menuArr['帮助'] = "原神";
+            $menuArr['原神'] = "原神";
+            $menuArr['王者荣耀'] = "王者荣耀";
             $menuArr['系统功能'] = "系统";
 
             $ret = $this->getPluginsInfo($menuArr[$matchValue]);
-        } elseif (FRAME_ID == 10000 && $msgContent == "登录") {
-            $ret = $this->getMpqLoginQrcode($msgSender);
         } elseif ($msgContent == "群组") {
             if (in_array(FRAME_ID, array(10000, 20000))) {
                 $ret = "机器人:{$msgRobot} 当前群号:{$msgSource} 您的账号:" . $msgSender;
@@ -135,11 +136,9 @@ class system_actions extends app
 
             //获取群组信息
         } elseif ($msgContent == "系统状态") {
-            $ret = $this->getSystemInfo();
-
-            //获取系统状态
+            $ret = "咕咕咕~";
         } elseif ($msgContent == "频道数据") {
-            $ret = "主人，当前一共加了【21】个，其中活跃频道【15】个~";
+            $ret = "咕咕咕~";
         } elseif (in_array($msgSender, CONFIG_ADMIN)) {
             if (preg_match("/复述/", $msgContent, $msgMatch)) {
                 $matchValue = $msgMatch[0];
@@ -154,7 +153,7 @@ class system_actions extends app
                         $nowMsgType = NULL;
                     }
 
-                    $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = $nowMsgType;
+                    $this->appSetMsgType($nowMsgType);
 
                     $ret = $msgContent;
                 } else {
@@ -197,8 +196,14 @@ class system_actions extends app
 
                 //清除系统缓存
             }
+        } elseif (FRAME_ID == 10000 && $msgContent == "登录") {
+            $ret = $this->getMpqLoginQrcode($msgSender);
+        } elseif (FRAME_ID == 20000 && preg_match("/http/", $msgContent, $msgMatch)) {
+            $msgFileUrl = $msg['MsgFileUrl'] ?? NULL;
+            if ($msgType == 100 && $msgFileUrl) {
+                $ret = $this->appGetShortUrl($msgContent);
+            }
         }
-        //管理员
 
         $this->appSend($msgRobot, $msgType, $msgSource, $msgSender, $ret);
 
@@ -214,7 +219,11 @@ class system_actions extends app
     {
         $reqRet = $this->requestUrl(
             APP_API_ROBOT . "?type=rss&frameId=" . FRAME_ID . "&aid=0",
-            "robotUin=" . $GLOBALS['msgRobot'] . "&msgSource=" . $GLOBALS['msgGc']
+            "robotUin=" . $GLOBALS['msgRobot'] . "&msgSource=" . $GLOBALS['msgGc'],
+            array(
+                "Referer: https://bot.91m.top",
+                DEFAULT_UA
+            )
         );
         $resJson = json_decode($reqRet);
         $resData = $resJson->data;
@@ -267,7 +276,11 @@ class system_actions extends app
     {
         $reqRet = $this->requestUrl(
             APP_API_ROBOT . "?type=rss&frameId=" . FRAME_ID . "&aid=1",
-            "robotUin=" . $GLOBALS['msgRobot'] . "&msgSource=" . $GLOBALS['msgGc'] . "&rssId=" . $msgContent
+            "robotUin=" . $GLOBALS['msgRobot'] . "&msgSource=" . $GLOBALS['msgGc'] . "&rssId=" . $msgContent,
+            array(
+                "Referer: https://bot.91m.top",
+                DEFAULT_UA
+            )
         );
         $resJson = json_decode($reqRet);
         $resData = $resJson->data;
@@ -326,13 +339,7 @@ class system_actions extends app
      */
     function cleanWebCache()
     {
-        $keyList = array(
-            "*-getHero*",
-            "*-getAppInfo-*",
-            "*-getAppHome-*",
-            "*-getRanking-*"
-        );
-
+        $keyList = array("*-getHero*", "*-getAppInfo-*", "*-getAppHome-*", "*-getRanking-*", "*-gcIsOverdue-*", "plugins-generateImgInfo-*");
         for ($k_i = 0; $k_i < count($keyList); $k_i++) {
             $forList = $keyList[$k_i];
 
@@ -357,68 +364,6 @@ class system_actions extends app
         foreach ($keyList as $value) {
             $this->redisDel($value);
         }
-    }
-
-    /**
-     *
-     * appNode 控制面板自带开发文档，获取系统信息，配合 F12 使用
-     *
-     * @link https://www.kancloud.cn/appnode/apidoc/504312
-     * @link http://apidoc.cn/explore
-     */
-    function getSystemInfo()
-    {
-        $key = APP_INFO['authInfo'][1002][0];
-        $host = "http://127.0.0.1:8899";
-
-        /**
-         *
-         * 获取系统信息
-         *
-         */
-        $url_1 = "api_action=Status.Overview&api_agent_app=sysinfo&api_nodeid=1&api_nonce=" . $this->appGetRandomString(16) . "&api_timestamp=" . TIME_T;
-        $sign_1 = hash_hmac("md5", $url_1, $key);
-
-        $newUrl_1 = $host . "/?{$url_1}&api_sign=" . $sign_1;
-
-        $reqRet_1 = $this->requestUrl($newUrl_1);
-        $resJson_1 = json_decode($reqRet_1);
-        $resData_1 = $resJson_1->DATA;
-        $CPUUseRate = $resData_1->CPUUseRate;
-        $UpTime = $resData_1->UpTime;
-        $LoadAvg = $resData_1->LoadAvg;
-        $MemInfo = $resData_1->MemInfo;
-        $Disks = $resData_1->Disks[0];
-
-        /**
-         *
-         * 获取网络信息
-         *
-         */
-        $url_2 = "api_action=Network.Info&api_agent_app=sysinfo&api_nodeid=1&api_nonce=" . $this->appGetRandomString(16) . "&api_timestamp=" . TIME_T;
-        $sign_2 = hash_hmac("md5", $url_2, $key);
-
-        $newUrl_2 = $host . "/?{$url_2}&api_sign=" . $sign_2;
-
-        $reqRet_2 = $this->requestUrl($newUrl_2);
-        $reqRet_2 = str_replace("K/", " K/", $reqRet_2);
-        $reqRet_2 = str_replace("B/", " B/", $reqRet_2);
-        $reqRet_2 = str_replace("M/", " M/", $reqRet_2);
-        $reqRet_2 = str_replace("G", " G", $reqRet_2);
-
-        $resJson_2 = json_decode($reqRet_2);
-        $resData_2 = $resJson_2->DATA;
-        $NetworkCards = $resData_2->NetworkCards[0];
-
-        $ret = "SDK/PHP:" . CONFIG_VERSION . " / " . PHP_VERSION . "\n";
-        $ret .= "运行时间:" . (floor($UpTime->Total * 100 / 86400) / 100) . " 天\n";
-        $ret .= "内存使用:" . str_replace("G", "", $MemInfo->MemUsed) . " / " . str_replace("G", "", $MemInfo->MemTotal) . " G\n";
-        $ret .= "存储空间:" . str_replace("G", "", $Disks->Used) . " / " . str_replace("G", "", $Disks->Total) . " G\n";
-        $ret .= "当前负载:" . ($CPUUseRate * 100) .  " % CPU使用率:" . $LoadAvg->Last1MinRate . " / " . $LoadAvg->Last5MinRate . " / " . $LoadAvg->Last15MinRate . " %\n";
-        $ret .= "网络接口:↑ " . $NetworkCards->TXSpeed . " | " . $NetworkCards->TX . " / ↓ " . $NetworkCards->RXSpeed . " | " . $NetworkCards->RX . "\n";
-        $ret .= "操作系统:" . php_uname();
-
-        return $ret;
     }
 
     /**
@@ -512,19 +457,16 @@ class system_actions extends app
 
         $triggerNum = count($allTrigger);
         $nowAllTimes = floor(($allTimes / 10000) * 100) / 100;
-
+        $allCommand .= $adminCommand;
         //$allCommand .= "以下为所有人命令:\n";
         $allCommand .= $commonCommand;
         $allCommand .= "-----\n";
-        //$allCommand .= "以下为管理员命令:\n";
-        //$allCommand .= $adminCommand;
-        //$allCommand .= "-----\n";
-        $allCommand .= "发送【功能】返回【主菜单】\n";
+        $allCommand .= "上善若水小灰灰\n";
         $allCommand .= "-----\n";
         $allCommand .= "插件/钩子/调用:{$pluginsNum}/{$triggerNum}/{$nowAllTimes}w";
 
         $this->redisSet("plugins-allTrigger-" . FRAME_ID, $allTrigger);
-        $this->redisSet("plugins-allKeywords-" . FRAME_ID, "/^({$allKeywords})/i");
+        $this->redisSet("plugins-allKeywords-" . FRAME_ID, "/^(\#|\/|\!)?({$allKeywords})/i");
 
         return $allCommand;
     }
@@ -536,7 +478,7 @@ class system_actions extends app
      */
     function getMpqLoginQrcode($msgSender)
     {
-        $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "api_msg";;
+        $this->appSetMsgType("api_msg");
 
         $loginQrCode = $this->requestApiByMPQ("Api_GetLoginQRCode()");
         $reqRet = $this->appDownloadImg($msgSender, "mpqLoginQrcode", "mpqLoginQrcode", "mpqLoginQrcode", NULL, base64_decode($loginQrCode));
@@ -546,7 +488,7 @@ class system_actions extends app
         $ret = "请打开链接，使用摄像头扫码，有效期很短\n";
         $ret .= $img;
 
-        $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = NULL;
+        $this->appSetMsgType();
 
         return $ret;
     }
@@ -641,12 +583,14 @@ class system_actions extends app
     function appInviteInGroup($msgRobot, $msgSource, $msgSender)
     {
         if (FRAME_ID == 10000) {
-            $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = "api_msg";
+            $this->appSetMsgType("api_msg");
 
             $this->requestApiByMPQ("Api_JoinGroup('{$msgRobot}','{$msgSource}','')");
 
-            $GLOBALS['msgExt'][$GLOBALS['msgGc']]['msgType'] = NULL;
+            $this->appSetMsgType();
         } elseif (FRAME_ID == 20000) {
+            $this->appSetMsgType("json_msg");
+
             $newData = array();
             $newData['type'] = 311;
             $newData['robot_wxid'] = $msgRobot;

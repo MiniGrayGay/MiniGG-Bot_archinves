@@ -33,7 +33,7 @@ class poster
             'top' => 0, //上边距,数字或者center,垂直居中
             'width' => 0, //文本框宽度，设置后可实现文字换行
             'fontSize' => 32, //字号
-            'fontPath' => 'msyh.ttc', //字体文件
+            'fontPath' => 'msyh.ttf', //字体文件
             'fontColor' => '255,255,255', //字体颜色
             'angle' => 0, //倾斜角度
         );
