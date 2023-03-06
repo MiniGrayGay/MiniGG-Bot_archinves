@@ -1,12 +1,11 @@
-.vscode/settings.json
-composer.lock
-yarn.lock
+.idea/*
+.vscode/*
 .DS_Store
-.idea
-node_modules
-vendor
 app/cache/*
 app/config/*
+app/resources/*
 app/ws/*
+node_modules/*
+vendor/*
 !app/config/app.definition.php
 !app/ws/example.qq_ws.js

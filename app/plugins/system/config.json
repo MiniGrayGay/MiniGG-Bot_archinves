@@ -1,13 +1,13 @@
 {
   "icon": "pic.icon",
-  "guid": "a02987e6-0101-46eb-8830-30c163d63ecc",
+  "guid": "59fe8b10-9c6d-5661-fbb3-0c7867783421",
   "name": "系统",
   "type": [
     "系统"
   ],
   "desc": "你就是我的Master吗？",
   "ver": "1.0.0.0",
-  "author": "苏苏",
+  "author": "minigg",
   "url": null,
   "switch": true,
   "trigger": {
@@ -15,34 +15,17 @@
     "frame": [],
     "command": [
       {
-        "keywords": "系统状态",
-        "desc": "查询机器人框架信息"
-      },
-      {
-        "keywords": "登录",
-        "desc": "机器人掉线时重新登录",
+        "keywords": "群组",
+        "desc": "获取当前群组的信息",
         "show": false
       },
       {
-        "keywords": "菜单",
+        "keywords": "功能|菜单|帮助",
         "desc": "一级菜单",
         "show": false
       },
       {
-        "keywords": "功能|帮助|娱乐功能|其他功能|原神|原神功能|系统功能",
-        "desc": "二级菜单",
-        "show": false
-      },
-      {
-        "keywords": "群组",
-        "desc": "获取当前群组的信息"
-      },
-      {
-        "keywords": "频道数据",
-        "desc": "获取当前频道的数据"
-      },
-      {
-        "keywords": "复读姬",
+        "keywords": "复述",
         "desc": "[管]复读机",
         "demo": "复述<内容>，示例:复述你好"
       },
@@ -66,8 +49,12 @@
         "desc": "[管]返回当前黑名单列表"
       },
       {
-        "keywords": "清除缓存",
-        "desc": "[管]清空系统缓存"
+        "keywords": "清除系统缓存",
+        "desc": "[管]清除系统缓存"
+      },
+      {
+        "keywords": "清除网站缓存",
+        "desc": "[管]清除网站缓存"
       }
     ]
   }

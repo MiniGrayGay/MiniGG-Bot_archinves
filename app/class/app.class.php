@@ -1,8 +1,6 @@
 <?php
 
-use Intervention\Image\ImageManager;
-use Overtrue\Pinyin\Pinyin;
-use Symfony\Component\Yaml\Yaml;
+use Predis\Client;
 
 /**
  *
@@ -41,27 +39,15 @@ class app extends api
      */
     public function linkRedis()
     {
-        $redisConfig = APP_REDIS_CONFIG[0] ?? NULL;
+        $redisConfig = APP_REDIS_CONFIG;
         //Redis
 
-        $this->redis = new redis();
-        $this->redis->connect("127.0.0.1", 6379);
-        if ($redisConfig) $this->redis->auth($redisConfig);
-    }
+        $this->redis = new Client(
+            array("host" => $redisConfig[0][0], "port" => $redisConfig[0][2]),
+            $redisConfig ? array("parameters" => array("password" => $redisConfig[0][1])) : NULL
+        );
 
-    public function pinyinConvert()
-    {
-        $this->Pinyin = new Pinyin();
-    }
-
-    public function IMS()
-    {
-        $this->manager = new ImageManager(['driver' => 'imagick']);
-    }
-
-    public function PHP_YAML()
-    {
-        $this->phpyaml = new Yaml();
+        $this->redisSelect(1);
     }
 
     /**
@@ -77,9 +63,10 @@ class app extends api
 
         $plugins = array();
         foreach ($scanDir as $name) {
-            if ($name != '.' && $name != '..') {
+            if (!preg_match("/^\./i", $name)) {
                 $plugins[] = array(
-                    'name' => $name, //不带后缀 例如:hitokoto
+                    'name' => $name,
+                    //不带后缀 例如:hitokoto
                     'path' => $dir . $name
                 );
             }
@@ -102,7 +89,8 @@ class app extends api
             $reqRet = file_get_contents($configPath);
             $resJson = json_decode($reqRet);
 
-            if (!$resJson->switch) continue;
+            if (!$resJson->switch)
+                continue;
 
             $actionsPath = $pluginPath . "/actions.php";
             if (@file_exists($actionsPath)) {

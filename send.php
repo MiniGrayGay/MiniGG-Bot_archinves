@@ -1,5 +1,7 @@
 <?php
 
+//QQ卡片消息发送，功能已废弃
+
 require_once("main.php");
 
 if (!FRAME_KEY || !in_array(FRAME_KEY, APP_KEY) || !PUSH_MSG_SOURCE || !PUSH_MSG_CONTENT) return;
@@ -12,25 +14,25 @@ $appManager = new app();
  *
  */
 /*
-$extMsgType = "at_msg";
+  $extMsgType = "at_msg";
 
-$extMsgOrigMsg = array(
-    "robot_wxid" => (string)$msgRobot, //机器人
-    "from_wxid" => (string)$msgSource //群号
-);
+  $extMsgOrigMsg = array(
+    "robot_wxid" => (string) $msgRobot, //机器人
+    "from_wxid" => (string) $msgSource //群号
+  );
 
-array(
+  array(
     "msgOrigMsg" => $extMsgOrigMsg,
     "msgAtNokNok" => array(
-        "at_type" => 2,
-        "at_uid_list" => array()
+      "at_type" => 2,
+      "at_uid_list" => array()
     ),
     "msgAtQQChannel" => array(
-        "at_type" => 2,
-        "at_uid_list" => array()
+      "at_type" => 2,
+      "at_uid_list" => array()
     ),
     "msgType" => $extMsgType
-)
+  )
 */
 $appManager->appSend(PUSH_MSG_ROBOT, PUSH_MSG_TYPE, PUSH_MSG_SOURCE, PUSH_MSG_SOURCE, PUSH_MSG_CONTENT, PUSH_MSG_EXT);
 
